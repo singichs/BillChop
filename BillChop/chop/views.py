@@ -11,6 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from models import Group, Receipt, User, UserMembership, Item, ReceiptMembership
 from serializers import *
+from datetime import *
 
 # TODO:
 
@@ -44,7 +45,7 @@ def get_receipt(request):
 @api_view(['GET', 'POST', 'PUT'])
 def group(request):
     if request.method == "GET":
-        groups = Group.objects.filter(name='test boi')
+        groups = Group.objects.filter(name='bed boi')
         serializer = GroupSerializer(groups, many=True)
         return JsonResponse(serializer.data, safe=False)
     elif request.method == "PUT":
@@ -63,6 +64,17 @@ def group(request):
 def payments(request):
     if request.method == "GET":
         return HttpResponse("Payments GET");
+    if request.method == "POST":
+        groups = Group.objects.filter(name='test boi')
+        user = User.objects.get(pk=1)
+        m1 = UserMembership(user=user, group=groups[0], date_joined=datetime.now(), role="adminboi")
+        m1.save()
+        print groups[0]
+        print user
+        serializer = GroupSerializer(groups, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+
 
 @csrf_exempt
 def payup(request):
