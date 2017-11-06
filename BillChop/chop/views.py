@@ -8,13 +8,15 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from chop.models import Group, Receipt, User, UserMembership, Item, ReceiptMembership
+from chop.models import Group, Receipt, Users, UserMembership, Item, ReceiptMembership
 from chop.serializers import *
 from datetime import *
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 import json
+from django.db import IntegrityError
+
 
 
 # TODO:
@@ -99,6 +101,17 @@ def register(request):
     username = data['username']
     password = data['password']
     email = data['email']
-    user = User.objects.create_user(username, email, password)
-    return HttpResponse("Hello, world");
+
+    #try to create user
+    try:
+        user = User.objects.create_user(username, email, password)
+    except IntegrityError:
+        # user already exists
+        status = 'user already exists'
+    else:
+        new_user = Users(first_name = username, last_name= "default", email= email)
+        new_user.save()
+        status = 'new user was created'
+   
+    return HttpResponse(status)
 

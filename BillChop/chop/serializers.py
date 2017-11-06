@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from chop.models import Group, Receipt, User, Item, UserMembership, ReceiptMembership
+from chop.models import Group, Receipt, Users, Item, UserMembership, ReceiptMembership
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,7 +13,7 @@ class ReceiptSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Users
         fields = ('first_name', 'last_name', 'email', 'venmo_handle', 'groups', 'receipts')
         # currently not working - phone_number = PhoneNumberField()
 
