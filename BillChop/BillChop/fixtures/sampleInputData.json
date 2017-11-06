@@ -24,9 +24,9 @@
 		"fields": {
 			"photo_bucket": "sample-s3-bucket", 
 			"timestamp": "2017-10-30", 
-			"total_cost": "40.00", 
-			"tip": "0.00", 
-			"tax": "5.00", 
+			"total_cost": 40.00, 
+			"tip": 0.00, 
+			"tax": 5.00, 
 			"is_complete": false, 
 			"group": 1,
 			"owner": 1
@@ -37,9 +37,28 @@
 		"pk": 1, 
 		"fields": {
 			"name": "ciroc", 
-			"value": "35.00", 
+			"value": 35.00, 
 			"receipt": 1, 
 			"user_owns": 1
+		}
+	},
+	{
+		"model": "chop.usermembership",
+		"pk": 1,
+		"fields": {
+			"user": 1,
+			"group": 1,
+			"date_joined": "2017-10-30",
+			"role": "nerd"
+		}
+	},
+	{
+		"model": "chop.receiptmembership",
+		"pk": 1,
+		"fields": {
+			"users" : 1,
+			"receipt" : 1,
+			"outstanding_payment": 40.00
 		}
 	}
 ]
