@@ -118,7 +118,7 @@ def get_user_payments(request):
         receipt_info["owner"] = receipt.owner.full_name()
         data.append(receipt_info)
 
-    data = json.dumps(data)
+   # data = json.dumps(data)
     user_payments = {'payments': data}
     return JsonResponse(user_payments)
 
