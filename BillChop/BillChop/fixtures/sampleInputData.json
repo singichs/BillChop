@@ -1,0 +1,44 @@
+[
+	{
+		"model": "chop.user", 
+		"pk": 1, 
+		"fields": {
+			"first_name": "Ramana", 
+			"last_name": "Keerthi", 
+			"email": "ramanak@umich.edu", 
+			"venmo_handle": "Ramana-Keerthi"
+		}
+	},
+	{
+		"model": "chop.group", 
+		"pk": 1, 
+		"fields": {
+			"name": "eecs441squaaa", 
+			"date_created": "2017-10-30", 
+			"last_used": "2017-10-30"
+		}
+	},
+	{
+		"model": "chop.receipt", 
+		"pk": 1, 
+		"fields": {
+			"photo_bucket": "sample-s3-bucket", 
+			"timestamp": "2017-10-30", 
+			"total_cost": "40.00", 
+			"tip": "0.00", 
+			"tax": "5.00", 
+			"is_complete": false, 
+			"group": 1
+		}
+	},
+	{
+		"model": "chop.item", 
+		"pk": 1, 
+		"fields": {
+			"name": "ciroc", 
+			"value": "35.00", 
+			"receipt": 1, 
+			"user_owns": 1
+		}
+	}
+]
