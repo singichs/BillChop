@@ -1,12 +1,12 @@
 [
 	{
-		"model": "chop.user", 
+		"model": "chop.users", 
 		"pk": 1, 
 		"fields": {
 			"first_name": "Ramana", 
 			"last_name": "Keerthi", 
 			"email": "ramanak@umich.edu", 
-			"venmo_handle": "Ramana-Keerthi"
+			"venmo": "Ramana-Keerthi"
 		}
 	},
 	{
@@ -28,7 +28,8 @@
 			"tip": "0.00", 
 			"tax": "5.00", 
 			"is_complete": false, 
-			"group": 1
+			"group": 1,
+			"owner": 1
 		}
 	},
 	{

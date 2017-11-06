@@ -9,7 +9,7 @@ class GroupSerializer(serializers.ModelSerializer):
 class ReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receipt
-        fields = ('photo_bucket', 'timestamp', 'total_cost', 'tip', 'tax', 'is_complete', 'group')
+        fields = ('photo_bucket', 'timestamp', 'total_cost', 'tip', 'tax', 'is_complete', 'group', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

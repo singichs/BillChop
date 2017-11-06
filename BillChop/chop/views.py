@@ -90,7 +90,18 @@ def payup(request):
 @login_required
 @api_view(['GET'])
 def get_user_payments(request):
-    print (request.user.username)
+    print (request.user.email)
+
+    #Get our user object with logged in user email
+    user = Users.objects.filter(email=request.user.email)
+
+    #Get receipts that user is involved with
+    receipt_memberships = ReceiptMembership.objects.filter(users=user[0].pk)
+
+    print (receipt_memberships)
+
+
+
     return HttpResponse("Hello, world")
 
 
