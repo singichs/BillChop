@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
@@ -12,6 +11,10 @@ from rest_framework.response import Response
 from chop.models import Group, Receipt, User, UserMembership, Item, ReceiptMembership
 from chop.serializers import *
 from datetime import *
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
+
 
 # TODO:
 
@@ -19,12 +22,13 @@ from datetime import *
 
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
 
+@login_required
 def index(request):
     return HttpResponse("Hello, world")
 
 # localhost:8000/chop/receipt/15/
 # note trailing slash, we need to include for POST requests while APPEND_SLASH is true      
-@csrf_exempt
+@login_required
 def receipt(request, user_id):
     if request.method == "GET":
         receipts = Receipt.objects.all()
@@ -34,7 +38,7 @@ def receipt(request, user_id):
     elif request.method == "POST":
         return HttpResponse(request);
 
-@csrf_exempt
+@login_required
 def get_receipt(request):
     if request.method == "POST":
         # receipts = Receipt.objects.all()
@@ -42,6 +46,7 @@ def get_receipt(request):
         # return JsonResponse(serializer.data, safe=False)
         return HttpResponse(request);
 
+@login_required
 @api_view(['GET', 'POST', 'PUT'])
 def group(request):
     if request.method == "GET":
@@ -60,7 +65,7 @@ def group(request):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-@csrf_exempt
+@login_required
 def payments(request):
     if request.method == "GET":
         return HttpResponse("Payments GET");
@@ -74,13 +79,26 @@ def payments(request):
         serializer = GroupSerializer(groups, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-
-
-@csrf_exempt
+@login_required
 def payup(request):
     if request.method == "POST":
         return HttpResponse(request);
 
+@api_view(['GET'])
+def get_user_payments(request):
+    print (User.username)
+    return HttpResponse(request);
 
 
+def register(request):
+    user = User.objects.create_user('joe', 'joe@joe.com', 'joepassword')
+    return HttpResponse(request);
 
+
+def login(request):
+    user = authenticate(username='joe', password='joepassword')
+    print (user)
+    if user is not None:
+        return HttpResponse(request);
+    else:
+        return HttpResponse(request);

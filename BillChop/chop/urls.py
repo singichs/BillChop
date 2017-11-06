@@ -12,4 +12,8 @@ urlpatterns = [
 	url(r'^group', views.group, name='group'),
 	url(r'^payments', views.payments, name='payments'),
 	url(r'^payup', views.payup, name='payup'),
+	url(r'^get_user_payments', views.get_user_payments, name='get_user_payments'),
+	url(r'^login', views.login, name='login'),
+	url(r'^register', views.register, name='register'),
+
 ]
