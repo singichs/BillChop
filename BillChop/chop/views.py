@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 
 
+
 # TODO:
 
 # 
@@ -84,21 +85,14 @@ def payup(request):
     if request.method == "POST":
         return HttpResponse(request);
 
+@login_required
 @api_view(['GET'])
 def get_user_payments(request):
-    print (User.username)
-    return HttpResponse(request);
+    print (request.user.username)
+    return HttpResponse("Hello, world")
 
 
 def register(request):
     user = User.objects.create_user('joe', 'joe@joe.com', 'joepassword')
     return HttpResponse(request);
 
-
-def login(request):
-    user = authenticate(username='joe', password='joepassword')
-    print (user)
-    if user is not None:
-        return HttpResponse(request);
-    else:
-        return HttpResponse(request);

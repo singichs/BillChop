@@ -28,6 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+CSRF_COOKIE_DOMAIN = '127.0.0.1'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -57,7 +59,7 @@ ROOT_URLCONF = 'BillChop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['chop/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
