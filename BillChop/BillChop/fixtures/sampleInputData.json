@@ -29,7 +29,8 @@
 			"tax": 5.00, 
 			"is_complete": false, 
 			"group": 1,
-			"owner": 1
+			"owner": 1,
+			"title": "alcohol"
 		}
 	},
 	{
