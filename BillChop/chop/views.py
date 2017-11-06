@@ -14,7 +14,7 @@ from datetime import *
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
-
+import json
 
 
 # TODO:
@@ -92,7 +92,13 @@ def get_user_payments(request):
     return HttpResponse("Hello, world")
 
 
+@api_view(['POST'])
 def register(request):
-    user = User.objects.create_user('joe', 'joe@joe.com', 'joepassword')
-    return HttpResponse(request);
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    username = data['username']
+    password = data['password']
+    email = data['email']
+    user = User.objects.create_user(username, email, password)
+    return HttpResponse("Hello, world");
 
