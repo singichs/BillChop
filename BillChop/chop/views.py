@@ -9,8 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from models import Group, Receipt, User, UserMembership, Item, ReceiptMembership
-from serializers import *
+from chop.models import Group, Receipt, User, UserMembership, Item, ReceiptMembership
+from chop.serializers import *
 from datetime import *
 
 # TODO:
@@ -56,7 +56,7 @@ def group(request):
         serializer = GroupSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            print serializer.data
+            print(serializer.data)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -69,8 +69,8 @@ def payments(request):
         user = User.objects.get(pk=1)
         m1 = UserMembership(user=user, group=groups[0], date_joined=datetime.now(), role="adminboi")
         m1.save()
-        print groups[0]
-        print user
+        print(groups[0])
+        print(user)
         serializer = GroupSerializer(groups, many=True)
         return JsonResponse(serializer.data, safe=False)
 
