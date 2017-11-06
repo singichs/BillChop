@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 import json
 from django.db import IntegrityError
-
+from decimal import *
 
 
 # TODO:
@@ -92,17 +92,35 @@ def payup(request):
 def get_user_payments(request):
     print (request.user.email)
 
+    data = []
+
     #Get our user object with logged in user email
     user = Users.objects.filter(email=request.user.email)
 
     #Get receipts that user is involved with
     receipt_memberships = ReceiptMembership.objects.filter(users=user[0].pk)
 
-    print (receipt_memberships)
+    #Get Receipt information 
+    for membership in receipt_memberships:
+        receipt = Receipt.objects.get(pk=membership.receipt.pk)
 
+        receipt_info = {}
+        receipt_info["title"] = receipt.title
 
+        #If user owns receipt
+        if receipt.owner.pk == user[0].pk:
+            receipt_info["is_owner"] = True
+            receipt_info["cost"] = str(receipt.total_cost)
+        else:
+            receipt_info["is_owner"] = False
+            receipt_info["cost"] = str(membership.outstanding_payment)
 
-    return HttpResponse("Hello, world")
+        receipt_info["owner"] = receipt.owner.full_name()
+        data.append(receipt_info)
+
+    data = json.dumps(data)
+    user_payments = {'payments': data}
+    return JsonResponse(user_payments)
 
 
 @api_view(['POST'])

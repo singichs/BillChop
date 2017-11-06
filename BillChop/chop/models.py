@@ -22,6 +22,9 @@ class Users(models.Model):
     email = models.EmailField()
     groups = models.ManyToManyField(Group, through='UserMembership', related_name='people')
 
+    def full_name(self):
+        return self.first_name + " " + self.last_name
+
     def __str__(self):
         return self.first_name + " " + self.last_name
 
