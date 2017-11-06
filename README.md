@@ -17,16 +17,21 @@ Set up Postgres & Django locally on your machine.
 2. Install dependencies, run:
 ```$pip install -r requirements.txt ```
 
-3. Create the local db with these commands:
-```
-$psql
-$CREATE ROLE peter WITH LOGIN PASSWORD 'peter';
-$ALTER ROLE peter CREATEDB;
-$CREATE DATABASE chop_db;
-$GRANT ALL PRIVILEGES ON DATABASE chop_db TO peter;
-```
+3. Create the db using command: 
+```$psql -f BillChop/dbsetup.sql -v v1='userRole' -v v2='userRolePassword' ```
+  where v1 is the PostGres user role you want to create, which will be granted all privileges to the database
+  
+4. Make the migrations:
+```$python3 manage.py migrate ```
 
-4. Outside the db (\q): 
-```python manage.py createsuperuser```
+5. Create the super user:
+```$python3 manage.py createsuperuser```
 
-5. Then go to http://127.0.0.1:8000/admin and login and make sure it works
+6. Load the sample data:
+```$python3 manage.py loaddata BillChop/fixtures/sampleInputData.json```
+
+7. Run the server:
+```$python3 manage.py runserver```
+
+8. Then go to http://127.0.0.1:8000/admin and login and make sure it works
+** the login credentials here are the ones you provided for the superuser, not for the postgres role
