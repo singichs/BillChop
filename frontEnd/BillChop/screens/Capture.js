@@ -8,9 +8,9 @@ import {
 import Camera from 'react-native-camera';
 
 export default class Capture extends Component<{}> {
-    static navigationOptions = {
-        title: 'Capture',
-    };
+    static navigationOptions = ({ navigation, screenProps }) => ({
+        title: "Capture",
+    });
     render() {
         return (
             <View style={styles.container}>
@@ -19,8 +19,9 @@ export default class Capture extends Component<{}> {
                         this.camera = cam;
                     }}
                     style={styles.preview}
-                    aspect={Camera.constants.Aspect.fill}>
-                    <Text style={styles.capture} onPress={this.takePicture.bind(this)}>[CAPTURE]</Text>
+                    aspect={Camera.constants.Aspect.fill}
+                    captureTarget={Camera.constants.CaptureTarget.temp}>
+                    <Text style={styles.capture} onPress={this.takePicture.bind(this)}>CAPTURE</Text>
                 </Camera>
             </View>
         );
@@ -30,8 +31,11 @@ export default class Capture extends Component<{}> {
         const options = {};
         //options.location = ...
         this.camera.capture({metadata: options})
-            .then((data) => console.log(data))
-            .catch(err => console.error(err));
+            .then((data) => {
+                console.log(data);
+                this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data});
+            })
+            .catch(err => console.error("test"));
     }
 }
 

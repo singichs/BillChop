@@ -27,7 +27,7 @@ export default class HomeNavigation extends Component<{}> {
     };
     render() {
         return (
-            <HomeScreenNavigator/>
+            <HomeScreenNavigator screenProps={{ rootNavigation: this.props.navigation }}/>
         );
     }
 }

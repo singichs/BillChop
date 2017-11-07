@@ -17,9 +17,11 @@ import {
 } from 'react-navigation';
 import Capture from './screens/Capture';
 import HomeNavigation from "./screens/HomeNavigation";
+import ReviewCapture from "./screens/ReviewCapture";
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
+    ReviewCapture: {screen: ReviewCapture }
 });
 
 export default class App extends Component<{}> {
