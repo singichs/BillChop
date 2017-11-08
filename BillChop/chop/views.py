@@ -12,7 +12,7 @@ from chop.models import UserMembership
 from chop.serializers import *
 from datetime import *
 from decimal import *
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -201,7 +201,7 @@ def get_user_payments(request, page_num=1):
     user_payments = {'payments':  data}
     return Response(user_payments)
 
-
+@csrf_exempt
 @api_view(['POST'])
 def register(request):
     body_unicode = request.body.decode('utf-8')
@@ -240,3 +240,19 @@ def upload_file(request):
         form = UploadFileForm()
     return HttpResponse("dope")
 
+@api_view(['POST'])
+def user_login(request):
+    print ("current user: " + str(request.user))
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    username = data['username']
+    password = data['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return HttpResponse("logged in")
+        # Redirect to a success page.
+    else:
+        return HttpResponse("failed to log in")
+        # Return an 'invalid login' error message.
+        

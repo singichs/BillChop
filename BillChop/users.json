@@ -3,16 +3,16 @@
     "model": "auth.user",
     "pk": 1,
     "fields": {
-        "password": "pbkdf2_sha256$36000$cOcRHk67N5aS$M5WzxGx/hDyB4dE8ETQ/u7/hRbnYCQUeTslihSsbMBY=",
-        "last_login": "2017-11-08T16:14:30.035Z",
+        "password": "pbkdf2_sha256$36000$HI2XrsNfTbvc$bLl0PnUXFHQyF9scgKVW7o99HFtsF3/o5/bADRZTcRg=",
+        "last_login": "2017-11-08T16:53:10.651Z",
         "is_superuser": true,
-        "username": "peter",
+        "username": "joekunnath",
         "first_name": "",
         "last_name": "",
-        "email": "p@p.com",
+        "email": "jmkunnat@umich.edu",
         "is_staff": true,
         "is_active": true,
-        "date_joined": "2017-11-08T16:14:10.292Z",
+        "date_joined": "2017-11-08T16:50:07.042Z",
         "groups": [],
         "user_permissions": []
     }
@@ -21,16 +21,16 @@
     "model": "auth.user",
     "pk": 2,
     "fields": {
-        "password": "pbkdf2_sha256$36000$zjM77Tqd8Upc$CswUqMQW3CIBCTIIIjbR/8AspJYGm3ASG/Bz3pFyNiM=",
-        "last_login": null,
+        "password": "pbkdf2_sha256$36000$ANdnggOzidvA$CpXjCRLHZodPBeI3/rsHjOKfywPAGaOEeuGx6LraX/Q=",
+        "last_login": "2017-11-08T17:37:08.202Z",
         "is_superuser": false,
-        "username": "Ramana",
+        "username": "jenkins",
         "first_name": "",
         "last_name": "",
-        "email": "ramanak@umich.edu",
+        "email": "",
         "is_staff": false,
         "is_active": true,
-        "date_joined": "2017-11-08T16:15:18.925Z",
+        "date_joined": "2017-11-08T17:27:37.985Z",
         "groups": [],
         "user_permissions": []
     }
@@ -39,27 +39,18 @@
     "model": "auth.user",
     "pk": 3,
     "fields": {
-        "password": "pbkdf2_sha256$36000$FVVRdG7flWhM$hvV2rNpIGcq91P+hMo/6emlQ9WWnndfas5TxOSHilF4=",
+        "password": "pbkdf2_sha256$36000$ekfmokqQE52G$udIEGy14Fnia7b55zg7s++LAMC+8pJH/A+Modj0bTBQ=",
         "last_login": null,
         "is_superuser": false,
-        "username": "joe",
+        "username": "lelbron",
         "first_name": "",
         "last_name": "",
         "email": "",
         "is_staff": false,
         "is_active": true,
-        "date_joined": "2017-11-08T16:51:50.904Z",
+        "date_joined": "2017-11-08T17:38:24.355Z",
         "groups": [],
         "user_permissions": []
-    }
-},
-{
-    "model": "chop.group",
-    "pk": 1,
-    "fields": {
-        "name": "eecs441squaaa",
-        "date_created": "2017-10-30",
-        "last_used": "2017-10-30"
     }
 }
 ]
