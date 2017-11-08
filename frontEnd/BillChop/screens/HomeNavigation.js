@@ -8,6 +8,7 @@ import {
 import Home from './Home';
 import Capture from './Capture';
 import { TabNavigator } from "react-navigation";
+import FriendList from "./FriendList";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -17,6 +18,7 @@ const instructions = Platform.select({
 });
 
 const HomeScreenNavigator = TabNavigator({
+    FriendList: {screen: FriendList},
     Home: {screen: Home},
     Capture: { screen: Capture },
 });
