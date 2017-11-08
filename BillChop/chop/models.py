@@ -44,7 +44,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 class Receipt(models.Model):
     photo_bucket = models.CharField(max_length=30)
-    image = models.ImageField(upload_to="receipt_images", null=True, blank=True)
+    image = models.ImageField(upload_to="receipt_images/", null=True, blank=True)
     timestamp = models.DateField(auto_now_add = True)
     total_cost = models.DecimalField(max_digits=5, decimal_places=2)
     tip = models.DecimalField(max_digits=5, decimal_places=2)
@@ -83,9 +83,4 @@ class ReceiptMembership(models.Model):
 
     def __str__(self):
         return self.users.first_name + " " + str(self.receipt.timestamp)
-
-
-
-
-
 

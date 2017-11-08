@@ -26,7 +26,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from .forms import UploadFileForm
+from .forms import ImageUploadForm
 
 
 
@@ -224,21 +224,17 @@ def register(request):
     return HttpResponse(status)
 
 @csrf_exempt
-def upload_file(request):
-    if request.method == 'POST':
-        body_unicode = request.body.decode('utf-8')
-        data = json.loads(body_unicode)
-        print(data["image"])
-        with open("imageToSave.png", "wb") as fh:
-            fh.write(base64.decodebytes(base64.b64encode(data["image"].encode('utf-8'))))
-        return HttpResponse("yo")
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            return HttpResponseRedirect('/success/url/')
-    else:
-        form = UploadFileForm()
-    return HttpResponse("dope")
+@api_view(['POST'])
+def upload_receipt(request):
+    print(request.FILES)
+    form = ImageUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+        receipt = Receipt.objects.get(pk=1)
+        receipt.image = form.cleaned_data['image']
+        receipt.save()
+        return HttpResponse('image upload success')
+
+    return HttpResponse("image wasn't valid")
 
 @api_view(['POST'])
 def user_login(request):
@@ -255,4 +251,4 @@ def user_login(request):
     else:
         return HttpResponse("failed to log in")
         # Return an 'invalid login' error message.
-        
+
