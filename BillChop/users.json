@@ -1,0 +1,65 @@
+[
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$cOcRHk67N5aS$M5WzxGx/hDyB4dE8ETQ/u7/hRbnYCQUeTslihSsbMBY=",
+        "last_login": "2017-11-08T16:14:30.035Z",
+        "is_superuser": true,
+        "username": "peter",
+        "first_name": "",
+        "last_name": "",
+        "email": "p@p.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:14:10.292Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$zjM77Tqd8Upc$CswUqMQW3CIBCTIIIjbR/8AspJYGm3ASG/Bz3pFyNiM=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "Ramana",
+        "first_name": "",
+        "last_name": "",
+        "email": "ramanak@umich.edu",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:15:18.925Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$FVVRdG7flWhM$hvV2rNpIGcq91P+hMo/6emlQ9WWnndfas5TxOSHilF4=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "joe",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:51:50.904Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "chop.group",
+    "pk": 1,
+    "fields": {
+        "name": "eecs441squaaa",
+        "date_created": "2017-10-30",
+        "last_used": "2017-10-30"
+    }
+}
+]

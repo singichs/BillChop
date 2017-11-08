@@ -1,32 +1,32 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.shortcuts import render
-
-from django.http import HttpResponse, JsonResponse
-from rest_framework.decorators import api_view
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
-from rest_framework.response import Response
-from chop.models import Group, Receipt, Users, UserMembership, Item, ReceiptMembership
+import json
+from chop.models import Group
+from chop.models import Item
+from chop.models import Profile
+from chop.models import Receipt
+from chop.models import ReceiptMembership
+from chop.models import UserMembership
 from chop.serializers import *
 from datetime import *
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate
-import json
-from django.db import IntegrityError
 from decimal import *
+from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.db import IntegrityError
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 
 # TODO:
-
-# 
-
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
-
 @login_required
 def index(request):
     return HttpResponse("Hello, world")
@@ -35,6 +35,7 @@ def index(request):
 # note trailing slash, we need to include for POST requests while APPEND_SLASH is true      
 @login_required
 def receipt(request, user_id):
+
     if request.method == "GET":
         receipts = Receipt.objects.all()
         serializer = ReceiptSerializer(receipts, many=True)
@@ -194,11 +195,13 @@ def get_user_payments(request, page_num=1):
         if receipt.owner.pk == user[0].pk:
             receipt_info["is_owner"] = True
             receipt_info["cost"] = str(receipt.total_cost)
+        #If the user does not own receipt
         else:
             receipt_info["is_owner"] = False
             receipt_info["cost"] = str(membership.outstanding_payment)
 
-        receipt_info["owner"] = receipt.owner.full_name()
+        receipt_info["receipt_id"] = receipt.pk
+        receipt_info["owner"] = receipt.owner.profile.full_name()
         data.append(receipt_info)
     
     user_payments = {'payments':  data}
@@ -216,12 +219,12 @@ def register(request):
     #try to create user
     try:
         user = User.objects.create_user(username, email, password)
+        user.profile.venmo = "eecs"
+        user.save()
     except IntegrityError:
         # user already exists
         status = 'user already exists'
     else:
-        new_user = Users(first_name = username, last_name= "default", email= email)
-        new_user.save()
         status = 'new user was created'
    
     return HttpResponse(status)
