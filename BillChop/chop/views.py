@@ -102,7 +102,10 @@ def create_group(request):
 @login_required
 @api_view(['GET'])
 def get_user_groups(request):
+    print("Request")
     print(request.user.pk)
+    print(request.user)
+
     user = Users.objects.get(pk=request.user.pk)
     print(user.full_name())
     print(user.groups.all())
@@ -166,6 +169,8 @@ def payup(request):
     if request.method == "POST":
         return HttpResponse(request);
 
+
+# Call http://localhost:8000/chop/get_user_payments/1
 @login_required
 @api_view(['GET'])
 def get_user_payments(request, page_num=1):
@@ -195,18 +200,9 @@ def get_user_payments(request, page_num=1):
 
         receipt_info["owner"] = receipt.owner.full_name()
         data.append(receipt_info)
-
-   # data = json.dumps(data)
-    paginated_data = Paginator(data, 1)
-    print type(paginated_data)
-    print(paginated_data)
-    page_of_data = json.dumps(paginated_data.page(page_num))
-
-  #  payments = list(page_of_data.values_list('code', flat=True))
-    user_payments = {'payments':  page_of_data}
-
-
-    return Response("hello")
+    
+    user_payments = {'payments':  data}
+    return Response(user_payments)
 
 
 @api_view(['POST'])
