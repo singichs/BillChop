@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -17,7 +17,7 @@ class Group(models.Model):
         return self.name 
 # TO DO: 
 #Subclass  auth user model 
-class User(django.contrib.auth.models.User):
+class Users(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     venmo = models.CharField(max_length=30, default="hello")
