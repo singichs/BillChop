@@ -179,10 +179,10 @@ def get_user_payments(request, page_num=1):
     data = []
 
     #Get our user object with logged in user email
-    user = Users.objects.filter(email=request.user.email)
+    #user = User.objects.filter(email=request.user.email)
 
     #Get receipts that user is involved with
-    receipt_memberships = ReceiptMembership.objects.filter(users=user[0].pk)
+    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
 
     #Get Receipt information 
     for membership in receipt_memberships:
@@ -192,7 +192,7 @@ def get_user_payments(request, page_num=1):
         receipt_info["title"] = receipt.title
 
         #If user owns receipt
-        if receipt.owner.pk == user[0].pk:
+        if receipt.owner.pk == request.user.pk:
             receipt_info["is_owner"] = True
             receipt_info["cost"] = str(receipt.total_cost)
         #If the user does not own receipt
