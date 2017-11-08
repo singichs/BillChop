@@ -7,25 +7,17 @@ import {
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 
-const resetAction = NavigationActions.reset({
-    index: 0,
-    actions: [
-        NavigationActions.navigate({ routeName: 'Home'})
-    ]
-});
 
-export default class ReviewCapture extends Component<{}> {
+export default class TransactionView extends Component<> {
     static navigationOptions = {
-        title: 'Review Image',
+        title: 'View Transaction',
     };
 
-render() {
+    render() {
+        console.log(this.props);
         return (
             <View style={styles.container}>
-                <View style={styles.imageContainer}>
-                    <Image source={{uri: this.props.navigation.state.params.image.path, isStatic:true}} style={styles.image}/>
-                </View>
-                <Button title="Continue" onPress={() => this.props.screenProps.dispatch(resetAction)}/>
+                <Text>{this.props.navigation.state.params.transactionid}</Text>
             </View>
         );
     }

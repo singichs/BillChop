@@ -18,10 +18,12 @@ import {
 import Capture from './screens/Capture';
 import HomeNavigation from "./screens/HomeNavigation";
 import ReviewCapture from "./screens/ReviewCapture";
+import TransactionView from "./screens/TransactionView";
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
-    ReviewCapture: {screen: ReviewCapture }
+    ReviewCapture: {screen: ReviewCapture },
+    TransactionView: {screen: TransactionView}
 });
 
 export default class App extends Component<{}> {
@@ -31,22 +33,3 @@ export default class App extends Component<{}> {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
