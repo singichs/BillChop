@@ -55,11 +55,11 @@ class TransactionList extends Component {
             <List>
                 <FlatList
                     data={this.state.data}
-                    style={{flex: 1, flexDirection: 'row'}}
                     renderItem={({ item }) => (
                         <ListItem
                             title={getString({item})}
                             subtitle={item.title}
+                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
                         />
                     )}
                     keyExtractor={item => item.id}
@@ -78,7 +78,7 @@ export default class Home extends Component<{}> {
     render() {
         return (
             <View style={styles.container}>
-                <TransactionList/>
+                <TransactionList screenProps={this.props.screenProps}/>
             </View>
         );
     }
@@ -87,18 +87,8 @@ export default class Home extends Component<{}> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'stretch',
+        justifyContent: 'flex-start',
         backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
     },
 });
