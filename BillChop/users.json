@@ -1,0 +1,56 @@
+[
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$HI2XrsNfTbvc$bLl0PnUXFHQyF9scgKVW7o99HFtsF3/o5/bADRZTcRg=",
+        "last_login": "2017-11-08T16:53:10.651Z",
+        "is_superuser": true,
+        "username": "joekunnath",
+        "first_name": "",
+        "last_name": "",
+        "email": "jmkunnat@umich.edu",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:50:07.042Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$ANdnggOzidvA$CpXjCRLHZodPBeI3/rsHjOKfywPAGaOEeuGx6LraX/Q=",
+        "last_login": "2017-11-08T17:37:08.202Z",
+        "is_superuser": false,
+        "username": "jenkins",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-08T17:27:37.985Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$ekfmokqQE52G$udIEGy14Fnia7b55zg7s++LAMC+8pJH/A+Modj0bTBQ=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "lelbron",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-08T17:38:24.355Z",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

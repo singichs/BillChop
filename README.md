@@ -35,3 +35,7 @@ Set up Postgres & Django locally on your machine.
 
 8. Then go to http://127.0.0.1:8000/admin and login and make sure it works
 ** the login credentials here are the ones you provided for the superuser, not for the postgres role
+
+
+Note: To get a JSON version of the current models in the DB run this, change auth.user to whichever model you want:
+```$python manage.py dumpdata auth.User --indent 4 > users.json```

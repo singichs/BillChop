@@ -1,31 +1,32 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.shortcuts import render
-
-from django.http import HttpResponse, JsonResponse
-from rest_framework.decorators import api_view
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
-from rest_framework.response import Response
-from chop.models import Group, Receipt, Users, UserMembership, Item, ReceiptMembership
+import json
+from chop.models import Group
+from chop.models import Item
+from chop.models import Profile
+from chop.models import Receipt
+from chop.models import ReceiptMembership
+from chop.models import UserMembership
 from chop.serializers import *
 from datetime import *
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate
-import json
-from django.db import IntegrityError
 from decimal import *
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.db import IntegrityError
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 
 # TODO:
-
-# 
-
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
-
 @login_required
 def index(request):
     return HttpResponse("Hello, world")
@@ -34,6 +35,7 @@ def index(request):
 # note trailing slash, we need to include for POST requests while APPEND_SLASH is true      
 @login_required
 def receipt(request, user_id):
+
     if request.method == "GET":
         receipts = Receipt.objects.all()
         serializer = ReceiptSerializer(receipts, many=True)
@@ -76,8 +78,7 @@ def create_group(request):
     data = json.loads(body_unicode)
     group_name = data["group_name"]
     user_ids = data["user_ids"]
-    print(group_name)
-    print(user_ids)
+
     if len(group_name) > 30:
         response = HttpResponse("Group name provided was too long")
         response.status_code = 400
@@ -90,38 +91,31 @@ def create_group(request):
     new_group = Group.objects.create(name=group_name)
     # Assuming the users already exist
     for user_id in user_ids:
-        user = Users.objects.get(pk=user_id)
+        profile = Profile.objects.get(pk=user_id)
         #Todo: Figure out if something else should be default for the role
         # Create user membership for this user to the new group
-        m1 = UserMembership(user = user, group = new_group, role="")
+        m1 = UserMembership(user = profile.user, group = new_group, role="")
         m1.save()
-        print(user.groups.all())
     return HttpResponse(status=204)
 
 @login_required
 @api_view(['GET'])
 def get_user_groups(request):
-    print(request.user.pk)
-    user = Users.objects.get(pk=request.user.pk)
-    print(user.full_name())
-    print(user.groups.all())
-    user_groups = user.groups.all().values()
-    return JsonResponse({'groups':list(user_groups)})
+    user_groups = UserMembership.objects.filter(user=request.user)
+    return JsonResponse({'groups':list(user_groups.values())})
 
 # localhost:8000/chop/get_users_in_group/groupName/
 @login_required
 @api_view(['GET'])
-def get_users_in_group(request, group_name):
-    print(group_name)
-    if not Group.objects.filter(name=group_name).exists():
-        response = HttpResponse("Group name doesn't exist")
+def get_users_in_group(request, group_id):
+    if not Group.objects.filter(pk=group_id).exists():
+        response = HttpResponse("Group id doesn't exist")
         response.status_code = 400
         return response
 
     #Todo: check if user is in group? or is that done in the frontend?
-    group = Group.objects.get(name=group_name)
+    group = Group.objects.get(pk=group_id)
     users = UserMembership.objects.filter(group=group)
-    print(users)
     return JsonResponse({'users':list(users.values())})
 
 @csrf_exempt
@@ -129,19 +123,19 @@ def get_users_in_group(request, group_name):
 def add_users_to_group(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
-    group_name = data["group_name"]
+    group_id = data["group_id"]
     user_ids = data["user_ids"]
-    if not Group.objects.filter(name=group_name).exists():
-        response = HttpResponse("Group name doesn't exist")
+    if not Group.objects.filter(pk=group_id).exists():
+        response = HttpResponse("Group id doesn't exist")
         response.status_code = 400
         return response
 
-    group = Group.objects.get(name=group_name)   
+    group = Group.objects.get(pk=group_id)   
     for user_id in user_ids:
-        user = Users.objects.get(pk=user_id)
+        profile = Profile.objects.get(pk=user_id)
         #Todo: Figure out if something else should be default for the role
         # Create user membership for this user to the new group
-        m1 = UserMembership(user = user, group = group, role="")
+        m1 = UserMembership(user = profile.user, group = group, role="")
         m1.save()
 
     return HttpResponse(204)
@@ -165,19 +159,16 @@ def payup(request):
     if request.method == "POST":
         return HttpResponse(request);
 
+
+# Call http://localhost:8000/chop/get_user_payments/1
 @login_required
 @api_view(['GET'])
-def get_user_payments(request):
-    print (request.user.email)
-    print (request.user.has_perm("chop.add_item"))
+def get_user_payments(request, page_num=1):
 
     data = []
 
-    #Get our user object with logged in user email
-    user = Users.objects.filter(email=request.user.email)
-
     #Get receipts that user is involved with
-    receipt_memberships = ReceiptMembership.objects.filter(users=user[0].pk)
+    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
 
     #Get Receipt information 
     for membership in receipt_memberships:
@@ -187,21 +178,25 @@ def get_user_payments(request):
         receipt_info["title"] = receipt.title
 
         #If user owns receipt
-        if receipt.owner.pk == user[0].pk:
+        if receipt.owner.pk == request.user.pk:
             receipt_info["is_owner"] = True
             receipt_info["cost"] = str(receipt.total_cost)
+        #If the user does not own receipt
         else:
             receipt_info["is_owner"] = False
             receipt_info["cost"] = str(membership.outstanding_payment)
 
-        receipt_info["owner"] = receipt.owner.full_name()
+        receipt_info["receipt_id"] = receipt.pk
+        receipt_info["owner"] = receipt.owner.profile.full_name()
+        receipt_info["owner_id"] = receipt.owner.pk
+        receipt_info["timestamp"] = receipt.timestamp
+
         data.append(receipt_info)
+    
+    user_payments = {'payments':  data}
+    return Response(user_payments)
 
-   # data = json.dumps(data)
-    user_payments = {'payments': data}
-    return JsonResponse(user_payments)
-
-
+@csrf_exempt
 @api_view(['POST'])
 def register(request):
     body_unicode = request.body.decode('utf-8')
@@ -213,13 +208,34 @@ def register(request):
     #try to create user
     try:
         user = User.objects.create_user(username, email, password)
+        user.profile.venmo = "eecs"
+        user.save()
     except IntegrityError:
         # user already exists
         status = 'user already exists'
     else:
-        new_user = Users(first_name = username, last_name= "default", email= email)
-        new_user.save()
         status = 'new user was created'
    
     return HttpResponse(status)
+
+@api_view(['POST'])
+def user_login(request):
+    print ("current user: " + str(request.user))
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    username = data['username']
+    password = data['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return HttpResponse("logged in")
+        # Redirect to a success page.
+    else:
+        return HttpResponse("failed to log in")
+        # Return an 'invalid login' error message.
+        
+
+
+
+
 
