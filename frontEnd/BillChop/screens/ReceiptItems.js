@@ -66,6 +66,9 @@ class ItemList extends Component {
     renderFooter = () => {
         return <ListItem
                     title={<TextInput onChangeText={(text) => this.setState({newItemName: text})} value={this.state.newItemName}/>}
+                    textInputPlaceholder="Cost: $0.00"
+                    textInput = {true}
+                    textInputOnChangeText = {(text) => this.setState({newItemName: text})} //fix this to be new function
                     hideChevron={true}
                     leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} />}/>;
     };
