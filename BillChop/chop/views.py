@@ -18,6 +18,7 @@ from django.contrib.auth import authenticate
 import json
 from django.db import IntegrityError
 from decimal import *
+from django.core.paginator import Paginator
 
 
 # TODO:
@@ -167,9 +168,7 @@ def payup(request):
 
 @login_required
 @api_view(['GET'])
-def get_user_payments(request):
-    print (request.user.email)
-    print (request.user.has_perm("chop.add_item"))
+def get_user_payments(request, page_num=1):
 
     data = []
 
@@ -198,8 +197,16 @@ def get_user_payments(request):
         data.append(receipt_info)
 
    # data = json.dumps(data)
-    user_payments = {'payments': data}
-    return JsonResponse(user_payments)
+    paginated_data = Paginator(data, 1)
+    print type(paginated_data)
+    print(paginated_data)
+    page_of_data = json.dumps(paginated_data.page(page_num))
+
+  #  payments = list(page_of_data.values_list('code', flat=True))
+    user_payments = {'payments':  page_of_data}
+
+
+    return Response("hello")
 
 
 @api_view(['POST'])
