@@ -18,10 +18,12 @@ import {
 import Capture from './screens/Capture';
 import HomeNavigation from "./screens/HomeNavigation";
 import ReviewCapture from "./screens/ReviewCapture";
+import ReceiptItems from "./screens/ReceiptItems";
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
-    ReviewCapture: {screen: ReviewCapture }
+    ReviewCapture: {screen: ReviewCapture },
+    ReceiptItems: {screen: ReceiptItems}
 });
 
 export default class App extends Component<{}> {

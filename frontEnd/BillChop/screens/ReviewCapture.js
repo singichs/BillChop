@@ -20,12 +20,13 @@ export default class ReviewCapture extends Component<{}> {
     };
 
 render() {
+        let image = this.props.navigation.state.params.image;
         return (
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
-                    <Image source={{uri: this.props.navigation.state.params.image.path, isStatic:true}} style={styles.image}/>
+                    <Image source={{uri: image, isStatic:true}} style={styles.image}/>
                 </View>
-                <Button title="Continue" onPress={() => this.props.navigation.dispatch(resetAction)}/>
+                <Button title="Continue" onPress={() => this.props.navigation.navigate('ReceiptItems', {image: image})}/>
             </View>
         );
     }

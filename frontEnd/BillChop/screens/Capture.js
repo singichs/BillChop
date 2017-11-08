@@ -33,7 +33,7 @@ export default class Capture extends Component<{}> {
         this.camera.capture({metadata: options})
             .then((data) => {
                 console.log(data);
-                this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data});
+                this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data.path});
             })
             .catch(err => console.error("test"));
     }
