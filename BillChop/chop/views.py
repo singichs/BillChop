@@ -78,8 +78,7 @@ def create_group(request):
     data = json.loads(body_unicode)
     group_name = data["group_name"]
     user_ids = data["user_ids"]
-    print(group_name)
-    print(user_ids)
+
     if len(group_name) > 30:
         response = HttpResponse("Group name provided was too long")
         response.status_code = 400
@@ -92,41 +91,31 @@ def create_group(request):
     new_group = Group.objects.create(name=group_name)
     # Assuming the users already exist
     for user_id in user_ids:
-        user = Users.objects.get(pk=user_id)
+        profile = Profile.objects.get(pk=user_id)
         #Todo: Figure out if something else should be default for the role
         # Create user membership for this user to the new group
-        m1 = UserMembership(user = user, group = new_group, role="")
+        m1 = UserMembership(user = profile.user, group = new_group, role="")
         m1.save()
-        print(user.groups.all())
     return HttpResponse(status=204)
 
 @login_required
 @api_view(['GET'])
 def get_user_groups(request):
-    print("Request")
-    print(request.user.pk)
-    print(request.user)
-
-    user = Users.objects.get(pk=request.user.pk)
-    print(user.full_name())
-    print(user.groups.all())
-    user_groups = user.groups.all().values()
-    return JsonResponse({'groups':list(user_groups)})
+    user_groups = UserMembership.objects.filter(user=request.user)
+    return JsonResponse({'groups':list(user_groups.values())})
 
 # localhost:8000/chop/get_users_in_group/groupName/
 @login_required
 @api_view(['GET'])
-def get_users_in_group(request, group_name):
-    print(group_name)
-    if not Group.objects.filter(name=group_name).exists():
-        response = HttpResponse("Group name doesn't exist")
+def get_users_in_group(request, group_id):
+    if not Group.objects.filter(pk=group_id).exists():
+        response = HttpResponse("Group id doesn't exist")
         response.status_code = 400
         return response
 
     #Todo: check if user is in group? or is that done in the frontend?
-    group = Group.objects.get(name=group_name)
+    group = Group.objects.get(pk=group_id)
     users = UserMembership.objects.filter(group=group)
-    print(users)
     return JsonResponse({'users':list(users.values())})
 
 @csrf_exempt
@@ -134,19 +123,19 @@ def get_users_in_group(request, group_name):
 def add_users_to_group(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
-    group_name = data["group_name"]
+    group_id = data["group_id"]
     user_ids = data["user_ids"]
-    if not Group.objects.filter(name=group_name).exists():
-        response = HttpResponse("Group name doesn't exist")
+    if not Group.objects.filter(pk=group_id).exists():
+        response = HttpResponse("Group id doesn't exist")
         response.status_code = 400
         return response
 
-    group = Group.objects.get(name=group_name)   
+    group = Group.objects.get(pk=group_id)   
     for user_id in user_ids:
-        user = Users.objects.get(pk=user_id)
+        profile = Profile.objects.get(pk=user_id)
         #Todo: Figure out if something else should be default for the role
         # Create user membership for this user to the new group
-        m1 = UserMembership(user = user, group = group, role="")
+        m1 = UserMembership(user = profile.user, group = group, role="")
         m1.save()
 
     return HttpResponse(204)
@@ -177,9 +166,6 @@ def payup(request):
 def get_user_payments(request, page_num=1):
 
     data = []
-
-    #Get our user object with logged in user email
-    #user = User.objects.filter(email=request.user.email)
 
     #Get receipts that user is involved with
     receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)

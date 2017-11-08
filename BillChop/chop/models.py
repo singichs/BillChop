@@ -68,7 +68,7 @@ class Item(models.Model):
         return self.name 
 
 class UserMembership(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     date_joined = models.DateField(auto_now_add=True)
     role = models.CharField(max_length=30)
