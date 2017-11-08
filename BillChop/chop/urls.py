@@ -20,5 +20,6 @@ urlpatterns = [
 	url(r'^get_user_payments/[0-9]', views.get_user_payments, name='get_user_payments'),
 	url(r'^login', auth_views.login, name='login'),
 	url(r'^register', views.register, name='register'),
+	url(r'^upload_file', views.upload_file, name='upload_file'),
 	url(r'^logout/$', auth_views.logout, name='logout'),
 ]

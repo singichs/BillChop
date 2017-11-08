@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import render
 import json
+import base64
 from chop.models import Group
 from chop.models import Item
 from chop.models import Profile
@@ -23,6 +24,10 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from .forms import UploadFileForm
+
 
 
 # TODO:
@@ -217,4 +222,21 @@ def register(request):
         status = 'new user was created'
    
     return HttpResponse(status)
+
+@csrf_exempt
+def upload_file(request):
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        print(data["image"])
+        with open("imageToSave.png", "wb") as fh:
+            fh.write(base64.decodebytes(base64.b64encode(data["image"].encode('utf-8'))))
+        return HttpResponse("yo")
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return HttpResponse("dope")
 
