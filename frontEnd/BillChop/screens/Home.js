@@ -49,7 +49,7 @@ class TransactionList extends Component {
             if (item.item.is_owner) {
                 return `You are owed $${item.item.cost}`;
             }
-            return `${item.item.owner} owes you $${item.item.cost}`;
+            return `You owe ${item.item.owner} $${item.item.cost}`;
         }
         return (
             <List>
