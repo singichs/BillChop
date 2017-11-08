@@ -13,6 +13,7 @@ from chop.serializers import *
 from datetime import *
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 import json
 from django.db import IntegrityError
@@ -68,6 +69,83 @@ def group(request):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+@csrf_exempt
+@api_view(['POST'])
+def create_group(request):
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    group_name = data["group_name"]
+    user_ids = data["user_ids"]
+    print(group_name)
+    print(user_ids)
+    if len(group_name) > 30:
+        response = HttpResponse("Group name provided was too long")
+        response.status_code = 400
+        return response
+    if Group.objects.filter(name=group_name).exists():
+        response = HttpResponse("Group name already exists")
+        response.status_code = 400
+        return response
+
+    new_group = Group.objects.create(name=group_name)
+    # Assuming the users already exist
+    for user_id in user_ids:
+        user = Users.objects.get(pk=user_id)
+        #Todo: Figure out if something else should be default for the role
+        # Create user membership for this user to the new group
+        m1 = UserMembership(user = user, group = new_group, role="")
+        m1.save()
+        print(user.groups.all())
+    return HttpResponse(status=204)
+
+@login_required
+@api_view(['GET'])
+def get_user_groups(request):
+    print(request.user.pk)
+    user = Users.objects.get(pk=request.user.pk)
+    print(user.full_name())
+    print(user.groups.all())
+    user_groups = user.groups.all().values()
+    return JsonResponse({'groups':list(user_groups)})
+
+# localhost:8000/chop/get_users_in_group/groupName/
+@login_required
+@api_view(['GET'])
+def get_users_in_group(request, group_name):
+    print(group_name)
+    if not Group.objects.filter(name=group_name).exists():
+        response = HttpResponse("Group name doesn't exist")
+        response.status_code = 400
+        return response
+
+    #Todo: check if user is in group? or is that done in the frontend?
+    group = Group.objects.get(name=group_name)
+    users = UserMembership.objects.filter(group=group)
+    print(users)
+    return JsonResponse({'users':list(users.values())})
+
+@csrf_exempt
+@api_view(['POST'])
+def add_users_to_group(request):
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    group_name = data["group_name"]
+    user_ids = data["user_ids"]
+    if not Group.objects.filter(name=group_name).exists():
+        response = HttpResponse("Group name doesn't exist")
+        response.status_code = 400
+        return response
+
+    group = Group.objects.get(name=group_name)   
+    for user_id in user_ids:
+        user = Users.objects.get(pk=user_id)
+        #Todo: Figure out if something else should be default for the role
+        # Create user membership for this user to the new group
+        m1 = UserMembership(user = user, group = group, role="")
+        m1.save()
+
+    return HttpResponse(204)
+
 @login_required
 def payments(request):
     if request.method == "GET":
@@ -91,6 +169,7 @@ def payup(request):
 @api_view(['GET'])
 def get_user_payments(request):
     print (request.user.email)
+    print (request.user.has_perm("chop.add_item"))
 
     data = []
 
