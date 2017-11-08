@@ -202,6 +202,9 @@ def get_user_payments(request, page_num=1):
 
         receipt_info["receipt_id"] = receipt.pk
         receipt_info["owner"] = receipt.owner.profile.full_name()
+        receipt_info["owner_id"] = receipt.owner.pk
+        receipt_info["timestamp"] = receipt.timestamp
+
         data.append(receipt_info)
     
     user_payments = {'payments':  data}
