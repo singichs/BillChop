@@ -19,11 +19,13 @@ import HomeNavigation from "./screens/HomeNavigation";
 import ReviewCapture from "./screens/splitProcess/ReviewCapture";
 import ReceiptItems from "./screens/splitProcess/ReceiptItems";
 import TransactionView from "./screens/TransactionView";
+import ReceiptPeople from "./screens/splitProcess/ReceiptPeople";
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
     ReviewCapture: {screen: ReviewCapture },
     ReceiptItems: {screen: ReceiptItems},
+    ReceiptPeople: {screen: ReceiptPeople},
     TransactionView: {screen: TransactionView}
 });
 
