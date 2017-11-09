@@ -3,36 +3,34 @@ import {
     StyleSheet,
     View,
     Image,
-    Text
+    Text,
+    KeyboardAvoidingView
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import LoginForm from './LoginForm';
 
 export default class Login extends Component {
     render(){
-        return {
+        return (
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
               <View style={styles.logoContainer}>
                 <Image
                   style={styles.logo}
                   source = {require('../../images/BillChop.png')}
                 />
-                //Create an images folder
-                //and put BillChop.png in it. Images should be in src (same level as ios/andr...)
-                //folder
 
-                <Text style={styles.title}>Whatever our value proposition is I forget...</Text>
+                <Text style={styles.title}>Capture, Select, Charge</Text>
                 <LoginForm />
               </View>
             </KeyboardAvoidingView>
-        };
+    );
     }
 }
 
 const styles = StyleSheet.create({
     container:{
-      flex:1
-      backgroundColor: '#ecf0f1' //white, for now
+      flex:1,
+      backgroundColor: '#4286f4' //white, for now
     },
       logoContainer: {
       alignItems: 'center',
@@ -44,7 +42,7 @@ const styles = StyleSheet.create({
       height: 100
     },
     title: {
-      color: '#000' //Black for now
+      color: '#000', //Black for now
       marginTop: 10,
       width: 160,
       textAlign: 'center',
