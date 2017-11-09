@@ -26,7 +26,7 @@ class ItemList extends Component {
             error: null,
             refreshing: false,
             newItemName: "Add New Item",
-            newItemCost: 0.00,
+            newItemCost: "Cost: $0.00",
         };
     }
 
@@ -62,15 +62,35 @@ class ItemList extends Component {
             finalCost: finalCost});
     };
 
+    addNewItem = () => {
+        // TODO: connect with api to actually add item to database as well
+        let items = this.state.items;
+        let costNum = this.state.newItemCost * 1;
+        if (isNaN(costNum)) {
+            costNum = 0;
+        }
+        let newItem = {"name": this.state.newItemName, "cost": costNum};
+        items.push(newItem);
+        let preTaxTemp = this.state.preTaxCost * 1;
+        let finalTemp = this.state.finalCost * 1;
+        let preTaxCost = (preTaxTemp + costNum).toFixed(2);
+        let finalCost = (finalTemp + costNum).toFixed(2);
+        this.setState({newItemName: "Add New Item",
+            newItemCost: "Cost: $0.00",
+            items: items,
+            preTaxCost: preTaxCost,
+            finalCost: finalCost});
+    };
+
 
     renderFooter = () => {
         return <ListItem
-                    title={<TextInput onChangeText={(text) => this.setState({newItemName: text})} value={this.state.newItemName}/>}
-                    textInputPlaceholder="Cost: $0.00"
+                    title={<TextInput value={this.state.newItemName} onChangeText={(text) => this.setState({newItemName: text})} />}
+                    textInputValue = {this.state.newItemCost}
                     textInput = {true}
-                    textInputOnChangeText = {(text) => this.setState({newItemName: text})} //fix this to be new function
+                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})}
                     hideChevron={true}
-                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} />}/>;
+                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addNewItem()}}/>}/>;
     };
 
     changeItemName = (index, text) => {
