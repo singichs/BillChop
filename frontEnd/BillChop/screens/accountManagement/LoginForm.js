@@ -20,7 +20,7 @@ export default class LoginForm extends Component {
            placeholder="username or email"
            placeholderTextColor='rgba(255,255,255,0.7)'
            returnKeyType="next"
-           onSubmitEditing{() => this.passwordInput.focus()}
+           onSubmitEditing={() => this.passwordInput.focus()}
            keyboardType="email-address"
            autoCapitalize="none"
            autoCorrect={false}
@@ -49,18 +49,18 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    backgroundColor: 'rgba(255,255,255,0.2)'
+    backgroundColor: 'rgba(255,255,255,0.2)',
     marginBottom: 20,
     color: '#FFF',
     paddingHorizontal: 10
-  }
+  },
   buttonContainer: {
-    backgroundColor: '#bdc3c7'
+    backgroundColor: '#bdc3c7',
     paddingVertical: 15
   },
   buttonText: {
     textAlign: 'center',
-    color: '#FFFFFF'
+    color: '#FFFFFF',
     fontWeight: '700'
   }
 });
