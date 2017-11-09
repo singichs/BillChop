@@ -15,7 +15,7 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-class TransactionList extends Component {
+class PeopleList extends Component {
     constructor (props) {
         super(props);
 
@@ -82,7 +82,7 @@ export default class FriendList extends Component<{}> {
     render() {
         return (
             <View style={styles.container}>
-                <TransactionList screenProps={this.props.screenProps}/>
+                <PeopleList screenProps={this.props.screenProps}/>
             </View>
         );
     }

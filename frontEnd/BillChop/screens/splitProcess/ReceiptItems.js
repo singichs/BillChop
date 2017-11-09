@@ -25,8 +25,8 @@ class ItemList extends Component {
             seed: 1,
             error: null,
             refreshing: false,
-            newItemName: "Add New Item",
-            newItemCost: "Cost: $0.00",
+            newItemName: "",
+            newItemCost: "",
         };
     }
 
@@ -51,6 +51,7 @@ class ItemList extends Component {
 
     };
 
+
     deleteItem = (index) => {
         // TODO: connect with api to actually delete item from database as well
         let items = this.state.items;
@@ -62,35 +63,28 @@ class ItemList extends Component {
             finalCost: finalCost});
     };
 
-    addNewItem = () => {
-        // TODO: connect with api to actually add item to database as well
-        let items = this.state.items;
-        let costNum = this.state.newItemCost * 1;
-        if (isNaN(costNum)) {
-            costNum = 0;
-        }
-        let newItem = {"name": this.state.newItemName, "cost": costNum};
-        items.push(newItem);
-        let preTaxTemp = this.state.preTaxCost * 1;
-        let finalTemp = this.state.finalCost * 1;
-        let preTaxCost = (preTaxTemp + costNum).toFixed(2);
-        let finalCost = (finalTemp + costNum).toFixed(2);
-        this.setState({newItemName: "Add New Item",
-            newItemCost: "Cost: $0.00",
-            items: items,
+    addItem = () => {
+        let items=this.state.items;
+        items.push({"name": this.state.newItemName, "quantity": 1, "cost": this.state.newItemCost});
+        let preTaxCost=this.state.preTaxCost + this.state.newItemCost;
+        let finalCost = this.state.finalCost + this.state.newItemCost;
+        this.setState({items: items,
             preTaxCost: preTaxCost,
-            finalCost: finalCost});
-    };
+            finalCost: finalCost,
+            newItemCost: "",
+            newItemName: ""});
+    }
 
 
     renderFooter = () => {
         return <ListItem
-                    title={<TextInput value={this.state.newItemName} onChangeText={(text) => this.setState({newItemName: text})} />}
-                    textInputValue = {this.state.newItemCost}
+                    title={<TextInput onChangeText={(text) => this.setState({newItemName: text})} placeholder="Add new item" value={this.state.newItemName}/>}
+                    textInputPlaceholder="Cost: $0.00"
                     textInput = {true}
-                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})}
+                    textInputValue = {this.state.newItemCost}
+                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})} //fix this to be new function
                     hideChevron={true}
-                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addNewItem()}}/>}/>;
+                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem()}}/>}/>;
     };
 
     changeItemName = (index, text) => {
@@ -121,6 +115,7 @@ class ItemList extends Component {
                         ListFooterComponent={this.renderFooter}
                     />
                 </List>
+                <View style={styles.summary}>
                 <Text style={styles.footer1}>
                     {`Sub-Total: $${this.state.preTaxCost}`}
                 </Text>
@@ -130,6 +125,7 @@ class ItemList extends Component {
                 <Text style={styles.footer2}>
                     {`Total: $${this.state.finalCost}`}
                 </Text>
+                </View>
             </View>
         );
     }
@@ -151,7 +147,7 @@ export default class ReceiptItems extends Component<{}> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'stretch',
+        flexDirection: 'column',
         justifyContent: 'flex-start',
         backgroundColor: '#F5FCFF'
     },
