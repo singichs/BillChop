@@ -25,8 +25,8 @@ class ItemList extends Component {
             seed: 1,
             error: null,
             refreshing: false,
-            newItemName: "Add New Item",
-            newItemCost: 0.00,
+            newItemName: "",
+            newItemCost: "",
         };
     }
 
@@ -51,6 +51,7 @@ class ItemList extends Component {
 
     };
 
+
     deleteItem = (index) => {
         // TODO: connect with api to actually delete item from database as well
         let items = this.state.items;
@@ -62,15 +63,28 @@ class ItemList extends Component {
             finalCost: finalCost});
     };
 
+    addItem = () => {
+        let items=this.state.items;
+        items.push({"name": this.state.newItemName, "quantity": 1, "cost": this.state.newItemCost});
+        let preTaxCost=this.state.preTaxCost + this.state.newItemCost;
+        let finalCost = this.state.finalCost + this.state.newItemCost;
+        this.setState({items: items,
+            preTaxCost: preTaxCost,
+            finalCost: finalCost,
+            newItemCost: "",
+            newItemName: ""});
+    }
+
 
     renderFooter = () => {
         return <ListItem
-                    title={<TextInput onChangeText={(text) => this.setState({newItemName: text})} value={this.state.newItemName}/>}
+                    title={<TextInput onChangeText={(text) => this.setState({newItemName: text})} placeholder="Add new item" value={this.state.newItemName}/>}
                     textInputPlaceholder="Cost: $0.00"
                     textInput = {true}
-                    textInputOnChangeText = {(text) => this.setState({newItemName: text})} //fix this to be new function
+                    textInputValue = {this.state.newItemCost}
+                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})} //fix this to be new function
                     hideChevron={true}
-                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} />}/>;
+                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem()}}/>}/>;
     };
 
     changeItemName = (index, text) => {
@@ -101,6 +115,7 @@ class ItemList extends Component {
                         ListFooterComponent={this.renderFooter}
                     />
                 </List>
+                <View style={styles.summary}>
                 <Text style={styles.footer1}>
                     {`Sub-Total: $${this.state.preTaxCost}`}
                 </Text>
@@ -110,6 +125,7 @@ class ItemList extends Component {
                 <Text style={styles.footer2}>
                     {`Total: $${this.state.finalCost}`}
                 </Text>
+                </View>
             </View>
         );
     }
@@ -131,7 +147,7 @@ export default class ReceiptItems extends Component<{}> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'stretch',
+        flexDirection: 'column',
         justifyContent: 'flex-start',
         backgroundColor: '#F5FCFF'
     },

@@ -15,10 +15,9 @@ import {
 import {
     StackNavigator,
 } from 'react-navigation';
-import Capture from './screens/Capture';
 import HomeNavigation from "./screens/HomeNavigation";
-import ReviewCapture from "./screens/ReviewCapture";
-import ReceiptItems from "./screens/ReceiptItems";
+import ReviewCapture from "./screens/splitProcess/ReviewCapture";
+import ReceiptItems from "./screens/splitProcess/ReceiptItems";
 import TransactionView from "./screens/TransactionView";
 
 const Navigation = StackNavigator({

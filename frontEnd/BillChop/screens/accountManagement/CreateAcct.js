@@ -15,7 +15,7 @@ export default class CreateAcct extends Component {
               <View style={styles.logoContainer}>
                 <Image
                   style={styles.logo}
-                  source = {require('../images/BillChop.png')}
+                  source = {require('../../images/BillChop.png')}
                 />
                 //Create an images folder
                 //and put BillChop.png in it. Images should be in src (same level as ios/andr...)
