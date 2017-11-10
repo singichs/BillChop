@@ -29,7 +29,7 @@ from django.shortcuts import render
 from .forms import ImageUploadForm
 from twilio.rest import Client
 from pytesseract import image_to_string
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 # TODO:
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
@@ -234,12 +234,21 @@ def upload_receipt(request):
         receipt.image = form.cleaned_data['image']
         receipt.save()
         img = Image.open(form.cleaned_data['image'].file)
-        print(type(img))
+        enhancer = ImageEnhance.Contrast(img)
+        new_img = enhancer.enhance(35)
+        new_img.show()
+        print(type(new_img))
         # image_to_string is the receipt parsing function that returns the text from the image
-        print(image_to_string(img))
+        print(image_to_string(new_img))
         return HttpResponse('image upload success')
 
     return HttpResponse("image wasn't valid")
+
+def change_contrast(img, level):
+    factor = (259 * (level + 255)) / (255 * (259 - level))
+    def contrast(c):
+        return 128 + factor * (c - 128)
+    return img.point(contrast)
 
 # getting rid of the api_view wrapper takes away the csrf
 @csrf_exempt
