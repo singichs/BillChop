@@ -38,9 +38,9 @@ class TransactionList extends Component {
         // this link is useful: https://medium.com/react-native-development/
         // how-to-use-the-flatlist-component-react-native-basics-92c482816fe6
 
-        const fake_data = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true, "title": "Costco", "id": 0},
-            {"owner": "Mazen Oweiss", "cost": "123.00", "is_owner": false, "title": "Target", "id": 1},
-            {"owner": "Katie Matton", "cost": "84.34", "is_owner": true, "title": "Meijer", "id": 2}];
+        const fake_data = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true,"date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "title": "Costco", "id": 0},
+            {"owner": "Mazen Oweiss", "cost": "123.00", "is_owner": false, "title": "Target","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 1},
+            {"owner": "Katie Matton", "cost": "84.34", "is_owner": true, "title": "Meijer","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 2}];
         this.setState({data: fake_data});
     };
 
@@ -50,7 +50,12 @@ class TransactionList extends Component {
                 return `You are owed $${item.item.cost}`;
             }
             return `You owe ${item.item.owner} $${item.item.cost}`;
-        }
+        };
+        getDate = (item) => {
+           curr_date = new Date(item.item.date);
+           date_str = curr_date.toLocaleString('en-US');
+           return date_str;
+        };
         return (
             <List>
                 <FlatList
@@ -58,7 +63,8 @@ class TransactionList extends Component {
                     renderItem={({ item }) => (
                         <ListItem
                             title={getString({item})}
-                            subtitle={item.title}
+                            subtitle={getDate({item})}
+                            rightTitle={item.title}
                             onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
                         />
                     )}
