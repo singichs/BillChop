@@ -40,39 +40,107 @@ class PeopleList extends Component {
         {"friend": "Joe Kunnath", "id": 5},
         {"friend": "Peter Kaplan", "id": 6}];
         for (let i=0; i<fake_people.length; i++) {
-            fake_people[i]["payingItems"] = [];
-            fake_people[i]["nonPayingItems"]=this.props.parentProps.items;
             fake_people[i]["total"]=0.00;
             fake_people[i]["isCollapsed"]=false;
         }
+        let items = this.props.parentProps.items;
+        for (let i=0; i<items.length; i++) {
+            items[i]["payers"]=[];
+        }
         this.setState({
             people: fake_people,
+            items: items,
             openPerson: -1
         });
 
     };
+    //function that calculates total costs after adding or removing an item. Called before item.payers is modified!
+    calculateTotal = (itemIndex, isAdd)=> {
+        let items=this.state.items;
+        let people=this.state.people;
+        let newTotal=0;
+        let oldTotal=0;
+        if (isAdd) {
+            newTotal = items[itemIndex].cost/(items[itemIndex].payers.length+1);
+            if (items[itemIndex].payers.length===0){
+                oldTotal = 0;
+            }
+            else {
+                oldTotal=items[itemIndex].cost/items[itemIndex].payers.length;
+            }
+            for (let j=0; j<people.length; j++) {
+                if (people[j].id === this.state.openPerson) {
+                    people[j].total+=(newTotal);
+                }
+            }
+        }
+        else {
+            oldTotal=items[itemIndex].cost/items[itemIndex].payers.length;
+            if (items[itemIndex].payers.length===1){
+                newTotal = 0;
+            }
+            else {
+                newTotal=items[itemIndex].cost/(items[itemIndex].payers.length-1);
+            }
+            for (let j=0; j<people.length; j++) {
+                if (people[j].id === this.state.openPerson) {
+                    people[j].total-=newTotal;
+                }
+            }
+        }
+        for (let i=0; i<items[itemIndex].payers.length; i++) {
+            for (let j=0; j<people.length; j++) {
+                if (people[j].id === items[itemIndex].payers[i]) {
+                    people[j].total+=(newTotal-oldTotal);
+                }
+            }
+        }
+        this.setState({
+            items: items,
+            people: people,
+        });
+    };
 
     addItem = (itemIndex) => {
-        let people = this.state.people;
-        let personIndex = this.state.openPerson;
-        let value = people[personIndex].nonPayingItems[itemIndex];
-        people[personIndex].payingItems.push(value);
-        people[personIndex].nonPayingItems.splice(itemIndex,1);
+        this.calculateTotal(itemIndex, true);
+        let items = this.state.items;
+        let person = this.state.openPerson;
+        items[itemIndex].payers.push(this.state.openPerson);
         this.setState({
-            people: people
+            items: items
         });
     };
     removeItem = (itemIndex) => {
-        let people = this.state.people;
-        let personIndex = this.state.openPerson;
-        let value = people[personIndex].payingItems[itemIndex];
-        people[personIndex].nonPayingItems.push(value);
-        people[personIndex].payingItems.splice(itemIndex,1);
+        let items = this.state.items;
+        let person = this.state.openPerson;
+        this.calculateTotal(itemIndex, false);
+        for (let i=0; i<items[itemIndex].payers.length; i++) {
+            if (items[itemIndex].payers[i]===this.state.openPerson) {
+                items[itemIndex].payers.splice(i,1);
+                break;
+            }
+        }
         this.setState({
-            people: people
+            items: items
         });
     };
-
+    renderEntry = ({item, index}) => {
+        let icon = (<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem(index)}}/>);
+        for (let i=0; i<item.payers.length; i++) {
+            if (item.payers[i]===this.state.openPerson) {
+                icon = (<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
+                break;
+            }
+        }
+        return (
+            <ListItem
+                title={<Text>{item.name}</Text>}
+                rightTitle={`$${item.cost}`}
+                hideChevron={true}
+                leftIcon={icon}
+            />
+        );
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -86,11 +154,12 @@ class PeopleList extends Component {
                         renderItem={({item, index})  =>
                             (   <View style={styles.listItem}>
                                     <ListItem onPress={()=> {
-                                        if (index===this.state.openPerson) {
-                                            index = -1;
+                                        let id = item.id;
+                                        if (id===this.state.openPerson) {
+                                            id = -1;
                                         }
                                         this.setState({
-                                            openPerson: index
+                                            openPerson: id
                                         })
                                     }}
                                     title={<View>
@@ -99,31 +168,11 @@ class PeopleList extends Component {
                                     rightTitle={`$${item.total}`}
                                     hideChevron={true}
                                     />
-                                    <Collapsible collapsed={index!==this.state.openPerson}>
+                                    <Collapsible collapsed={item.id!==this.state.openPerson}>
                                         <FlatList
-                                            data={item.payingItems}
+                                            data={this.state.items}
                                             extraData={this.state}
-                                            renderItem={({item, index})  => (
-                                                <ListItem
-                                                    title={<Text>{item.name}</Text>}
-                                                    rightTitle={`$${item.cost}`}
-                                                    hideChevron={true}
-                                                    leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />}
-                                                />
-                                            )}
-                                            keyExtractor={(item, index) => index}
-                                        />
-                                        <FlatList
-                                            data={item.nonPayingItems}
-                                            extraData={this.state}
-                                            renderItem={({item, index})  => (
-                                                <ListItem
-                                                    title={<Text>{item.name}</Text>}
-                                                    rightTitle={`$${item.cost}`}
-                                                    hideChevron={true}
-                                                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem(index)}}/>}
-                                                />
-                                            )}
+                                            renderItem={this.renderEntry}
                                             keyExtractor={(item, index) => index}
                                         />
                                     </Collapsible>
