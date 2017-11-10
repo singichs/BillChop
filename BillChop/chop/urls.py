@@ -22,5 +22,6 @@ urlpatterns = [
 	url(r'^register', views.register, name='register'),
 	url(r'^upload_receipt', views.upload_receipt, name='upload_receipt'),
 	url(r'^logout/$', auth_views.logout, name='logout'),
-	url(r'^user_login/$', views.user_login, name='user_login')
+	url(r'^user_login/$', views.user_login, name='user_login'),
+	url(r'^send_notifications/$', views.send_notifications, name='send_notifications')
 ]

@@ -66,8 +66,8 @@ class ItemList extends Component {
     addItem = () => {
         let items=this.state.items;
         items.push({"name": this.state.newItemName, "quantity": 1, "cost": this.state.newItemCost});
-        let preTaxCost=this.state.preTaxCost + this.state.newItemCost;
-        let finalCost = this.state.finalCost + this.state.newItemCost;
+        let preTaxCost=((this.state.preTaxCost * 1) + (this.state.newItemCost * 1)).toFixed(2);
+        let finalCost = ((this.state.finalCost * 1) + (this.state.newItemCost * 1)).toFixed(2);
         this.setState({items: items,
             preTaxCost: preTaxCost,
             finalCost: finalCost,
@@ -126,6 +126,11 @@ class ItemList extends Component {
                     {`Total: $${this.state.finalCost}`}
                 </Text>
                 </View>
+                <Button title="Continue" onPress={() => {this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
+                    title: this.state.title,
+                    preTaxCost: this.state.preTaxCost,
+                    tax: this.state.tax,
+                    finalCost: this.state.finalCost})}}/>
             </View>
         );
     }
@@ -138,7 +143,7 @@ export default class ReceiptItems extends Component<{}> {
 
     render() {
         return (
-            <ItemList image= {this.props.navigation.state.params.image} />
+            <ItemList image= {this.props.navigation.state.params.image} navigation={this.props.navigation} />
         );
     }
 

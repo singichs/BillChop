@@ -27,8 +27,9 @@ from rest_framework.response import Response
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import ImageUploadForm
-
-
+from twilio.rest import Client
+from pytesseract import image_to_string
+from PIL import Image, ImageEnhance
 
 # TODO:
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
@@ -77,7 +78,6 @@ def group(request):
         return Response(serializer.errors, status=400)
 
 @csrf_exempt
-@api_view(['POST'])
 def create_group(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
@@ -146,6 +146,7 @@ def add_users_to_group(request):
     return HttpResponse(204)
 
 @login_required
+@csrf_exempt
 def payments(request):
     if request.method == "GET":
         return HttpResponse("Payments GET");
@@ -232,11 +233,25 @@ def upload_receipt(request):
         receipt = Receipt.objects.get(pk=1)
         receipt.image = form.cleaned_data['image']
         receipt.save()
+        img = Image.open(form.cleaned_data['image'].file)
+        enhancer = ImageEnhance.Contrast(img)
+        new_img = enhancer.enhance(35)
+        new_img.show()
+        print(type(new_img))
+        # image_to_string is the receipt parsing function that returns the text from the image
+        print(image_to_string(new_img))
         return HttpResponse('image upload success')
 
     return HttpResponse("image wasn't valid")
 
-@api_view(['POST'])
+def change_contrast(img, level):
+    factor = (259 * (level + 255)) / (255 * (259 - level))
+    def contrast(c):
+        return 128 + factor * (c - 128)
+    return img.point(contrast)
+
+# getting rid of the api_view wrapper takes away the csrf
+@csrf_exempt
 def user_login(request):
     print ("current user: " + str(request.user))
     body_unicode = request.body.decode('utf-8')
@@ -251,4 +266,29 @@ def user_login(request):
     else:
         return HttpResponse("failed to log in")
         # Return an 'invalid login' error message.
+
+
+# add "twilio" to requirements
+# could also just put this into view.payup
+# things required: receipt items and the userid for each item
+# so if the receipt id is sent, then we can get all items within that receipt
+# and get each user per item and send that value to them
+@csrf_exempt
+def send_notifications(request):
+    if request.method == "POST":
+        return HttpResponse("s n")
+
+
+
+# make sure the to_number is in the format like from_ (below) = "+1xxxxxxxxxx"
+def send_sms(to_number, message):
+    account_sid = "ACfca8839f241f252e7015e95f8627f8b1"
+    auth_token = "be5450946081c391715ea4e18cb12597"
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+        to=to_number,
+        from_="+12485957908 ",
+        body="Hello from Python! - Joe")
+    print(message.sid)
 
