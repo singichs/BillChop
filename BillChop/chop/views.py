@@ -28,8 +28,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import ImageUploadForm
 from twilio.rest import Client
-
-
+from pytesseract import image_to_string
+from PIL import Image
 
 # TODO:
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
@@ -233,6 +233,10 @@ def upload_receipt(request):
         receipt = Receipt.objects.get(pk=1)
         receipt.image = form.cleaned_data['image']
         receipt.save()
+        img = Image.open(form.cleaned_data['image'].file)
+        print(type(img))
+        # image_to_string is the receipt parsing function that returns the text from the image
+        print(image_to_string(img))
         return HttpResponse('image upload success')
 
     return HttpResponse("image wasn't valid")
