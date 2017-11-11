@@ -51,14 +51,30 @@ def receipt(request, user_id):
         return HttpResponse(request);
 
 @login_required
-def get_receipt(request):
-    if request.method == "POST":
-        # receipts = Receipt.objects.all()
-        # serializer = ReceiptSerializer(receipts, many=True)
-        # return JsonResponse(serializer.data, safe=False)
-        return HttpResponse(request);
+@api_view(['GET'])
+def get_receipt(request, receipt_id):
 
-#@login_required
+    receipt = Receipt.objects.get(pk=receipt_id)
+
+    serializer = ReceiptSerializer(receipt)
+    data = {'receipt': serializer.data}
+    
+    items = Item.objects.filter(receipt=receipt_id)
+
+    item_data = []
+
+    for item in items:
+        serializer = ItemSerializer(item)
+        item_data.append(serializer.data)
+
+    data['items'] = item_data
+    the_data = {'data':  data}
+
+    # serializer = ReceiptSerializer(receipts, many=True)
+    # return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(the_data);
+
+@login_required
 @api_view(['GET', 'POST', 'PUT'])
 def group(request):
     if request.method == "GET":

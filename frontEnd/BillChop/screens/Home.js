@@ -21,8 +21,7 @@ class TransactionList extends Component {
 
         this.state = {
             loading: false,
-            transaction_data: [],
-            receipt_data: [],
+            data: [],
             page: 1,
             seed: 1,
             error: null,
@@ -37,11 +36,10 @@ class TransactionList extends Component {
     makeRemoteRequests = () => {
         // TODO hit api endpoints for 1) logged in user's unsaved receipts and 2) their transaction history
 
-        const fake_data1 = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true,"date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "title": "Costco", "id": 0},
+        const fake_data = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true,"date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "title": "Costco", "id": 0},
             {"owner": "Mazen Oweiss", "cost": "123.00", "is_owner": false, "title": "Target","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 1},
             {"owner": "Katie Matton", "cost": "84.34", "is_owner": true, "title": "Meijer","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 2}];
-        const fake_data2 = [{"cost": "19.75", "date": "Sat Nov 11 2017 10:35:17 GMT-0500 (EST)", "title": "McDonald's", "id": 0}];
-        this.setState({transaction_data: fake_data1, receipt_data: fake_data2});
+        this.setState({data: fake_data});
     };
 
     render() {
@@ -58,24 +56,9 @@ class TransactionList extends Component {
         };
         return (
             <View>
-                <Text style={styles.titleText}> {"Saved Receipts"} </Text>
                 <List>
                     <FlatList
-                        data={this.state.receipt_data}
-                        renderItem={({ item }) => (
-                            <ListItem
-                                title={`${item.title}: $${item.cost}`}
-                                subtitle={getDate({item})}
-                                onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
-                            />
-                        )}
-                        keyExtractor={item => item.id}
-                    />
-                </List>
-                <Text style={styles.titleText}> {"Transaction History"} </Text>
-                <List>
-                    <FlatList
-                        data={this.state.transaction_data}
+                        data={this.state.data}
                         renderItem={({ item }) => (
                             <ListItem
                                 title={getString({item})}
