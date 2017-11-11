@@ -93,6 +93,13 @@ class ItemList extends Component {
         this.setState({items: items});
     };
 
+    saveReceipt = () => {
+        // TODO: make api call to save receipt info (items, subTotal, Pretax cost, final cost)
+        this.props.navigation.navigate("Home");
+
+    };
+
+
     render() {
         return (
             <View style={styles.container}>
@@ -126,11 +133,12 @@ class ItemList extends Component {
                     {`Total: $${this.state.finalCost}`}
                 </Text>
                 </View>
-                <Button title="Continue" onPress={() => {this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
+                <Button title="Continue to Item Assignment" onPress={() => {this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
                     title: this.state.title,
                     preTaxCost: this.state.preTaxCost,
                     tax: this.state.tax,
                     finalCost: this.state.finalCost})}}/>
+                <Button title="Save Receipt for Later" onPress={() => {this.saveReceipt()}} />
             </View>
         );
     }

@@ -21,7 +21,8 @@ class TransactionList extends Component {
 
         this.state = {
             loading: false,
-            data: [],
+            transaction_data: [],
+            receipt_data: [],
             page: 1,
             seed: 1,
             error: null,
@@ -30,18 +31,17 @@ class TransactionList extends Component {
     }
 
     componentDidMount() {
-        this.makeRemoteRequest();
+        this.makeRemoteRequests();
     }
 
-    makeRemoteRequest = () => {
-        // for now, just dummy data later will actually make api request
-        // this link is useful: https://medium.com/react-native-development/
-        // how-to-use-the-flatlist-component-react-native-basics-92c482816fe6
+    makeRemoteRequests = () => {
+        // TODO hit api endpoints for 1) logged in user's unsaved receipts and 2) their transaction history
 
-        const fake_data = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true,"date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "title": "Costco", "id": 0},
+        const fake_data1 = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true,"date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "title": "Costco", "id": 0},
             {"owner": "Mazen Oweiss", "cost": "123.00", "is_owner": false, "title": "Target","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 1},
             {"owner": "Katie Matton", "cost": "84.34", "is_owner": true, "title": "Meijer","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 2}];
-        this.setState({data: fake_data});
+        const fake_data2 = [{"cost": "19.75", "date": "Sat Nov 11 2017 10:35:17 GMT-0500 (EST)", "title": "McDonald's", "id": 0}];
+        this.setState({transaction_data: fake_data1, receipt_data: fake_data2});
     };
 
     render() {
@@ -51,26 +51,45 @@ class TransactionList extends Component {
             }
             return `You owe ${item.item.owner} $${item.item.cost}`;
         };
-        getDate = (item) => {
+        let getDate = (item) => {
            curr_date = new Date(item.item.date);
            date_str = curr_date.toLocaleString('en-US');
            return date_str;
         };
         return (
-            <List>
-                <FlatList
-                    data={this.state.data}
-                    renderItem={({ item }) => (
-                        <ListItem
-                            title={getString({item})}
-                            subtitle={getDate({item})}
-                            rightTitle={item.title}
-                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
-                        />
-                    )}
-                    keyExtractor={item => item.id}
-                />
-            </List>
+            <View>
+                <Text style={styles.titleText}> {"Saved Receipts"} </Text>
+                <List>
+                    <FlatList
+                        data={this.state.receipt_data}
+                        renderItem={({ item }) => (
+                            <ListItem
+                                title={`${item.title}: $${item.cost}`}
+                                subtitle={getDate({item})}
+                                onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
+                            />
+                        )}
+                        keyExtractor={item => item.id}
+                    />
+                </List>
+                <Text style={styles.titleText}> {"Transaction History"} </Text>
+                <List>
+                    <FlatList
+                        data={this.state.transaction_data}
+                        renderItem={({ item }) => (
+                            <ListItem
+                                title={getString({item})}
+                                subtitle={getDate({item})}
+                                rightTitle={item.title}
+                                titleContainerStyle={{ backgroundColor: '#F5FCFF'}}
+                                rightTitleContainerStyle={{backgroundColor: '#F5FCFF'}}
+                                onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
+                            />
+                        )}
+                        keyExtractor={item => item.id}
+                    />
+                </List>
+            </View>
         );
     }
 }
@@ -96,5 +115,11 @@ const styles = StyleSheet.create({
         alignItems: 'stretch',
         justifyContent: 'flex-start',
         backgroundColor: '#F5FCFF',
+    },
+    titleText: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        textAlign: 'center',
+        marginTop: 20
     },
 });
