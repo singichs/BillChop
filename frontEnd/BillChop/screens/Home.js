@@ -45,7 +45,7 @@ class TransactionList extends Component {
     };
 
     render() {
-        getString = (item) => {
+        let getString = (item) => {
             if (item.item.is_owner) {
                 return `You are owed $${item.item.cost}`;
             }

@@ -52,7 +52,7 @@ class PeopleList extends Component {
     };
 
     render() {
-        getString = (item) => {
+        let getPerson = (item) => {
             return item.item.friend;
         }
         return (
@@ -61,7 +61,7 @@ class PeopleList extends Component {
                     data={this.state.data}
                     renderItem={({ item }) => (
                         <ListItem
-                            title={getString({item})}
+                            title={getPerson({item})}
                             subtitle={item.title}
                             onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
                         />

@@ -150,7 +150,7 @@ class PeopleList extends Component {
         this.setState({charged: true});
     };
     render() {
-        getButtonStr = () => {
+        let getButtonStr = () => {
             if (this.state.charged) {
                 return "Resend Notification";
             }
