@@ -89,7 +89,6 @@ def group(request):
         serializer = GroupSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -180,6 +179,45 @@ def payments(request):
 def payup(request):
     if request.method == "POST":
         return HttpResponse(request);
+
+@csrf_exempt
+@login_required
+def add_item_to_receipt(request):
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    print data
+    receipt = Receipt.objects.get(pk=data['receipt_id'])
+    name = data['name']
+    value = data['value']
+    user_owns = User.objects.get(pk=data['user_id'])
+    item = Item(name=name, value = value, receipt = receipt, user_owns = user_owns)
+    item.save()
+    #serializer = ItemSerializer(item)
+    
+    data = {'hi':'joe'}
+
+    #print serializer.data
+
+   # if serializer.is_valid():
+    #    serializer.save()
+
+    return JsonResponse(data)
+
+@login_required
+@api_view(['GET'])
+def get_group_receipts(request, group_id):
+
+    receipts = Receipt.objects.filter(group=group_id)
+
+    receipt_data =[]
+
+    for receipt in receipts:
+        serializer = ReceiptSerializer(receipt)
+        receipt_data.append(serializer.data)
+
+    data = {'receipts': receipt_data}
+    
+    return JsonResponse(data)
 
 
 # Call http://localhost:8000/chop/get_user_payments/1
