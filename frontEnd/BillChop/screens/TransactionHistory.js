@@ -81,7 +81,7 @@ class TransactionHistory extends Component {
 
 export default class Home extends Component<{}> {
     static navigationOptions = {
-        title: 'Home',
+        title: 'Transaction History',
     };
     render() {
         return (
