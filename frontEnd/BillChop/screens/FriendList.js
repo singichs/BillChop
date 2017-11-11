@@ -63,7 +63,7 @@ class PeopleList extends Component {
                         <ListItem
                             title={getPerson({item})}
                             subtitle={item.title}
-                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
+                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionHistory', {transactionid: item.id})}
                         />
                     )}
                     keyExtractor={item => item.id}
