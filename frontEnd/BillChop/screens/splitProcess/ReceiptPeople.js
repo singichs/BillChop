@@ -19,6 +19,7 @@ class PeopleList extends Component {
             people: [],
             page: 1,
             seed: 1,
+            charged: false,
             error: null,
             refreshing: false,
         };
@@ -142,8 +143,19 @@ class PeopleList extends Component {
                 leftIcon={icon}
             />
         );
-    }
+    };
+    charge = () => {
+        // TODO: use apis to send twilio request
+        // for now just change text and button to reflect that people have been charged
+        this.setState({charged: true});
+    };
     render() {
+        getButtonStr = () => {
+            if (this.state.charged) {
+                return "Resend Notification";
+            }
+            return "Notify People of Amounts Owed";
+        };
         return (
             <View style={styles.container}>
                 <Text style={styles.header}>
@@ -195,7 +207,7 @@ class PeopleList extends Component {
                         {`Total: $${this.props.parentProps.finalCost}`}
                     </Text>
                 </View>
-                <Button title="Continue" onPress={() => this.props.navigation.navigate('PaymentSummary')}/>
+                <Button title={getButtonStr()} style={styles.button} onPress={() =>{this.charge()}}/>
             </View>
         );
     }
@@ -203,7 +215,7 @@ class PeopleList extends Component {
 
 export default class ReceiptPeople extends Component<{}> {
     static navigationOptions = {
-        title: 'Edit Items',
+        title: 'Assign Items to People',
     };
 
     render() {
@@ -243,5 +255,8 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 20
+    },
+    button: {
+        marginTop: 40
     }
 });
