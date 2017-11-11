@@ -71,7 +71,7 @@ class PeopleList extends Component {
             }
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
-                    people[j].total+=(newTotal * 1);
+                    people[j].total=(people[j].total*1)+(newTotal * 1);
                 }
             }
         }
