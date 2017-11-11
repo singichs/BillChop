@@ -25,6 +25,7 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=30, default="moo")
     last_name = models.CharField(max_length=30, default="asd")
     venmo = models.CharField(max_length=30, default="hello")
+    phone_number = models.CharField(max_length=30, default="+1")
    # email = models.EmailField()
 
     def full_name(self):
