@@ -61,37 +61,39 @@ class PeopleList extends Component {
         let newTotal=0;
         let oldTotal=0;
         if (isAdd) {
-            newTotal = items[itemIndex].cost/(items[itemIndex].payers.length+1);
+            newTotal = (items[itemIndex].cost/(items[itemIndex].payers.length+1)).toFixed(2);
             if (items[itemIndex].payers.length===0){
                 oldTotal = 0;
             }
             else {
-                oldTotal=items[itemIndex].cost/items[itemIndex].payers.length;
+                oldTotal=(items[itemIndex].cost/items[itemIndex].payers.length).toFixed(2);
             }
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
-                    people[j].total+=(newTotal);
+                    people[j].total+=(newTotal * 1);
                 }
             }
         }
         else {
-            oldTotal=items[itemIndex].cost/items[itemIndex].payers.length;
+            oldTotal=(items[itemIndex].cost/items[itemIndex].payers.length).toFixed(2);
             if (items[itemIndex].payers.length===1){
                 newTotal = 0;
             }
             else {
-                newTotal=items[itemIndex].cost/(items[itemIndex].payers.length-1);
+                newTotal=(items[itemIndex].cost/(items[itemIndex].payers.length-1)).toFixed(2);
             }
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
-                    people[j].total-=newTotal;
+                    let new_people_total = (people[j].total * 1) - (newTotal * 1);
+                    people[j].total = new_people_total;
                 }
             }
         }
         for (let i=0; i<items[itemIndex].payers.length; i++) {
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === items[itemIndex].payers[i]) {
-                    people[j].total+=(newTotal-oldTotal);
+                    let new_total = ((people[j].total * 1) + (newTotal * 1) - (oldTotal * 1)).toFixed(2);
+                    people[j].total = new_total;
                 }
             }
         }
