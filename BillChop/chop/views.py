@@ -58,7 +58,7 @@ def get_receipt(request):
         # return JsonResponse(serializer.data, safe=False)
         return HttpResponse(request);
 
-@login_required
+#@login_required
 @api_view(['GET', 'POST', 'PUT'])
 def group(request):
     if request.method == "GET":
@@ -145,12 +145,12 @@ def add_users_to_group(request):
 
     return HttpResponse(204)
 
-@login_required
 @csrf_exempt
 def payments(request):
     if request.method == "GET":
         return HttpResponse("Payments GET");
     if request.method == "POST":
+        # should check if group exists first
         groups = Group.objects.filter(name='test boi')
         user = User.objects.get(pk=1)
         m1 = UserMembership(user=user, group=groups[0], date_joined=datetime.now(), role="adminboi")
@@ -270,13 +270,25 @@ def user_login(request):
 
 # add "twilio" to requirements
 # could also just put this into view.payup
-# things required: receipt items and the userid for each item
+# things required: receipt items and the userid for each item - so just receipt id
 # so if the receipt id is sent, then we can get all items within that receipt
 # and get each user per item and send that value to them
 @csrf_exempt
 def send_notifications(request):
     if request.method == "POST":
-        return HttpResponse("s n")
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        # should do checking to make sure that person making request owns receipt
+        # also have to make sure owner doesn't get notification of things being sent, maybe confirmation
+        receipt = Receipt.objects.get(pk=data["receipt_id"])
+        items = Item.objects.filter(receipt=receipt)
+        for item in items:
+            profile = Profile.objects.get(user=item.user_owns)
+            # properly get receipt owner's name - this doesn't work - sending works fine
+            msg = "Hello " + profile.first_name + ", you owe " + receipt.owner.first_name + " $" + str(item.value)
+            send_sms(profile.phone_number, msg)
+        # return status code
+        return HttpResponse("notifications sent")
 
 
 
@@ -289,6 +301,6 @@ def send_sms(to_number, message):
     message = client.messages.create(
         to=to_number,
         from_="+12485957908 ",
-        body="Hello from Python! - Joe")
+        body=message)
     print(message.sid)
 
