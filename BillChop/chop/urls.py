@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
 	url(r'^receipt/(?P<user_id>\d+)/$', views.receipt, name='receipt'),
-	url(r'^get_receipt', views.get_receipt, name='get_receipt'),
+	url(r'^get_receipt/(?P<receipt_id>\d+)/$', views.get_receipt, name='get_receipt'),
 	#url(r'^create_group', views.create_group, name='create_group'),
 	url(r'^group', views.group, name='group'),
 	url(r'^create_group', views.create_group, name='create_group'),
