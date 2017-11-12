@@ -406,6 +406,11 @@ def add_group_to_receipt(request):
     group = Group.objects.get(pk=group_id)
     receipt = Receipt.objects.get(pk=receipt_id)
 
+    users = UserMembership.objects.filter(group=group.pk)
+    for user in users:
+        membership = ReceiptMembership.objects.create(users=user.user, receipt=receipt, outstanding_payment=0)
+        membership.save()
+
     group.last_used = datetime.datetime.now()
     group.save()
 
@@ -616,4 +621,32 @@ def get_mutual_transactions(request, user_id):
     
     user_payments = {'payments':  data}
     return JsonResponse(user_payments)
-  
+
+
+@csrf_exempt
+def add_receipt_information(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        receipt_id = data["receipt_id"]
+        items = data["items"]
+        tax = data["tax"]
+        total_cost = data["total_cost"]
+        receipt = Receipt.objects.get(pk=receipt_id)
+        receipt.tax = tax
+        receipt.total_cost = total_cost
+        receipt.save()
+
+        for item in items:
+            item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
+            item.save()
+
+        return HttpResponse("add receipt info")
+
+
+
+
+
+
+
+
