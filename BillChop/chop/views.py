@@ -29,7 +29,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Count
 from .forms import ImageUploadForm
-from twilio.rest import Client
 from pytesseract import image_to_string
 from PIL import Image, ImageEnhance
 from django.db.models import Q
@@ -429,7 +428,7 @@ def send_notifications(request):
         return HttpResponse("notifications sent")
 
 
-
+'''
 # make sure the to_number is in the format like from_ (below) = "+1xxxxxxxxxx"
 def send_sms(to_number, message):
     account_sid = "ACfca8839f241f252e7015e95f8627f8b1"
@@ -441,7 +440,7 @@ def send_sms(to_number, message):
         from_="+12485957908 ",
         body=message)
     print(message)
-
+'''
 # receiptid (receipt membership), firstname, lastname
 @csrf_exempt
 def add_user_to_receipt(request):
