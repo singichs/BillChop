@@ -6,6 +6,7 @@ import {
     Text,
     View, Button, TouchableHighlight
 } from 'react-native';
+import SearchBar from 'react-native-searchbar';
 import { List, ListItem} from 'react-native-elements';
 
 const instructions = Platform.select({
@@ -22,6 +23,8 @@ class PeopleList extends Component {
         this.state = {
             loading: false,
             data: [],
+            contacts: [],
+            results: [],
             page: 1,
             seed: 1,
             error: null,
@@ -30,13 +33,33 @@ class PeopleList extends Component {
     }
 
     componentDidMount() {
+        if (this.state.contacts.length === 0) {
+            this.getContacts();
+        }
         this.makeRemoteRequest();
     }
 
+    getContacts = () => {
+        var Contacts = require('react-native-contacts');
+        Contacts.getAll((err, contacts) => {
+            if (err === 'denied') {
+                //error TODO: implement more comprehensive error handling
+                console.log("could not get contacts");
+            } else {
+                this.setState({contacts: contacts});
+            }
+        });
+    };
+
     makeRemoteRequest = () => {
-        // for now, just dummy data later will actually make api request
-        // this link is useful: https://medium.com/react-native-development/
-        // how-to-use-the-flatlist-component-react-native-basics-92c482816fe6
+        fetch('http://127.0.0.1:8000/chop/get_user_groups/')
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({data: responseJson["payments"]});
+            })
+            .catch((error) => {
+                console.error(error);
+            });
 
         const fake_data = [
             {"friend": "EECS 441", "group": true, "id": 7},
@@ -49,6 +72,46 @@ class PeopleList extends Component {
             {"friend": "Peter Kaplan", "group": false, "id": 6}];
 
         this.setState({data: fake_data});
+    };
+
+    _handleResults = (results) => {
+        // loop through results and pull out unnecessary info
+        let results_temp = []
+        for (let i = 0; i < results.length; i++) {
+            let result = results[i];
+            let temp_result = {"givenName": result["givenName"], "familyName": result["familyName"], "phoneNumber": ""}
+            let p_nums = result["phoneNumbers"];
+            for (let j = 0; j < p_nums.length; j++) {
+                if (p_nums[j]["label"] === 'mobile') {
+                    temp_result["phoneNumber"] = p_nums[j]["number"];
+                }
+            }
+            if (temp_result["phoneNumber"]) {
+                results_temp.push(temp_result);
+            }
+        }
+        console.log("in handle");
+        console.log(results_temp);
+        this.setState({results: results_temp});
+    };
+
+    hideSearch = () => {
+        this.searchBar.hide();
+        this.setState({searchShown: false });
+    };
+
+    showSearch = () => {
+        this.searchBar.show();
+        this.setState({searchShown: true });
+    };
+
+    renderSearchButton(searchShown, showSearchFn) {
+        if(searchShown) {
+            return (<Text>{""}</Text>);
+        }
+        else {
+            return(<Button title={"Search for Friends to Split With"} style={styles.button} onPress={showSearchFn}/>);
+        }
     };
 
     render() {
