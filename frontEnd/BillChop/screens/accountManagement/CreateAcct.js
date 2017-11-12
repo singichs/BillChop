@@ -130,7 +130,7 @@ export default class CreateAcct extends Component<{}> {
             alert('Passwords do not match!');
           }
           else{
-              fetch('http://127.0.0.1:8000/chop/register/', {
+              fetch(hosturl + 'chop/register/', {
                   method:'POST',
                   headers: {
                       'Accept': 'application/json',
