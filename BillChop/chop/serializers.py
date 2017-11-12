@@ -20,7 +20,7 @@ class ReceiptSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ('name', 'value', 'receipt', 'user_owns')
+        fields = ('name', 'value', 'receipt_id', 'user_owns')
 
 class UserMembershipSerializer(serializers.ModelSerializer):
     class Meta:

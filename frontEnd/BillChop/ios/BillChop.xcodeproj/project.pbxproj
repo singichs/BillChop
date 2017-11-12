@@ -38,6 +38,7 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* BillChopTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BillChopTests.m */; };
+		389026D00B974C4EA4AB4E08 /* libRCTContacts.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E55D180360D4DA5A0591D8D /* libRCTContacts.a */; };
 		3B1F8F194CFF4A0CB23CA0B6 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 24D0BE2C73AA431E87C59657 /* Entypo.ttf */; };
 		520F052969174BB689AF37A5 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F15314F18394A958A264E9F /* Foundation.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
@@ -264,6 +265,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		6CB765B41FB797E000D1A9F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F7748388C8C4E2BBAF86CB0 /* RCTContacts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1441618E1BD0A79300FA4F59;
+			remoteInfo = RCTContacts;
+		};
 		6CE4B5C71FB276510058EBB8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -347,6 +355,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BillChopTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BillChopTests.m; sourceTree = "<group>"; };
 		0E144CA019244AAEAD730B33 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		0F7748388C8C4E2BBAF86CB0 /* RCTContacts.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTContacts.xcodeproj; path = "../node_modules/react-native-contacts/ios/RCTContacts.xcodeproj"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* BillChop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BillChop.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -362,6 +371,7 @@
 		2D02E47B1E0B4A5D006451C7 /* BillChop-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BillChop-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* BillChop-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BillChop-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ED9CB34BD7245439167CE50 /* RNPdfScanner.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPdfScanner.xcodeproj; path = "../node_modules/react-native-document-scanner/ios/RNPdfScanner.xcodeproj"; sourceTree = "<group>"; };
+		3E55D180360D4DA5A0591D8D /* libRCTContacts.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTContacts.a; sourceTree = "<group>"; };
 		3F15314F18394A958A264E9F /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		4523C23EEB0D4401885563CA /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		4D74F934453D4D688E7113DB /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -410,6 +420,7 @@
 				7D7B82E122AA4CAAAD15C888 /* libRCTCamera.a in Frameworks */,
 				E8EAE9EEF3DE44338F712EA0 /* libRNVectorIcons.a in Frameworks */,
 				1554BA2184A842BF976626C7 /* libRNPdfScanner.a in Frameworks */,
+				389026D00B974C4EA4AB4E08 /* libRCTContacts.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +586,7 @@
 			children = (
 				5A8DEB1295134E4286EFC418 /* libRCTCamera.a */,
 				DE60B2DD0B8F4BB786219D35 /* libRNVectorIcons.a */,
+				3E55D180360D4DA5A0591D8D /* libRCTContacts.a */,
 				F928D4CA1CAA450C83DE0852 /* libRNPdfScanner.a */,
 			);
 			name = "Recovered References";
@@ -601,6 +613,14 @@
 			children = (
 				5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */,
 				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6CB765B11FB797E000D1A9F5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6CB765B51FB797E000D1A9F5 /* libRCTContacts.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -639,6 +659,7 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				8DC4E8A03BBD415E942CBD3C /* RCTCamera.xcodeproj */,
 				FC27C962B9254E329C825BF3 /* RNVectorIcons.xcodeproj */,
+				0F7748388C8C4E2BBAF86CB0 /* RCTContacts.xcodeproj */,
 				2ED9CB34BD7245439167CE50 /* RNPdfScanner.xcodeproj */,
 			);
 			name = Libraries;
@@ -778,7 +799,8 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 8T4TQF82KS;
+						DevelopmentTeam = Y423ZK47UY;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -820,6 +842,10 @@
 				{
 					ProductGroup = 3442420B1FB23DA500E93058 /* Products */;
 					ProjectRef = 8DC4E8A03BBD415E942CBD3C /* RCTCamera.xcodeproj */;
+				},
+				{
+					ProductGroup = 6CB765B11FB797E000D1A9F5 /* Products */;
+					ProjectRef = 0F7748388C8C4E2BBAF86CB0 /* RCTContacts.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
@@ -1073,6 +1099,13 @@
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		6CB765B51FB797E000D1A9F5 /* libRCTContacts.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTContacts.a;
+			remoteRef = 6CB765B41FB797E000D1A9F5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6CE4B5C81FB276510058EBB8 /* libthird-party.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1298,6 +1331,7 @@
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts",
 				);
 				INFOPLIST_FILE = BillChopTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1328,6 +1362,8 @@
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts",
+					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
 				);
 				INFOPLIST_FILE = BillChopTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -1351,13 +1387,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 8T4TQF82KS;
+				DEVELOPMENT_TEAM = Y423ZK47UY;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts",
 					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
 				);
 				INFOPLIST_FILE = BillChop/Info.plist;
@@ -1368,7 +1408,9 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.BillChop7890;
 				PRODUCT_NAME = BillChop;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1377,12 +1419,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8T4TQF82KS;
+				DEVELOPMENT_TEAM = Y423ZK47UY;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts",
 					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
 				);
 				INFOPLIST_FILE = BillChop/Info.plist;
@@ -1393,7 +1439,9 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.BillChop7890;
 				PRODUCT_NAME = BillChop;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1415,6 +1463,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts",
 					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
 				);
 				INFOPLIST_FILE = "BillChop-tvOS/Info.plist";
@@ -1454,6 +1504,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts",
 					"$(SRCROOT)/../node_modules/react-native-document-scanner/ios/**",
 				);
 				INFOPLIST_FILE = "BillChop-tvOS/Info.plist";

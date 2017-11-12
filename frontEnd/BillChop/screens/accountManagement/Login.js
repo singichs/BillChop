@@ -8,13 +8,12 @@ import {
     Button,
     KeyboardAvoidingView,
     TouchableOpacity,
-    StatusBar,
     AsyncStorage
 } from 'react-native';
 import { StackNavigator } from 'react-navigation'
 import { NavigationActions } from 'react-navigation'
-import HomeNavigation from '../HomeNavigation';
-import LoginForm from './LoginForm';
+import CreateAcct from './CreateAcct';
+import HomeNavigation from './../HomeNavigation';
 
 export default class Login extends Component<{}> {
     constructor(props) {
@@ -25,7 +24,7 @@ export default class Login extends Component<{}> {
     	}
     }
     
-    componentDidMount() {
+    /*componentDidMount() {
     	this._loadInitialState().done();
     }	
     
@@ -34,25 +33,19 @@ export default class Login extends Component<{}> {
     	if(value !== null){
     		this.props.navigation.navigate('HomeNavigation');
     	}
-    }
+    }*/
     
     render(){
         return (
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
-              <View style={styles.logoContainer}>
-                <Image
-                  style={styles.logo}
-                  source = {require('../../images/BillChop.png')}
-                />
+             <View style={styles.logoContainer}>
 
-                <Text style={styles.title}>Capture, Select, Charge</Text>
+                <Text style={styles.title}>BillChop</Text>
+                <Text style={styles.valueProp}>Capture, Select, Charge</Text>
                 
-                <StatusBar
-            		barStyle="light-content"
-            	/>
          		   <TextInput
-           			  placeholder="username or email"
-           			  placeholderTextColor='rgba(255,255,255,0.7)'
+          			  placeholder="username"
+                  placeholderTextColor='rgba(255,255,255,0.7)'
            			  onChangeText={ (username) => this.setState({username}) }
            			  underlineColorAndroid = 'transparent'
            			  returnKeyType="next"
@@ -76,13 +69,23 @@ export default class Login extends Component<{}> {
          		 <TouchableOpacity style={styles.buttonContainer} onPress={this.login}>
            			<Text style={styles.buttonText}> LOGIN </Text>
          		 </TouchableOpacity>
+            <TouchableOpacity onPress={this.createAcct}>
+              <Text style={styles.signUp}>Don't have an account? Sign up here!</Text>
+            </TouchableOpacity>
+
             </View>
           </KeyboardAvoidingView>
-    );
+      );
+    }
+
+    createAcct = () => {
+      this.props.navigation.navigate('CreateAcct');
     }
     
     login = () => {
-		fetch('http://192.5454.25.2:3000/users', {
+      this.props.navigation.navigate('HomeNavigation');
+
+		/*fetch('http://192.5454.25.2:3000/users', {
 			method:'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -106,7 +109,7 @@ export default class Login extends Component<{}> {
 				alert(res.message);
 			}
 		}) 
-		.done();
+		.done();*/
    }
 }
 
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
 	},
     container:{
       flex:1,
-      backgroundColor: '#4286f4', //white, for now
+      backgroundColor: '#FFFFFF', //white, for now
       paddingLeft: 10,
       paddingRight: 10,
       justifyContent: 'center',
@@ -127,32 +130,47 @@ const styles = StyleSheet.create({
       flexGrow: 1,
       justifyContent: 'center'
     },
-    logo: {
-      width: 100,
-      height: 100
-    },
     title: {
       color: '#000', //Black for now
       marginTop: 10,
       width: 160,
       textAlign: 'center',
-      opacity: 0.9
+      opacity: 0.9,
+      fontSize: 44,
+    },
+    valueProp: {
+      color: '#000', //Black for now
+      marginTop: 10,
+      width: 160,
+      textAlign: 'center',
+      opacity: 0.9,
+    },
+    signUp: {
+      color: '#000', //Black for now
+      marginTop: 30,
+      width: 160,
+      textAlign: 'center',
+      opacity: 0.9,
+      borderBottomColor: '#000',
     },
   	input: {
     	height: 40,
-    	backgroundColor: 'rgba(255,255,255,0.2)',
+      width: 300,
+    	backgroundColor: '#bdc3c7',
+      marginTop: 20,
     	marginBottom: 20,
     	color: '#FFF',
     	paddingHorizontal: 10
   	},
   	buttonContainer: {
-    	backgroundColor: '#bdc3c7',
-    	paddingVertical: 15
+      alignSelf: 'stretch',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: '#000',
+      marginTop: 30
   	},
   	buttonText: {
-    	textAlign: 'center',
-    	color: '#FFFFFF',
-    	fontWeight: '700'
+    	color: '#FFF',
+      fontWeight: 'bold'
   	}
 });
-

@@ -3,6 +3,7 @@ package com.billchop;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.reactlibrary.RNPdfScannerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new RNPdfScannerPackage(),
+            new ReactNativeContacts(),
             new VectorIconsPackage(),
             new RCTCameraPackage()
       );
