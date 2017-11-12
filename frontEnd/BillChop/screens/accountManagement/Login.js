@@ -37,7 +37,7 @@ export default class Login extends Component<{}> {
     _loadInitialState = async () => {
     	var value = await AsyncStorage.getItem('user');
     	if(value !== null){
-    		this.props.navigation.navigate('HomeNavigation');
+    		this.props.navigation.navigate('Home');
     	}
     }
     
@@ -101,17 +101,14 @@ export default class Login extends Component<{}> {
 				password: this.state.password
 			})
 		})
-
-		//.then((response) => response.json())
 		.then((res) => {
-		    resJSON = res.json();
 			if(res.status === 200) {
 				//AsyncStorage.setItem('user', res.user);
                 this.props.navigation.dispatch(resetAction);
 			}
 			
 			else{
-				alert(res.message);
+				alert("Incorrect login credentials. Please try again");
 			}
 		}) 
 		.done();

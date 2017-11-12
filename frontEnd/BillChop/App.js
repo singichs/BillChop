@@ -23,8 +23,12 @@ import ReceiptPeople from "./screens/splitProcess/ReceiptPeople";
 import TransactionHistory from "./screens/TransactionHistory";
 import AddGroup from "./screens/AddGroup";
 import Settings from "./screens/accountManagement/Settings"
+import Login from "./screens/accountManagement/Login";
+import CreateAcct from "./screens/accountManagement/CreateAcct";
 
 const Navigation = StackNavigator({
+    Login: { screen: Login },
+    CreateAcct: { screen: CreateAcct },
     Home: { screen: HomeNavigation },
     Settings: { screen: Settings},
     ReviewCapture: {screen: ReviewCapture },
