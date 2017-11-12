@@ -7,6 +7,7 @@ import {
     TextInput,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
+import {hosturl} from "../../constants";
 import { NavigationActions } from 'react-navigation'
 import { List, ListItem, Icon} from 'react-native-elements';
 
@@ -82,7 +83,7 @@ class ItemList extends Component {
                     textInputPlaceholder="Cost: $0.00"
                     textInput = {true}
                     textInputValue = {this.state.newItemCost}
-                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})} //fix this to be new function
+                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})}
                     hideChevron={true}
                     leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem()}}/>}/>;
     };
@@ -92,6 +93,17 @@ class ItemList extends Component {
         items[index]["name"] = text;
         this.setState({items: items});
     };
+    changeItemCost = (index, cost)=> {
+        if (isNaN(cost)) {
+            return;
+        }
+        let items = this.state.items;
+        let oldCost = items[index].cost;
+        items[index]["cost"] = cost;
+        let preTaxCost = ((this.state.preTaxCost*1)-(oldCost*1)+(cost*1)).toFixed(2);
+        let finalCost = ((this.state.finalCost*1)-(oldCost*1)+(cost*1)).toFixed(2);
+        this.setState({items: items, preTaxCost: preTaxCost, finalCost: finalCost});
+    }
 
     continueToNextPage = () => {
 
@@ -140,7 +152,10 @@ class ItemList extends Component {
                         renderItem={({item, index})  => (
                             <ListItem
                                 title={<TextInput onChangeText={(text) => this.changeItemName(index, text)} value={item.name}/>}
-                                rightTitle={`$${item.cost}`}
+                                textInputPlaceholder="Cost: $0.00"
+                                textInput = {true}
+                                textInputValue = {item.cost}
+                                textInputOnChangeText = {(text) => this.changeItemCost(index,text)}
                                 hideChevron={true}
                                 leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.deleteItem(index) }} />}
                             />
