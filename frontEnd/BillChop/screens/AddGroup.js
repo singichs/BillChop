@@ -117,18 +117,27 @@ class GroupView extends Component {
             formatNumber = formatNumber.replace(/\s/g, "");
             temp_members[i].phoneNumber = formatNumber;
         }
-        fetch('http://127.0.0.1:8000/chop/create_group', {
-            method: 'POST',
+        fetch(hosturl+'chop/create_group/', {
+            method:'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
+            body: JSON.stringify ({
                 group_name: this.state.group["name"],
-                users:temp_members,
+                users: temp_members
             })
-        });
-        this.props.navigation.goBack();
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    this.props.navigation.goBack();
+                }
+
+                else{
+                    alert("Invalid group");
+                }
+            })
+            .done();
     };
 
 
