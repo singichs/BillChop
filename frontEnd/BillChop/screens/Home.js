@@ -35,12 +35,15 @@ class TransactionList extends Component {
 
     makeRemoteRequests = () => {
         fetch('http://127.0.0.1:8000/chop/get_user_payments/1')
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
             .then((responseJson) => {
                 this.setState({data: responseJson["payments"]});
             })
             .catch((error) => {
-                console.error(error);
+                console.log(error);
             });
     };
 
