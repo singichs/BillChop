@@ -298,18 +298,26 @@ def register(request):
     data = json.loads(body_unicode)
     username = data['username']
     password = data['password']
-    email = data['email']
+    phone_number = data['phonenumber']
+    firstname = data['firstname']
+    lastname = data['lastname']
+
 
     #try to create user
     try:
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(username, username, password)
         user.profile.venmo = "eecs"
+        user.profile.phone_number = phone_number
+        user.first_name = firstname
+        user.last_name = lastname
         user.save()
     except IntegrityError:
         # user already exists
-        status = 'user already exists'
+        msg = "User already exists"
+        return HttpResponse(msg, status=status.HTTP_401_UNAUTHORIZED)
     else:
-        status = 'new user was created'
+        msg = "New account created"
+        return HttpResponse(msg, status=status.HTTP_200_OK)
    
     return HttpResponse(status)
 
@@ -460,7 +468,8 @@ def add_user_to_receipt(request):
     return HttpResponse("add user to receipt", status)
 
 
-
+def logout(request):
+    pass
 
 
 
