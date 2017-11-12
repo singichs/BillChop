@@ -3,38 +3,77 @@ import {
     StyleSheet,
     View,
     Image,
-    Text
+    Text,
+    Button,
+    KeyboardAvoidingView
 } from 'react-native';
-import { NavigationActions } from 'react-navigation'
-import CreateAcctForm from './CreateAcctForm';
+import { NavigationActions } from 'react-navigation';
+import { StackNavigator } from 'react-navigation';
 
-export default class CreateAcct extends Component {
-    render(){
-        return {
+export default class CreateAcct extends Component<{}> {
+    static navigationOptions = {
+        headerLeft: (<Button title="Login" onPress={()=>{this.props.navigation.navigate('Login')}}/>)
+    };
+
+    render() {
+        return (
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
               <View style={styles.logoContainer}>
                 <Image
                   style={styles.logo}
                   source = {require('../../images/BillChop.png')}
                 />
-                //Create an images folder
-                //and put BillChop.png in it. Images should be in src (same level as ios/andr...)
-                //folder
 
                 <Text style={styles.title}>Whatever our value proposition is I forget...</Text>
-              </View>
-              </View style={styles.formContainer}>
-                <CreateAcctForm />
-              </View>
+              
+                <TextInput
+                  placeholder="enter username or email"
+                  placeholderTextColor='rgba(255,255,255,0.7)'
+                  returnKeyType="next"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.input}
+                />
+                <TextInput
+                  placeholder="enter phone number"
+                  placeholderTextColor='rgba(255,255,255,0.7)'
+                  returnKeyType="next"
+                  keyboardType="numeric"
+                  style={styles.input}
+                  ref={(input) => {this.phoneInput = input;}}
+                />
+                <TextInput
+                  placeholder="password"
+                  placeholderTextColor='rgba(255,255,255,0.7)'
+                  returnKeyType="next"
+                  secureTextEntry
+                  style={styles.input}
+                  ref={(input) => this.passwordFirstInput = input}
+                />
+                <TextInput
+                  placeholder="re-enter password"
+                  placeholderTextColor='rgba(255,255,255,0.7)'
+                  returnKeyType="go"
+                  secureTextEntry
+                  style={styles.input}
+                  ref={(input) => this.passwordSecondInput = input}
+                />
+
+                <TouchableOpacity style={styles.buttonContainer}>
+                  <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
+                </TouchableOpacity>
+
+                </View>
             </KeyboardAvoidingView>
-        };
+        );
     }
 }
 
 const styles = StyleSheet.create({
     container:{
-      flex:1
-      backgroundColor: '#ecf0f1' //white, for now
+      flex:1,
+      backgroundColor: '#FFFFFF' //white, for now
     },
       logoContainer: {
       alignItems: 'center',
@@ -46,7 +85,7 @@ const styles = StyleSheet.create({
       height: 100
     },
     title: {
-      color: '#000' //Black for now
+      color: '#000', //Black for now
       marginTop: 10,
       width: 160,
       textAlign: 'center',

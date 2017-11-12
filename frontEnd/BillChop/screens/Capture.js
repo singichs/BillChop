@@ -3,39 +3,53 @@ import {
     Platform,
     StyleSheet,
     Text,
-    View, Button, TouchableHighlight
+    View, Button, TouchableHighlight, Image
 } from 'react-native';
-import Camera from 'react-native-camera';
+import DocumentScanner from 'react-native-document-scanner';
 
 export default class Capture extends Component<{}> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            image: null,
+            initialImage: null,
+            rectangleCoordinates: null,
+        };
+    }
     static navigationOptions = ({ navigation, screenProps }) => ({
         title: "Capture",
     });
-    render() {
-        return (
-            <View style={styles.container}>
-                <Camera
-                    ref={(cam) => {
-                        this.camera = cam;
-                    }}
-                    style={styles.preview}
-                    aspect={Camera.constants.Aspect.fill}
-                    captureTarget={Camera.constants.CaptureTarget.temp}>
-                    <Text style={styles.capture} onPress={this.takePicture.bind(this)}>CAPTURE</Text>
-                </Camera>
-            </View>
-        );
+    evalPicture =(data)=>{
+        this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data.croppedImage});
     }
-
-    takePicture() {
+    takePicture =()=> {
         const options = {};
         //options.location = ...
-        this.camera.capture({metadata: options})
-            .then((data) => {
-                console.log(data);
-                this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data.path});
-            })
-            .catch(err => console.error("test"));
+        this.scanner.capture();
+    };
+    render() {
+        console.log(this.state);
+        return (
+            <View style={styles.container}>
+                <DocumentScanner
+                    ref={(ref) => {this.scanner = ref}}
+                    style={styles.preview}
+                    onPictureTaken={data => this.evalPicture(data)}
+                    overlayColor="rgba(255,130,0, 0.7)"
+                    enableTorch={false}
+                    brightness={0.3}
+                    saturation={0.1}
+                    contrast={1.1}
+                    quality={0.5}
+                    onRectangleDetect={({ stableCounter, lastDetectionType }) => this.setState({ stableCounter, lastDetectionType })}
+                    detectionCountBeforeCapture={5}
+                    detectionRefreshRateInMS={50}
+                    captureMultiple>
+                    <Text style={styles.capture} onPress={this.takePicture.bind(this)}>[CAPTURE]</Text>
+                </DocumentScanner>
+                <Image source={{ uri: `data:image/jpeg;base64,${this.state.image}`}} resizeMode="contain" />
+            </View>
+        );
     }
 }
 

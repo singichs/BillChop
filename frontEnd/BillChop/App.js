@@ -20,13 +20,15 @@ import ReviewCapture from "./screens/splitProcess/ReviewCapture";
 import ReceiptItems from "./screens/splitProcess/ReceiptItems";
 import TransactionView from "./screens/TransactionView";
 import ReceiptPeople from "./screens/splitProcess/ReceiptPeople";
+import TransactionHistory from "./screens/TransactionHistory";
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
     ReviewCapture: {screen: ReviewCapture },
     ReceiptItems: {screen: ReceiptItems},
     ReceiptPeople: {screen: ReceiptPeople},
-    TransactionView: {screen: TransactionView}
+    TransactionView: {screen: TransactionView},
+    TransactionHistory: {screen: TransactionHistory}
 });
 
 export default class App extends Component<{}> {

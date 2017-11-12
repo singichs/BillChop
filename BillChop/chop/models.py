@@ -52,13 +52,12 @@ class Receipt(models.Model):
     tax = models.DecimalField(max_digits=5, decimal_places=2)
     title = models.CharField(max_length=30)
     is_complete = models.BooleanField()
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, default=1)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     participants = models.ManyToManyField(User, through='ReceiptMembership',  related_name='participants')
 
     def __str__(self):
         return self.title
-
 
 class Item(models.Model):
     name = models.CharField(max_length=30)
@@ -80,6 +79,7 @@ class UserMembership(models.Model):
 class ReceiptMembership(models.Model):
     users = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE, related_name='receipt')
+    notified = models.BooleanField(default=False)
     outstanding_payment = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):

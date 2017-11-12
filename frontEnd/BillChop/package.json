@@ -12,6 +12,7 @@
 		"react-native-camera": "^0.10.0",
 		"react-native-collapsible": "^0.9.0",
 		"react-native-contacts": "^1.0.4",
+		"react-native-document-scanner": "^1.4.2",
 		"react-native-elements": "^0.18.2",
 		"react-native-searchbar": "^1.13.0",
 		"react-native-vector-icons": "^4.4.2",
