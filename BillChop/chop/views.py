@@ -12,7 +12,7 @@ from chop.models import UserMembership
 from chop.serializers import *
 from datetime import *
 from decimal import *
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -102,7 +102,10 @@ def create_group(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
     group_name = data["group_name"]
-    user_ids = data["user_ids"]
+    user_info = data["users"]
+    
+    # don't forget to add to group - Joe
+    group_maker = request.user.pk 
 
     if len(group_name) > 30:
         response = HttpResponse("Group name provided was too long")
@@ -114,13 +117,35 @@ def create_group(request):
         return response
 
     new_group = Group.objects.create(name=group_name)
-    # Assuming the users already exist
-    for user_id in user_ids:
-        profile = Profile.objects.get(pk=user_id)
-        #Todo: Figure out if something else should be default for the role
-        # Create user membership for this user to the new group
-        m1 = UserMembership(user = profile.user, group = new_group, role="")
-        m1.save()
+    for user in user_info:
+        print "user: " + user["givenName"]
+        try:
+            profile = Profile.objects.get(phone_number=user["phoneNumber"])
+            print ("established profile")
+            db_user = User.objects.get(profile=profile.pk)
+            membership = UserMembership.objects.create(user=db_user, group=new_group)
+            membership.save()
+            print ("user is registered " + user["givenName"])
+            #return JsonResponse({'user_id': user.pk})
+        except:
+            try:
+                    # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
+                    # CAN'T BE CREATED
+                new_username = user["givenName"] + "." + user["familyName"]
+                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
+                new_user.save()
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = user["phoneNumber"]
+                profile.first_name = user["givenName"]
+                profile.last_name = user["familyName"]
+                membership = UserMembership.objects.create(user=new_user, group=new_group)
+                new_user.save()
+                membership.save()
+                profile.save()
+            except IntegrityError:
+                # user already exists
+                status = 'user already exists'
     return HttpResponse(status=204)
 
 @login_required
@@ -427,6 +452,7 @@ def send_sms(to_number, message):
     print(message)
 
 # receiptid (receipt membership), firstname, lastname
+# NEED TO FIX FOR UPDATING PROFILE - JOE HELP FIX - potantially fixed - need to push
 @csrf_exempt
 def add_user_to_receipt(request):
     if request.method == "POST":
@@ -456,9 +482,14 @@ def add_user_to_receipt(request):
                 # CAN'T BE CREATED
                 new_username = data['firstname'] + "." + data['lastname']
                 new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
-                new_user.profile.venmo = "eecs"
-                new_user.profile.phone_number = phone_number
+
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = phone_number
+                profile.first_name = username
+                profile.last_name = ""
                 new_user.save()
+                profile.save
                 return JsonResponse({'user_id': new_user.pk})
             except IntegrityError:
                 # user already exists
@@ -467,9 +498,13 @@ def add_user_to_receipt(request):
     
     return HttpResponse("add user to receipt", status)
 
-
-def logout(request):
-    pass
+@csrf_exempt
+def user_logout(request):
+    if request.method == "POST":
+        #context = RequestContext(request)
+        logout(request)
+        # Redirect back to index page.
+        return HttpResponse(status=status.HTTP_200_OK)
 
 
 
