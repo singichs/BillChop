@@ -25,7 +25,7 @@ export default class Capture extends Component<{}> {
             image: null,
             initialImage: null,
             rectangleCoordinates: null,
-            stableCounter: 0,
+            stableCounter: 0
         })
     }
     takePicture =()=> {
@@ -47,7 +47,7 @@ export default class Capture extends Component<{}> {
                     contrast={1.5}
                     quality={0.8}
                     onRectangleDetect={({ stableCounter, lastDetectionType }) => this.setState({ stableCounter, lastDetectionType })}
-                    detectionCountBeforeCapture={5}
+                    detectionCountBeforeCapture={50000000}
                     detectionRefreshRateInMS={50}
                     captureMultiple>
                     <Text style={styles.capture} onPress={this.takePicture.bind(this)}>[CAPTURE]</Text>

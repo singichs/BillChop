@@ -19,6 +19,10 @@ export default class ReviewCapture extends Component<{}> {
     static navigationOptions = {
         title: 'Review Image',
     };
+    constructor(props) {
+        super(props);
+        this.state = {rendering: false};
+    }
     submitPhoto = (image) => {
         const data = new FormData();
         data.append('image', {
@@ -26,20 +30,24 @@ export default class ReviewCapture extends Component<{}> {
             type: 'image/jpeg', // or photo.type
             name: 'test.jpeg'
         });
-        fetch(hosturl+"chop/upload_receipt", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data',
-            },
-            body: data
-        }).then((response) => {
-            if (!response.ok) throw Error(response.statusText);
-            return response.json();
-        }).then((data) => {
+        if(this.state.rendering===false) {
+            fetch(hosturl+"chop/upload_receipt", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: data
+            }).then((response) => {
+                this.setState({rendering: false});
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            }).then((data) => {
                 alert(data);
                 this.props.navigation.navigate('ReceiptItems', {data: data});
-        }).catch(error => alert(error));
+            }).catch(error => alert(error));
+        }
+        this.setState({rendering: true});
     }
 
 render() {
