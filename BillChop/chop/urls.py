@@ -12,6 +12,7 @@ urlpatterns = [
 	#url(r'^create_group', views.create_group, name='create_group'),
 	url(r'^group', views.group, name='group'),
 	url(r'^create_group', views.create_group, name='create_group'),
+	url(r'^add_group_to_receipt', views.add_group_to_receipt, name='add_group_to_receipt'),
 	url(r'^get_user_groups', views.get_user_groups, name='get_user_groups'),
 	url(r'^add_users_to_group', views.add_users_to_group, name='add_users_to_group'),
 	url(r'^add_item_to_receipt', views.add_item_to_receipt, name='add_item_to_receipt'),

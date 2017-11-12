@@ -31,6 +31,8 @@ from twilio.rest import Client
 from pytesseract import image_to_string
 from PIL import Image, ImageEnhance
 from django.db.models import Q
+import datetime
+
 
 # TODO:
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
@@ -285,6 +287,26 @@ def register(request):
    
     return HttpResponse(status)
 
+
+# add items to users 
+
+# Add group to be associated with receipt. Also update last used time of group.s
+@csrf_exempt
+def add_group_to_receipt(request):
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    group_id = data["group_id"]
+    receipt_id = data["receipt_id"]
+
+    group = Group.objects.get(pk=group_id)
+    receipt = Receipt.objects.get(pk=receipt_id)
+
+    group.last_used = datetime.datetime.now()
+    group.save()
+    receipt.group = group
+    receipt.save()
+    return HttpResponse("Group has been added to receipt")
+
 @csrf_exempt
 @api_view(['POST'])
 def upload_receipt(request):
@@ -366,7 +388,7 @@ def send_sms(to_number, message):
     print(message.sid)
 
 @csrf_exempt
-def get_mutual_transaction(request, user_id):
+def get_mutual_transactions(request, user_id):
     receipt_memberships = ReceiptMembership.objects.filter(Q(users=user_id) | Q(users=request.user.pk)).distinct('receipt')
     data = get_receipt_home(request.user.pk, receipt_memberships)
     
