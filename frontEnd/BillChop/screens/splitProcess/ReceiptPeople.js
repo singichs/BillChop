@@ -78,6 +78,10 @@ class PeopleList extends Component {
         // TODO: request user's ID to add to people data // or get this at root and pass through
         // TODO: request ID's of all people in groups
         let items = this.props.parentProps.items;
+        let last_page = this.props.parentProps.lastPage;
+        if (last_page == "Home") {
+            //populate items make request to get items
+        }
         for (let i=0; i<items.length; i++) {
             items[i]["payers"]=[];
         }
