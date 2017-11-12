@@ -7,7 +7,7 @@ import {
     TextInput,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
-import { NavigationActions } from 'react-navigation'
+import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
 import Collapsible from 'react-native-collapsible';
 
@@ -16,39 +16,48 @@ class PeopleList extends Component {
         super(props);
 
         this.state = {
-            people: [],
+            people: [{"friend": "You", "id":0, "total": 0.00, "isCollapsed": false}],
+            contacts: [],
+            results: [],
             page: 1,
             seed: 1,
+            currID: 0,
+            charged: false,
             error: null,
+            searchShown: false,
             refreshing: false,
         };
         this.state.people.state = { friend: '', id: 0, payers: [{name: '', quantity: 0, cost: 0}], nonPayers: [{name: '', quantity: 0, cost: 0}] };
     }
 
     componentDidMount() {
+        if (this.state.contacts.length === 0) {
+            this.getContacts();
+        }
         this.makeRemoteRequest();
     }
 
+    getContacts = () => {
+        var Contacts = require('react-native-contacts');
+        Contacts.getAll((err, contacts) => {
+            if (err === 'denied') {
+                //error TODO: implement more comprehensive error handling
+                console.log("could not get contacts");
+            } else {
+                this.setState({contacts: contacts});
+            }
+        });
+    };
+
     makeRemoteRequest = () => {
         // here we need to request to get contacts... or store in phone? not sure how to do this.
-        fake_people = [
-        {"friend": "Ramana Keerthi", "id": 0},
-        {"friend": "Mazen Oweiss", "id": 1},
-        {"friend": "Katie Matton", "id": 2},
-        {"friend": "Sagar Singichetti", "id": 3},
-        {"friend": "Will Stager", "id": 4},
-        {"friend": "Joe Kunnath", "id": 5},
-        {"friend": "Peter Kaplan", "id": 6}];
-        for (let i=0; i<fake_people.length; i++) {
-            fake_people[i]["total"]=0.00;
-            fake_people[i]["isCollapsed"]=false;
-        }
+        // TODO: request user's ID to add to people data
+        // TODO: request ID's of all
         let items = this.props.parentProps.items;
         for (let i=0; i<items.length; i++) {
             items[i]["payers"]=[];
         }
         this.setState({
-            people: fake_people,
             items: items,
             openPerson: -1
         });
@@ -70,7 +79,7 @@ class PeopleList extends Component {
             }
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
-                    people[j].total+=(newTotal * 1);
+                    people[j].total=(people[j].total*1)+(newTotal * 1);
                 }
             }
         }
@@ -142,13 +151,109 @@ class PeopleList extends Component {
                 leftIcon={icon}
             />
         );
-    }
+    };
+    charge = () => {
+        // TODO: use apis to send twilio request
+        // for now just change text and button to reflect that people have been charged
+        this.setState({charged: true});
+    };
+
+    _handleResults = (results) => {
+        // loop through results and pull out unnecessary info
+        let results_temp = []
+        for (let i = 0; i < results.length; i++) {
+            let result = results[i];
+            let temp_result = {"givenName": result["givenName"], "familyName": result["familyName"], "phoneNumber": ""}
+            let p_nums = result["phoneNumbers"];
+            for (let j = 0; j < p_nums.length; j++) {
+                if (p_nums[j]["label"] === 'mobile') {
+                    temp_result["phoneNumber"] = p_nums[j]["number"];
+                }
+            }
+            if (temp_result["phoneNumber"]) {
+                results_temp.push(temp_result);
+            }
+        }
+        console.log("in handle");
+        console.log(results_temp);
+        this.setState({results: results_temp});
+    };
+
+    hideSearch = () => {
+        this.searchBar.hide();
+        this.setState({searchShown: false });
+    };
+
+    showSearch = () => {
+        this.searchBar.show();
+        this.setState({searchShown: true });
+    };
+
+    renderSearchButton(searchShown, showSearchFn) {
+        if(searchShown) {
+            return (<Text>{""}</Text>);
+        }
+        else {
+            return(<Button title={"Search for Friends to Split With"} style={styles.button} onPress={showSearchFn}/>);
+        }
+    };
+
+    addPerson = (index, givenName, familyName, phoneNumber) => {
+        let people_temp = this.state.people;
+        let temp_ID = this.state.currID + 1;
+        let person_temp = {"friend": `${givenName} ${familyName}`, "id": index, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
+        people_temp.push(person_temp);
+        let results_temp = this.state.results;
+        results_temp.splice(index,1);
+        this.setState({people: people_temp, results: results_temp, currID: temp_ID});
+    };
+
+    removePerson = (index) => {
+        let people_temp = this.state.people;
+        people_temp.splice(index, 1);
+        this.setState({people: people_temp});
+    };
+
     render() {
+        let getButtonStr = () => {
+            if (this.state.charged) {
+                return "Resend Notification";
+            }
+            return "Notify People of Amounts Owed";
+        };
         return (
             <View style={styles.container}>
+                <View style={styles.containerSearch}>
+                    <SearchBar
+                        ref={(ref) => this.searchBar = ref}
+                        data={this.state.contacts}
+                        handleResults={this._handleResults}
+                        hideBack
+                        onX={this.hideSearch}
+                    />
+                </View>
                 <Text style={styles.header}>
-                    {this.props.title}
+                    {this.props.parentProps.title}
                 </Text>
+                {this.renderSearchButton(this.state.searchShown, () => {this.showSearch()})}
+                <View style={styles.containerSearch}>
+                    <List>
+                        <FlatList
+                            data={this.state.results}
+                            extraData={this.state}
+                            renderItem={({item, index})  => (
+                                <ListItem
+                                    title={`${item.givenName} ${item.familyName}`}
+                                    rightTitle={`${item.phoneNumber}`}
+                                    hideChevron={true}
+                                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon}
+                                                    onPress={() =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)}}/>}
+                                />
+                            )}
+                            keyExtractor={(item, index) => index}
+                        />
+                    </List>
+                </View>
                 <List>
                     <FlatList
                         data={this.state.people}
@@ -164,11 +269,10 @@ class PeopleList extends Component {
                                             openPerson: id
                                         })
                                     }}
-                                    title={<View>
-                                        <Text>{item.friend}</Text>
-                                    </View>}
+                                    title={<View><Text>{item.friend}</Text></View>}
                                     rightTitle={`$${item.total}`}
                                     hideChevron={true}
+                                    leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removePerson(index)}}/> }
                                     />
                                     <Collapsible collapsed={item.id!==this.state.openPerson}>
                                         <FlatList
@@ -195,7 +299,7 @@ class PeopleList extends Component {
                         {`Total: $${this.props.parentProps.finalCost}`}
                     </Text>
                 </View>
-                <Button title="Continue" onPress={() => this.props.navigation.navigate('PaymentSummary')}/>
+                <Button title={getButtonStr()} style={styles.button} onPress={() =>{this.charge()}}/>
             </View>
         );
     }
@@ -203,7 +307,7 @@ class PeopleList extends Component {
 
 export default class ReceiptPeople extends Component<{}> {
     static navigationOptions = {
-        title: 'Edit Items',
+        title: 'Assign Items to People',
     };
 
     render() {
@@ -222,13 +326,20 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        backgroundColor: '#F5FCFF'
+        backgroundColor: '#F5FCFF',
+        zIndex: 0,
+    },
+    containerSearch: {
+        zIndex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
     },
     header: {
         fontWeight: 'bold',
         fontSize: 20,
         textAlign: 'center',
-        marginTop: 20
+        marginTop: 20,
+        paddingBottom: 20
     },
     footer1: {
         marginTop: 20,
@@ -239,9 +350,13 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 10,
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
+        paddingBottom: 20
     },
     icon: {
         marginRight: 20
+    },
+    button: {
+        paddingTop: 40
     }
 });

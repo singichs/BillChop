@@ -126,7 +126,7 @@ class ItemList extends Component {
                     {`Total: $${this.state.finalCost}`}
                 </Text>
                 </View>
-                <Button title="Continue" onPress={() => {this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
+                <Button title="Continue to Item Assignment" onPress={() => {this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
                     title: this.state.title,
                     preTaxCost: this.state.preTaxCost,
                     tax: this.state.tax,
@@ -171,7 +171,8 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 10,
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
+        paddingBottom: 20
     },
     icon: {
         marginRight: 20

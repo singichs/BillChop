@@ -31,6 +31,9 @@ from .forms import ImageUploadForm
 from twilio.rest import Client
 from pytesseract import image_to_string
 from PIL import Image, ImageEnhance
+from django.db.models import Q
+import datetime
+
 
 # TODO:
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
@@ -52,14 +55,31 @@ def receipt(request, user_id):
         return HttpResponse(request);
 
 @login_required
-def get_receipt(request):
-    if request.method == "POST":
-        # receipts = Receipt.objects.all()
-        # serializer = ReceiptSerializer(receipts, many=True)
-        # return JsonResponse(serializer.data, safe=False)
-        return HttpResponse(request);
+@api_view(['GET'])
+def get_receipt(request, receipt_id):
 
-#@login_required
+    receipt = Receipt.objects.get(pk=receipt_id)
+
+    serializer = ReceiptSerializer(receipt)
+    data = {'receipt': serializer.data}
+    
+    items = Item.objects.filter(receipt=receipt_id)
+
+    item_data = []
+
+    for item in items:
+        serializer = ItemSerializer(item)
+        item_data.append(serializer.data)
+
+    data['items'] = item_data
+    the_data = {'data':  data}
+
+    # serializer = ReceiptSerializer(receipts, many=True)
+    # return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(the_data);
+
+@login_required
+@api_view(['GET', 'POST', 'PUT'])
 def group(request):
     if request.method == "GET":
         groups = Group.objects.filter(name='bed boi')
@@ -73,7 +93,6 @@ def group(request):
         serializer = GroupSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -162,17 +181,61 @@ def payup(request):
     if request.method == "POST":
         return HttpResponse(request);
 
-
-# Call http://localhost:8000/chop/get_user_payments/1
+@csrf_exempt
 @login_required
-def get_user_payments(request, page_num=1):
+def add_item_to_receipt(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        print data
+        receipt = Receipt.objects.get(pk=data['receipt_id'])
+        name = data['name']
+        value = data['value']
+        user_owns = User.objects.get(pk=data['user_id'])
+        item = Item(name=name, value = value, receipt = receipt, user_owns = user_owns)
+        item.save()
+
+        return HttpResponse("Item " + item + "added to receipt")
+    else:
+        return HttpResponse("Requires a get request")
+
+@csrf_exempt
+def delete_item_from_receipt(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        try:
+            receipt = Item.objects.get(pk=data['item_id'])
+            receipt.delete() 
+        except Exception:
+            return HttpResponse("Item already deleted")
+
+        return HttpResponse("Item deleted from Receipt")
+    else:
+        return HttpResponse("Requires a get request")
+
+
+
+@login_required
+@api_view(['GET'])
+def get_group_receipts(request, group_id):
+
+    receipts = Receipt.objects.filter(group=group_id)
+
+    receipt_data =[]
+
+    for receipt in receipts:
+        serializer = ReceiptSerializer(receipt)
+        receipt_data.append(serializer.data)
+
+    data = {'receipts': receipt_data}
+    
+    return JsonResponse(data)
+
+
+def get_receipt_home(user_pk, receipt_memberships):
 
     data = []
-
-    #Get receipts that user is involved with
-    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
-
-    #Get Receipt information 
     for membership in receipt_memberships:
         receipt = Receipt.objects.get(pk=membership.receipt.pk)
 
@@ -180,7 +243,7 @@ def get_user_payments(request, page_num=1):
         receipt_info["title"] = receipt.title
 
         #If user owns receipt
-        if receipt.owner.pk == request.user.pk:
+        if receipt.owner.pk == user_pk:
             receipt_info["is_owner"] = True
             receipt_info["cost"] = str(receipt.total_cost)
         #If the user does not own receipt
@@ -194,6 +257,20 @@ def get_user_payments(request, page_num=1):
         receipt_info["timestamp"] = receipt.timestamp
 
         data.append(receipt_info)
+
+    return data
+
+
+# Call http://localhost:8000/chop/get_user_payments/1
+@login_required
+@api_view(['GET'])
+def get_user_payments(request, page_num=1):
+
+    #Get receipts that user is involved with
+    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
+
+    #Get Receipt information 
+    data = get_receipt_home(request.user.pk, receipt_memberships)
     
     user_payments = {'payments':  data}
     return Response(user_payments)
@@ -219,6 +296,26 @@ def register(request):
         status = 'new user was created'
    
     return HttpResponse(status)
+
+
+# add items to users 
+
+# Add group to be associated with receipt. Also update last used time of group.s
+@csrf_exempt
+def add_group_to_receipt(request):
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    group_id = data["group_id"]
+    receipt_id = data["receipt_id"]
+
+    group = Group.objects.get(pk=group_id)
+    receipt = Receipt.objects.get(pk=receipt_id)
+
+    group.last_used = datetime.datetime.now()
+    group.save()
+    receipt.group = group
+    receipt.save()
+    return HttpResponse("Group has been added to receipt")
 
 @csrf_exempt
 def upload_receipt(request):
@@ -349,3 +446,11 @@ def add_user_to_receipt(request):
 
 
 
+@csrf_exempt
+def get_mutual_transactions(request, user_id):
+    receipt_memberships = ReceiptMembership.objects.filter(Q(users=user_id) | Q(users=request.user.pk)).distinct('receipt')
+    data = get_receipt_home(request.user.pk, receipt_memberships)
+    
+    user_payments = {'payments':  data}
+    return JsonResponse(user_payments)
+  
