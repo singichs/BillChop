@@ -14,6 +14,13 @@ import { StackNavigator } from 'react-navigation'
 import { NavigationActions } from 'react-navigation'
 import CreateAcct from './CreateAcct';
 
+const resetAction = NavigationActions.reset({
+    index: 0,
+    actions: [
+        NavigationActions.navigate({ routeName: 'Home'})
+    ]
+});
+
 export default class Login extends Component<{}> {
     constructor(props) {
     	super(props);
@@ -100,7 +107,7 @@ export default class Login extends Component<{}> {
 		    resJSON = res.json();
 			if(res.status === 200) {
 				//AsyncStorage.setItem('user', res.user);
-				this.props.navigation.navigate('Home');
+                this.props.navigation.dispatch(resetAction);
 			}
 			
 			else{
