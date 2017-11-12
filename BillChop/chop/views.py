@@ -361,7 +361,7 @@ def add_items_to_users(request):
                 receipt_item.user.add(user["id"])
 
         except Exception:
-            print ""
+            pass
 
 # Add group to be associated with receipt. Also update last used time of group.s
 # put in 
