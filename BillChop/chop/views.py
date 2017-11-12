@@ -450,6 +450,7 @@ def upload_receipt(request):
                 item_to_price[item.split(price, 1)[0]] = price.replace(",", ".")
 
         return_response = {"items" : item_to_price}
+        print(return_response)
         return JsonResponse(return_response)
 
     return JsonResponse("image wasn't valid")
