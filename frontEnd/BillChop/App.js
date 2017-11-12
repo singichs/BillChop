@@ -21,9 +21,11 @@ import ReceiptItems from "./screens/splitProcess/ReceiptItems";
 import TransactionView from "./screens/TransactionView";
 import ReceiptPeople from "./screens/splitProcess/ReceiptPeople";
 import TransactionHistory from "./screens/TransactionHistory";
+import Settings from "./screens/accountManagement/Settings"
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
+    Settings: { screen: Settings},
     ReviewCapture: {screen: ReviewCapture },
     ReceiptItems: {screen: ReceiptItems},
     ReceiptPeople: {screen: ReceiptPeople},
