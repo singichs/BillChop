@@ -26,6 +26,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.db.models import Count
 from .forms import ImageUploadForm
 from twilio.rest import Client
 from pytesseract import image_to_string
@@ -59,7 +60,6 @@ def get_receipt(request):
         return HttpResponse(request);
 
 #@login_required
-@api_view(['GET', 'POST', 'PUT'])
 def group(request):
     if request.method == "GET":
         groups = Group.objects.filter(name='bed boi')
@@ -104,14 +104,12 @@ def create_group(request):
     return HttpResponse(status=204)
 
 @login_required
-@api_view(['GET'])
 def get_user_groups(request):
     user_groups = UserMembership.objects.filter(user=request.user)
     return JsonResponse({'groups':list(user_groups.values())})
 
 # localhost:8000/chop/get_users_in_group/groupName/
 @login_required
-@api_view(['GET'])
 def get_users_in_group(request, group_id):
     if not Group.objects.filter(pk=group_id).exists():
         response = HttpResponse("Group id doesn't exist")
@@ -124,7 +122,6 @@ def get_users_in_group(request, group_id):
     return JsonResponse({'users':list(users.values())})
 
 @csrf_exempt
-@api_view(['POST'])
 def add_users_to_group(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
@@ -168,7 +165,6 @@ def payup(request):
 
 # Call http://localhost:8000/chop/get_user_payments/1
 @login_required
-@api_view(['GET'])
 def get_user_payments(request, page_num=1):
 
     data = []
@@ -202,8 +198,8 @@ def get_user_payments(request, page_num=1):
     user_payments = {'payments':  data}
     return Response(user_payments)
 
+# email is the same thing username
 @csrf_exempt
-@api_view(['POST'])
 def register(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
@@ -225,7 +221,6 @@ def register(request):
     return HttpResponse(status)
 
 @csrf_exempt
-@api_view(['POST'])
 def upload_receipt(request):
     print(request.FILES)
     form = ImageUploadForm(request.POST, request.FILES)
@@ -281,11 +276,13 @@ def send_notifications(request):
         # should do checking to make sure that person making request owns receipt
         # also have to make sure owner doesn't get notification of things being sent, maybe confirmation
         receipt = Receipt.objects.get(pk=data["receipt_id"])
+        owner = Profile.objects.get(user=receipt.owner)
+        print (owner.first_name + " " + owner.last_name)
         items = Item.objects.filter(receipt=receipt)
         for item in items:
             profile = Profile.objects.get(user=item.user_owns)
             # properly get receipt owner's name - this doesn't work - sending works fine
-            msg = "Hello " + profile.first_name + ", you owe " + receipt.owner.first_name + " $" + str(item.value)
+            msg = "Hello " + profile.first_name + ", you owe " + owner.first_name + " " + owner.last_name + " $" + str(item.value)
             send_sms(profile.phone_number, msg)
         # return status code
         return HttpResponse("notifications sent")
@@ -298,9 +295,57 @@ def send_sms(to_number, message):
     auth_token = "be5450946081c391715ea4e18cb12597"
     client = Client(account_sid, auth_token)
 
-    message = client.messages.create(
-        to=to_number,
-        from_="+12485957908 ",
-        body=message)
-    print(message.sid)
+    # message = client.messages.create(
+    #     to=to_number,
+    #     from_="+12485957908 ",
+    #     body=message)
+    print(message)
+
+# receiptid (receipt membership), firstname, lastname
+@csrf_exempt
+def add_user_to_receipt(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        username = data['firstname']
+        password = data['lastname']
+        phone_number = data['phone_number']
+        receipt_id = data['receipt_id']
+
+
+        try:
+            profile = Profile.objects.get(phone_number=phone_number)
+            print (profile)
+            user = User.objects.get(profile=profile)
+            print (user)
+            receipt = Receipt.objects.get(pk=receipt_id)
+            membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=0)
+            membership.save()
+            # user_payments = {'payments':  data}
+            return JsonResponse({'user_id': user.pk})
+
+        except:
+            print ("no similar number found")
+            try:
+                # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
+                # CAN'T BE CREATED
+                new_username = data['firstname'] + "." + data['lastname']
+                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
+                new_user.profile.venmo = "eecs"
+                new_user.profile.phone_number = phone_number
+                new_user.save()
+                return JsonResponse({'user_id': new_user.pk})
+            except IntegrityError:
+                # user already exists
+                status = 'user already exists'
+                print (status)
+    
+    return HttpResponse("add user to receipt", status)
+
+
+
+
+
+
+
 
