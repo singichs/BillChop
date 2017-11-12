@@ -24,7 +24,7 @@ export default class Login extends Component<{}> {
     	}
     }
     
-    /*componentDidMount() {
+    componentDidMount() {
     	this._loadInitialState().done();
     }	
     
@@ -33,7 +33,7 @@ export default class Login extends Component<{}> {
     	if(value !== null){
     		this.props.navigation.navigate('HomeNavigation');
     	}
-    }*/
+    }
     
     render(){
         return (
@@ -85,7 +85,7 @@ export default class Login extends Component<{}> {
     login = () => {
       this.props.navigation.navigate('HomeNavigation');
 
-		/*fetch('http://192.5454.25.2:3000/users', {
+		fetch('http://127.0.0.1:8000/chop/user_login/', {
 			method:'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -109,7 +109,7 @@ export default class Login extends Component<{}> {
 				alert(res.message);
 			}
 		}) 
-		.done();*/
+		.done();
    }
 }
 
