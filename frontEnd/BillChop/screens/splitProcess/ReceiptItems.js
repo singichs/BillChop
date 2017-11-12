@@ -38,15 +38,16 @@ class ItemList extends Component {
         // here we need to request OCR results from image - for now use fake data
         let data = this.props.navigation.state.params.data;
 
-        const fake_data = {"title": "Aroma Cafe", "preTaxCost": 0, "tax": 0, "finalCost": 0,
-                           "items": [{"name": "ginger carrot soup", "quantity": 1, "cost": 6.79},
-                               {"name": "house salad", "quantity": 1, "cost": 7.69}, {"name": "surf and turf", "quantity": 1, "cost": 48.79},
-                               {"name": "wine - glass", "quantity": 1, "cost": 11.50}, {"name": "chocolate cake", "quantity": 1, "cost": 6.75}]};
-
-        this.setState({title: fake_data.title,
-                        preTaxCost: fake_data.preTaxCost,
-                        tax: fake_data.tax,
-                        finalCost: fake_data.finalCost,
+        const fake_data = {"title": "Aroma Cafe", "preTaxCost": 0, "tax": 0, "finalCost": 0}
+        let preTaxCost = 0.00;
+        for (let i=0; i<data.items.length; i++) {
+            preTaxCost+=(1*data.items[i].cost);
+        }
+        preTaxCost = preTaxCost.toFixed(2);
+        this.setState({title: "Costco",
+                        preTaxCost: preTaxCost,
+                        tax: 0,
+                        finalCost: preTaxCost,
                         items: data.items});
 
     };

@@ -439,9 +439,7 @@ def upload_receipt(request):
     print(request.FILES)
     form = ImageUploadForm(request.POST, request.FILES)
     if form.is_valid():
-        receipt = Receipt.objects.get(pk=1)
-        receipt.image = form.cleaned_data['image']
-        receipt.save()
+        new_receipt = Receipt.objects.create(image=form.cleaned_data['image'], total_cost = 0, tip = 0, tax = 0, title = '', is_complete = False, owner_id = request.user.pk)
         img = Image.open(form.cleaned_data['image'].file)
         img = img.filter(ImageFilter.UnsharpMask(percent=250))
         bw = img.convert('L')
@@ -486,7 +484,7 @@ def upload_receipt(request):
                         items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
                         return_response.append(items_and_prices)
 
-        data = {"items" : return_response}
+        data = {"items" : return_response, "receipt_id" : new_receipt.pk}
         return JsonResponse(data)
 
     return JsonResponse("image wasn't valid")
