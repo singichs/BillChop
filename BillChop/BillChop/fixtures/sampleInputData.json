@@ -58,34 +58,5 @@
 			"owner": 1,
 			"title": "alcohol"
 		}
-	},
-	{
-		"model": "chop.item", 
-		"pk": 1, 
-		"fields": {
-			"name": "ciroc", 
-			"value": 35.00, 
-			"receipt": 1, 
-			"user": 1
-		}
-	},
-	{
-		"model": "chop.usermembership",
-		"pk": 1,
-		"fields": {
-			"user": 2,
-			"group": 1,
-			"date_joined": "2017-10-30",
-			"role": "nerd"
-		}
-	},
-	{
-		"model": "chop.receiptmembership",
-		"pk": 1,
-		"fields": {
-			"users" : 2,
-			"receipt" : 1,
-			"outstanding_payment": 40.00
-		}
 	}
 ]
