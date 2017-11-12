@@ -53,25 +53,16 @@ class PeopleList extends Component {
 
     makeRemoteRequest = () => {
         fetch('http://127.0.0.1:8000/chop/get_user_groups/')
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
             .then((responseJson) => {
-                this.setState({data: responseJson["payments"]});
+                this.setState({data: responseJson["groups"]});
             })
             .catch((error) => {
-                console.error(error);
+                console.log(error);
             });
-
-        const fake_data = [
-            {"friend": "EECS 441", "group": true, "id": 7},
-            {"friend": "Ramana Keerthi", "group": false, "id": 0},
-            {"friend": "Mazen Oweiss", "group": false, "id": 1},
-            {"friend": "Katie Matton", "group": false, "id": 2},
-            {"friend": "Sagar Singichetti", "group": false, "id": 3},
-            {"friend": "Will Stager", "group": false, "id": 4},
-            {"friend": "Joe Kunnath", "group": false, "id": 5},
-            {"friend": "Peter Kaplan", "group": false, "id": 6}];
-
-        this.setState({data: fake_data});
     };
 
     _handleResults = (results) => {
@@ -110,13 +101,13 @@ class PeopleList extends Component {
             return (<Text>{""}</Text>);
         }
         else {
-            return(<Button title={"Search for Friends to Split With"} style={styles.button} onPress={showSearchFn}/>);
+            return(<Button title={"Add New Group"} style={styles.button} onPress={showSearchFn}/>);
         }
     };
 
     render() {
-        let getPerson = (item) => {
-            return item.item.friend;
+        let getName = (item) => {
+            return item.group_name;
         }
         return (
             <List>
@@ -124,12 +115,12 @@ class PeopleList extends Component {
                     data={this.state.data}
                     renderItem={({ item }) => (
                         <ListItem
-                            title={getPerson({item})}
+                            title={getName(item)}
                             subtitle={item.title}
-                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionHistory', {transactionid: item.id})}
+                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionHistory', {transactionid: item.group_id})}
                         />
                     )}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.group_id}
                 />
             </List>
         );
