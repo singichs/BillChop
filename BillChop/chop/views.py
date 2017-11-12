@@ -187,7 +187,6 @@ def add_item_to_receipt(request):
     if request.method == "POST":
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
-        print data
         receipt = Receipt.objects.get(pk=data['receipt_id'])
         name = data['name']
         value = data['value']
@@ -273,7 +272,7 @@ def get_user_payments(request, page_num=1):
     data = get_receipt_home(request.user.pk, receipt_memberships)
     
     user_payments = {'payments':  data}
-    return Response(user_payments)
+    return JsonResponse(user_payments)
 
 # email is the same thing username
 @csrf_exempt
@@ -316,7 +315,7 @@ def add_group_to_receipt(request):
     receipt.group = group
     receipt.save()
     return HttpResponse("Group has been added to receipt")
-
+'''
 @csrf_exempt
 def upload_receipt(request):
     print(request.FILES)
@@ -335,7 +334,7 @@ def upload_receipt(request):
         return HttpResponse('image upload success')
 
     return HttpResponse("image wasn't valid")
-
+'''
 def change_contrast(img, level):
     factor = (259 * (level + 255)) / (255 * (259 - level))
     def contrast(c):
@@ -352,10 +351,13 @@ def user_login(request):
     password = data['password']
     user = authenticate(request, username=username, password=password)
     if user is not None:
+        print ("logged in As")
+        print (user)
         login(request, user)
         return HttpResponse("logged in")
         # Redirect to a success page.
     else:
+        print ("Failed to log in")
         return HttpResponse("failed to log in")
         # Return an 'invalid login' error message.
 
