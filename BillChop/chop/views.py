@@ -298,9 +298,9 @@ def register(request):
     data = json.loads(body_unicode)
     username = data['username']
     password = data['password']
-    phone_number = data['phonenumber']
-    firstname = data['firstname']
-    lastname = data['lastname']
+    phone_number = data['phoneNumber']
+    firstname = data['firstName']
+    lastname = data['lastName']
 
 
     #try to create user
@@ -370,7 +370,6 @@ def change_contrast(img, level):
 # getting rid of the api_view wrapper takes away the csrf
 @csrf_exempt
 def user_login(request):
-    print ("current user: " + str(request.user))
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
     username = data['username']

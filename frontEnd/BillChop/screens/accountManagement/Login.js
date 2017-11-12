@@ -101,10 +101,7 @@ export default class Login extends Component<{}> {
 				password: this.state.password
 			})
 		})
-
-		//.then((response) => response.json())
 		.then((res) => {
-		    resJSON = res.json();
 			if(res.status === 200) {
 				//AsyncStorage.setItem('user', res.user);
                 this.props.navigation.dispatch(resetAction);
