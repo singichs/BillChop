@@ -22,8 +22,12 @@ import TransactionView from "./screens/TransactionView";
 import ReceiptPeople from "./screens/splitProcess/ReceiptPeople";
 import TransactionHistory from "./screens/TransactionHistory";
 import Settings from "./screens/accountManagement/Settings"
+import Login from "./screens/accountManagement/Login";
+import CreateAcct from "./screens/accountManagement/CreateAcct";
 
 const Navigation = StackNavigator({
+    Login: { screen: Login },
+    CreateAcct: { screen: CreateAcct },
     Home: { screen: HomeNavigation },
     Settings: { screen: Settings},
     ReviewCapture: {screen: ReviewCapture },
