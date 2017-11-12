@@ -28,7 +28,6 @@ export default class Capture extends Component<{}> {
         this.scanner.capture();
     };
     render() {
-        console.log(this.state);
         return (
             <View style={styles.container}>
                 <DocumentScanner

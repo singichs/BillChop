@@ -14,6 +14,7 @@ import {
 import { NavigationActions } from 'react-navigation';
 import { StackNavigator } from 'react-navigation';
 import Login from './Login';
+import {hosturl} from "../../constants";
 
 export default class CreateAcct extends Component<{}> {
     constructor(props) {
@@ -132,7 +133,7 @@ export default class CreateAcct extends Component<{}> {
             this.props.navigation.navigate('Login'); //For now, we will eventually get to use the code below...
           }
 
-          fetch('http://127.0.0.1:8000/chop/register/', {
+          fetch(hosturl+'chop/register/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',

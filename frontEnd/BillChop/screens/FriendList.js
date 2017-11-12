@@ -35,7 +35,7 @@ class PeopleList extends Component {
     }
 
     makeRemoteRequest = () => {
-        fetch(hosturl+'/chop/get_user_groups/')
+        fetch(hosturl+'chop/get_user_groups/')
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();

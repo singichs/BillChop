@@ -91,7 +91,7 @@ export default class Login extends Component<{}> {
     
     login = () => {
 
-		fetch(hosturl+'/chop/user_login/', {
+		fetch(hosturl+'chop/user_login/', {
 			method:'POST',
 			headers: {
 				'Accept': 'application/json',
