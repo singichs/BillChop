@@ -125,7 +125,23 @@ def create_group(request):
 @login_required
 def get_user_groups(request):
     user_groups = UserMembership.objects.filter(user=request.user)
-    return JsonResponse({'groups':list(user_groups.values())})
+    groups = []
+    for group in user_groups:
+        #to_add = ["group_id": group.pk, "group_name": group.name]
+        to_add = {}
+        group_info = Group.objects.get(pk=group.group.pk)
+        to_add["group_id"] = group_info.pk
+        to_add["group_name"] = group_info.name
+        groups.append(to_add)
+    return JsonResponse({"groups": groups})
+    #return JsonResponse({'groups':list(user_groups.values())})
+    for group in user_groups:
+        print (group)
+        group_info = Group.objects.get(pk=group.pk)
+        print (group_info)
+    return HttpResponse("getting user groups")
+
+
 
 # localhost:8000/chop/get_users_in_group/groupName/
 @login_required
@@ -300,6 +316,7 @@ def register(request):
 # add items to users 
 
 # Add group to be associated with receipt. Also update last used time of group.s
+# put in 
 @csrf_exempt
 def add_group_to_receipt(request):
     body_unicode = request.body.decode('utf-8')
