@@ -21,6 +21,12 @@ export default class Capture extends Component<{}> {
     });
     evalPicture =(data)=>{
         this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data.croppedImage});
+        this.setState({
+            image: null,
+            initialImage: null,
+            rectangleCoordinates: null,
+            stableCounter: 0,
+        })
     }
     takePicture =()=> {
         const options = {};

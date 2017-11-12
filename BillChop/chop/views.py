@@ -34,6 +34,7 @@ from pytesseract import image_to_string
 from PIL import Image, ImageEnhance
 from django.db.models import Q
 import datetime
+from PIL import ImageFilter
 
 
 # TODO:
@@ -380,7 +381,14 @@ def add_group_to_receipt(request):
     receipt.group = group
     receipt.save()
     return HttpResponse("Group has been added to receipt")
-'''
+
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 @csrf_exempt
 def upload_receipt(request):
     print(request.FILES)
@@ -390,16 +398,38 @@ def upload_receipt(request):
         receipt.image = form.cleaned_data['image']
         receipt.save()
         img = Image.open(form.cleaned_data['image'].file)
-        enhancer = ImageEnhance.Contrast(img)
-        new_img = enhancer.enhance(35)
-        new_img.show()
-        print(type(new_img))
+        img = img.filter(ImageFilter.UnsharpMask(percent=250))
+        bw = img.convert('L')
+        enhancer2 = ImageEnhance.Contrast(bw)
+        bw = enhancer2.enhance(1.5)
+        bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
-        print(image_to_string(new_img))
-        return HttpResponse('image upload success')
+        ocr_string = image_to_string(bw)
+        items_start = False
+        parsed_items = []
+        for line in ocr_string.splitlines():
+            for word in line.split():
+                if items_start:
+                    if RepresentsInt(word):
+                        parsed_items.append(line.split(word,1)[1])
+                if word == "Member":
+                    items_start = True
+                elif word == "Tax":
+                    parsed_items.append(line)
+                    items_start = False
+
+        item_to_price = {}
+        for item in parsed_items:
+            price = item.split()
+            if len(price) > 1:
+                price = price[len(price)-1]
+                item_to_price[item.split(price, 1)[0]] = price.replace(",", ".")
+
+        return JsonResponse(item_to_price)
 
     return HttpResponse("image wasn't valid")
-'''
+
+
 def change_contrast(img, level):
     factor = (259 * (level + 255)) / (255 * (259 - level))
     def contrast(c):
@@ -518,10 +548,6 @@ def user_logout(request):
         logout(request)
         # Redirect back to index page.
         return HttpResponse(status=status.HTTP_200_OK)
-
-
-
-
 
 @csrf_exempt
 def get_mutual_transactions(request, user_id):
