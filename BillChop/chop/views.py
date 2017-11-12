@@ -142,8 +142,9 @@ def create_group(request):
                 profile.save()
             except IntegrityError:
                 # user already exists
-                status = 'user already exists'
-    return HttpResponse(status=204)
+                message = 'user already exists'
+                return HttpResponseBadRequest
+    return HttpResponse(status=status.HTTP_201_CREATED)
 
 @login_required
 def get_user_groups(request):
