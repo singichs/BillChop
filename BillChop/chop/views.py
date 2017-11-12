@@ -184,7 +184,12 @@ def get_users_in_group(request, group_id):
     #Todo: check if user is in group? or is that done in the frontend?
     group = Group.objects.get(pk=group_id)
     users = UserMembership.objects.filter(group=group)
-    return JsonResponse({'users':list(users.values())})
+    data = []
+    for user in users:
+        profile = Profile.objects.get(user=user.user.pk)
+        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk}
+        data.append(to_add)
+    return JsonResponse(data, safe=False)
 
 @csrf_exempt
 def add_users_to_group(request):
