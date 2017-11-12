@@ -16,6 +16,7 @@ Set up Postgres & Django locally on your machine.
 
 2. Install dependencies, run:
 ```$pip install -r requirements.txt ```
+```$brew install tesseract ```
 
 3. Create the db using command: 
 ```$psql -f BillChop/dbsetup.sql -v v1='userRole' -v v2='userRolePassword' ```
