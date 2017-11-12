@@ -145,12 +145,12 @@ class PeopleList extends Component {
         let icon = (<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem(index)}}/>);
         for (let i=0; i<item.payers.length; i++) {
             if (item.payers[i]===this.state.openPerson) {
-                icon = (<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
+                icon = (<Icon name='check' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
                 break;
             }
         }
         return (
-            <ListItem
+            <ListItem onPress={() =>{this.addItem(index)
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}
