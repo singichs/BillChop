@@ -186,25 +186,37 @@ def payup(request):
 @csrf_exempt
 @login_required
 def add_item_to_receipt(request):
-    body_unicode = request.body.decode('utf-8')
-    data = json.loads(body_unicode)
-    print data
-    receipt = Receipt.objects.get(pk=data['receipt_id'])
-    name = data['name']
-    value = data['value']
-    user_owns = User.objects.get(pk=data['user_id'])
-    item = Item(name=name, value = value, receipt = receipt, user_owns = user_owns)
-    item.save()
-    #serializer = ItemSerializer(item)
-    
-    data = {'hi':'joe'}
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        print data
+        receipt = Receipt.objects.get(pk=data['receipt_id'])
+        name = data['name']
+        value = data['value']
+        user_owns = User.objects.get(pk=data['user_id'])
+        item = Item(name=name, value = value, receipt = receipt, user_owns = user_owns)
+        item.save()
 
-    #print serializer.data
+        return HttpResponse("Item " + item + "added to receipt")
+    else:
+        return HttpResponse("Requires a get request")
 
-   # if serializer.is_valid():
-    #    serializer.save()
+@csrf_exempt
+def delete_item_from_receipt(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        try:
+            receipt = Item.objects.get(pk=data['item_id'])
+            receipt.delete() 
+        except Exception:
+            return HttpResponse("Item already deleted")
 
-    return JsonResponse(data)
+        return HttpResponse("Item deleted from Receipt")
+    else:
+        return HttpResponse("Requires a get request")
+
+
 
 @login_required
 @api_view(['GET'])
