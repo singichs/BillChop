@@ -28,12 +28,6 @@ export default class CreateAcct extends Component<{}> {
         secondPassword: ''
       }
     }
-    // const resetAction = NavigationActions.reset({
-    //     index: 0,
-    //     actions: [
-    //         NavigationActions.navigate({ routeName: 'Login'})
-    //     ]
-    // });
 
     /*componentDidMount() {
       this._loadInitialState().done();
