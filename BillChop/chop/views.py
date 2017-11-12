@@ -271,8 +271,24 @@ def get_group_receipts(request, group_id):
     receipt_data =[]
 
     for receipt in receipts:
+        to_add = {}
         serializer = ReceiptSerializer(receipt)
-        receipt_data.append(serializer.data)
+        is_owner = False
+        if serializer.data["owner"] == request.user.pk:
+            is_owner = True
+
+        to_add["timestamp"] = serializer.data["timestamp"]
+        to_add["is_owner"] = is_owner
+        to_add["total_cost"] = serializer.data["total_cost"]
+        to_add["tip"] = serializer.data["tip"]
+        to_add["tax"] = serializer.data["tax"]
+        to_add["is_complete"] = serializer.data["is_complete"]
+        to_add["group"] = serializer.data["group"]
+        to_add["owner"] = serializer.data["owner"]
+        #to_add["image"] = serializer.data["image"]
+
+        receipt_data.append(to_add)
+
 
     data = {'receipts': receipt_data}
     
