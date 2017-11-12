@@ -406,6 +406,11 @@ def add_group_to_receipt(request):
     group = Group.objects.get(pk=group_id)
     receipt = Receipt.objects.get(pk=receipt_id)
 
+    users = UserMembership.objects.filter(group=group.pk)
+    for user in users:
+        membership = ReceiptMembership.objects.create(users=user.user, receipt=receipt, outstanding_payment=0)
+        membership.save()
+
     group.last_used = datetime.datetime.now()
     group.save()
 
@@ -434,9 +439,7 @@ def upload_receipt(request):
     print(request.FILES)
     form = ImageUploadForm(request.POST, request.FILES)
     if form.is_valid():
-        receipt = Receipt.objects.get(pk=1)
-        receipt.image = form.cleaned_data['image']
-        receipt.save()
+        new_receipt = Receipt.objects.create(image=form.cleaned_data['image'], total_cost = 0, tip = 0, tax = 0, title = '', is_complete = False, owner_id = request.user.pk)
         img = Image.open(form.cleaned_data['image'].file)
         img = img.filter(ImageFilter.UnsharpMask(percent=250))
         bw = img.convert('L')
@@ -481,7 +484,7 @@ def upload_receipt(request):
                         items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
                         return_response.append(items_and_prices)
 
-        data = {"items" : return_response}
+        data = {"items" : return_response, "receipt_id" : new_receipt.pk}
         return JsonResponse(data)
 
     return JsonResponse("image wasn't valid")
@@ -616,4 +619,32 @@ def get_mutual_transactions(request, user_id):
     
     user_payments = {'payments':  data}
     return JsonResponse(user_payments)
-  
+
+
+@csrf_exempt
+def add_receipt_information(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        receipt_id = data["receipt_id"]
+        items = data["items"]
+        tax = data["tax"]
+        total_cost = data["total_cost"]
+        receipt = Receipt.objects.get(pk=receipt_id)
+        receipt.tax = tax
+        receipt.total_cost = total_cost
+        receipt.save()
+
+        for item in items:
+            item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
+            item.save()
+
+        return HttpResponse("add receipt info")
+
+
+
+
+
+
+
+
