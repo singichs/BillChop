@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
       width: 160,
       textAlign: 'center',
       opacity: 0.9,
-      fontSize: 44,
+      fontSize: 36,
     },
     valueProp: {
       color: '#000', //Black for now
