@@ -479,7 +479,7 @@ def upload_receipt(request):
                         items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
                         return_response.append(items_and_prices)
 
-        data = {new_receipt.pk : return_response}
+        data = {"items" : return_response, "receipt_id" : new_receipt.pk}
         return JsonResponse(data)
 
     return JsonResponse("image wasn't valid")
