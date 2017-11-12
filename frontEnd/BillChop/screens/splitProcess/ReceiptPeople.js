@@ -168,7 +168,7 @@ class PeopleList extends Component {
             }
         }
         return (
-            <ListItem onPress={() =>{this.addItem(index)
+            <ListItem onPress={() =>{}}
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}
