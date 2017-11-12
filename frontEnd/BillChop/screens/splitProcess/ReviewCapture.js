@@ -43,7 +43,6 @@ export default class ReviewCapture extends Component<{}> {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
             }).then((data) => {
-                alert(data);
                 this.props.navigation.navigate('ReceiptItems', {data: data});
             }).catch(error => alert(error));
         }
