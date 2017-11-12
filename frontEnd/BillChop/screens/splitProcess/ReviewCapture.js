@@ -22,19 +22,23 @@ export default class ReviewCapture extends Component<{}> {
     submitPhoto = (image) => {
         const data = new FormData();
         data.append('image', {
-            uri: image,
+            uri: encodeURIComponent(image),
             type: 'image/jpeg', // or photo.type
-            name: 'image'
+            name: 'test.jpeg'
         });
         fetch(hosturl+"chop/upload_receipt", {
             method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data',
+            },
             body: data
         }).then((response) => {
             if (!response.ok) throw Error(response.statusText);
-            return response;
+            return response.json();
         }).then((data) => {
-                alert(data.json());
-                this.props.navigation.navigate('ReceiptItems', {image: image});
+                alert(data);
+                this.props.navigation.navigate('ReceiptItems', {data: data});
         }).catch(error => alert(error));
     }
 
