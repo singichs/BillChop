@@ -366,7 +366,7 @@ def send_sms(to_number, message):
     print(message.sid)
 
 @csrf_exempt
-def get_friends(request, user_id):
+def get_mutual_transaction(request, user_id):
     receipt_memberships = ReceiptMembership.objects.filter(Q(users=user_id) | Q(users=request.user.pk)).distinct('receipt')
     data = get_receipt_home(request.user.pk, receipt_memberships)
     

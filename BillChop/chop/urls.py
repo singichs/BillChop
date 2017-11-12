@@ -26,5 +26,5 @@ urlpatterns = [
 	url(r'^logout/$', auth_views.logout, name='logout'),
 	url(r'^user_login/$', views.user_login, name='user_login'),
 	url(r'^send_notifications/$', views.send_notifications, name='send_notifications'),
-	url(r'^get_friends/(?P<user_id>\d+)/$', views.get_friends, name='get_friends')	
+	url(r'^get_mutual_transactions/(?P<user_id>\d+)/$', views.get_mutual_transactions, name='get_mutual_transactions')	
 ]
