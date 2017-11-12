@@ -118,6 +118,11 @@ def create_group(request):
         return response
 
     new_group = Group.objects.create(name=group_name)
+
+    maker_user = User.objects.get(profile=group_maker)
+    membership = UserMembership.objects.create(user=maker_user, group=new_group)
+    membership.save()
+
     for user in user_info:
         try:
             profile = Profile.objects.get(phone_number=user["phoneNumber"])
@@ -179,7 +184,12 @@ def get_users_in_group(request, group_id):
     #Todo: check if user is in group? or is that done in the frontend?
     group = Group.objects.get(pk=group_id)
     users = UserMembership.objects.filter(group=group)
-    return JsonResponse({'users':list(users.values())})
+    data = []
+    for user in users:
+        profile = Profile.objects.get(user=user.user.pk)
+        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk}
+        data.append(to_add)
+    return JsonResponse(data, safe=False)
 
 @csrf_exempt
 def add_users_to_group(request):
@@ -266,8 +276,30 @@ def get_group_receipts(request, group_id):
     receipt_data =[]
 
     for receipt in receipts:
+        to_add = {}
         serializer = ReceiptSerializer(receipt)
-        receipt_data.append(serializer.data)
+        is_owner = False
+        if serializer.data["owner"] == request.user.pk:
+            is_owner = True
+        print (serializer.data)
+
+        profile = Profile.objects.get(pk=serializer.data["owner"])
+        print (profile.first_name)
+
+        to_add["receipt_id"] = receipt.pk
+        to_add["timestamp"] = serializer.data["timestamp"]
+        to_add["is_owner"] = is_owner
+        to_add["total_cost"] = serializer.data["total_cost"]
+        to_add["tip"] = serializer.data["tip"]
+        to_add["tax"] = serializer.data["tax"]
+        to_add["title"] = serializer.data["title"]
+        to_add["is_complete"] = serializer.data["is_complete"]
+        to_add["group"] = serializer.data["group"]
+        to_add["owner"] = profile.first_name + " " + profile.last_name
+        #to_add["image"] = serializer.data["image"]
+
+        receipt_data.append(to_add)
+
 
     data = {'receipts': receipt_data}
     
@@ -366,7 +398,7 @@ def add_items_to_users(request):
             pass
 
 # Add group to be associated with receipt. Also update last used time of group.s
-# put in 
+# add everyone to receipt membership table???
 @csrf_exempt
 def add_group_to_receipt(request):
     body_unicode = request.body.decode('utf-8')
@@ -379,6 +411,9 @@ def add_group_to_receipt(request):
 
     group.last_used = datetime.datetime.now()
     group.save()
+
+    # add each user in group to receipt membership
+
     receipt.group = group
     receipt.save()
     return HttpResponse("Group has been added to receipt")
@@ -386,6 +421,13 @@ def add_group_to_receipt(request):
 def RepresentsInt(s):
     try: 
         int(s)
+        return True
+    except ValueError:
+        return False
+
+def RepresentsFloat(s):
+    try: 
+        float(s)
         return True
     except ValueError:
         return False
@@ -410,25 +452,42 @@ def upload_receipt(request):
         parsed_items = []
         for line in ocr_string.splitlines():
             for word in line.split():
-                if items_start:
-                    if RepresentsInt(word):
-                        parsed_items.append(line.split(word,1)[1])
-                if word == "Member":
-                    items_start = True
-                elif word == "Tax":
-                    parsed_items.append(line)
+                if word[:4] == "XXXX":
                     items_start = False
+                elif items_start:
+                    parsed_items.append(line)
+                    break
+                elif word.lower() == "member":
+                    items_start = True
 
-        item_to_price = {}
+        return_response = []
         for item in parsed_items:
-            price = item.split()
-            if len(price) > 1:
-                price = price[len(price)-1]
-                item_to_price[item.split(price, 1)[0]] = price.replace(",", ".")
+            items_and_prices = {}
+            item_name = ""
+            item_price = -1
+            for word in item.split():
+                if RepresentsInt(word):
+                    if len(item.split()) > 1:
+                        item_and_price = item.split(word,1)[1]
+                        item_and_price = item_and_price.replace(",", ".")
+                        for w in item_and_price.split():
+                            if RepresentsFloat(w):
+                                item_name = item_and_price.split(w,1)[0]
+                                item_price = w
+                                break
 
-        return JsonResponse(item_to_price)
+            if item_name != "" and item_name != " ":
+                if item_name in items_and_prices:
+                    items_and_prices["quantity"] += 1
+                else:
+                    if item_price != -1:
+                        items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
+                        return_response.append(items_and_prices)
 
-    return HttpResponse("image wasn't valid")
+        data = {"items" : return_response}
+        return JsonResponse(data)
+
+    return JsonResponse("image wasn't valid")
 
 
 def change_contrast(img, level):
@@ -533,6 +592,9 @@ def add_user_to_receipt(request):
                 profile.first_name = username
                 profile.last_name = ""
                 new_user.save()
+                receipt = Receipt.objects.get(pk=receipt_id)
+                membership = ReceiptMembership.objects.create(users=new_user, receipt=receipt, outstanding_payment=0)
+                membership.save()
                 profile.save
                 return JsonResponse({'user_id': new_user.pk})
             except IntegrityError:
