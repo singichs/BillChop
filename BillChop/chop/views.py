@@ -118,14 +118,11 @@ def create_group(request):
 
     new_group = Group.objects.create(name=group_name)
     for user in user_info:
-        print "user: " + user["givenName"]
         try:
             profile = Profile.objects.get(phone_number=user["phoneNumber"])
-            print ("established profile")
             db_user = User.objects.get(profile=profile.pk)
             membership = UserMembership.objects.create(user=db_user, group=new_group)
             membership.save()
-            print ("user is registered " + user["givenName"])
             #return JsonResponse({'user_id': user.pk})
         except:
             try:
