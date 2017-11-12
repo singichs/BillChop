@@ -187,7 +187,7 @@ class PeopleList extends Component {
 
     hideSearch = () => {
         this.searchBar.hide();
-        this.setState({searchShown: false });
+        this.setState({searchShown: false, results: []});
     };
 
     showSearch = () => {
@@ -364,6 +364,7 @@ const styles = StyleSheet.create({
         marginRight: 20
     },
     button: {
-        paddingTop: 40
+        paddingTop: 40,
+        marginTop: 100
     }
 });

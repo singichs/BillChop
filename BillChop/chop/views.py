@@ -221,16 +221,17 @@ def delete_item_from_receipt(request):
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
         try:
-            receipt = Item.objects.get(pk=data['item_id'])
-            receipt.delete() 
+            item_to_delete = Item.objects.get(pk=data['item_id'])
+            receipt = Receipt.objects.get(pk=data['receipt_id'])
+            receipt.total_cost -= item_to_delete.value
+            item_to_delete.delete() 
+
         except Exception:
             return HttpResponse("Item already deleted")
 
         return HttpResponse("Item deleted from Receipt")
     else:
         return HttpResponse("Requires a get request")
-
-
 
 @login_required
 @api_view(['GET'])
@@ -323,6 +324,22 @@ def register(request):
 
 
 # add items to users 
+@csrf_exempt
+@api_view(['POST'])
+def add_items_to_users(request):
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    items = data["items"]
+
+    for item in items:
+        try:
+            receipt_item = Item.objects.get(pk=item["id"])
+            #TODO:::: fix user name
+            for user in item["users"]:
+                receipt_item.user.add(user["id"])
+
+        except Exception:
+            print ""
 
 # Add group to be associated with receipt. Also update last used time of group.s
 # put in 
