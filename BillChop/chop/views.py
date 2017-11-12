@@ -414,6 +414,13 @@ def RepresentsInt(s):
     except ValueError:
         return False
 
+def RepresentsFloat(s):
+    try: 
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 @csrf_exempt
 def upload_receipt(request):
     print(request.FILES)
@@ -430,31 +437,44 @@ def upload_receipt(request):
         bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
         ocr_string = image_to_string(bw)
-        print(ocr_string)
         items_start = False
         parsed_items = []
         for line in ocr_string.splitlines():
             for word in line.split():
-                if items_start:
-                    if RepresentsInt(word):
-                        parsed_items.append(line.split(word,1)[1])
-                if word == "Member":
-                    items_start = True
-                elif word == "Tax":
-                    parsed_items.append(line)
-                elif word[:4] == "XXXX":
+                if word[:4] == "XXXX":
                     items_start = False
+                elif items_start:
+                    parsed_items.append(line)
+                    break
+                elif word.lower() == "member":
+                    items_start = True
 
-        item_to_price = {}
+        return_response = []
         for item in parsed_items:
-            price = item.split()
-            if len(price) > 1:
-                price = price[len(price)-1]
-                item_to_price[item.split(price, 1)[0]] = price.replace(",", ".")
+            items_and_prices = {}
+            item_name = ""
+            item_price = -1
+            for word in item.split():
+                if RepresentsInt(word):
+                    if len(item) > 1:
+                        item_and_price = item.split(word,1)[1]
+                        item_and_price = item_and_price.replace(",", ".")
+                        for w in item_and_price.split():
+                            if RepresentsFloat(w):
+                                item_name = item_and_price.split(w,1)[0]
+                                item_price = w
+                                break
 
-        return_response = {"items" : item_to_price}
-        print(return_response)
-        return JsonResponse(return_response)
+            if item_name != "" and item_name != " ":
+                if item_name in items_and_prices:
+                    items_and_prices["quantity"] += 1
+                else:
+                    if item_price != -1:
+                        items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
+                        return_response.append(items_and_prices)
+
+        data = {"items" : return_response}
+        return JsonResponse(data)
 
     return JsonResponse("image wasn't valid")
 

@@ -28,12 +28,6 @@ export default class CreateAcct extends Component<{}> {
         secondPassword: ''
       }
     }
-    const resetAction = NavigationActions.reset({
-        index: 0,
-        actions: [
-            NavigationActions.navigate({ routeName: 'Login'})
-        ]
-    });
 
     /*componentDidMount() {
       this._loadInitialState().done();
@@ -153,9 +147,9 @@ export default class CreateAcct extends Component<{}> {
                   .then((res) => {
                   if(res.status === 200) {
                   //AsyncStorage.setItem('user', res.user);
-                  //this.props.navigation.navigate('Login');
+                  this.props.navigation.navigate('Login');
                   //this.props.navigation.goBack();
-                  this.props.navigation.dispatch(resetAction);
+                  //this.props.navigation.dispatch(resetAction);
               }
               else{
                       alert("Internal Server Error");
