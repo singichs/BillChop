@@ -159,16 +159,25 @@ class PeopleList extends Component {
             items: items
         });
     };
-    renderEntry = ({item, index}) => {
-        let icon = (<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem(index)}}/>);
+    evaluateClick = (item, index) => {
         for (let i=0; i<item.payers.length; i++) {
             if (item.payers[i]===this.state.openPerson) {
-                icon = (<Icon name='check' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
+                this.removeItem(index);
+                return;
+            }
+        }
+        this.addItem(index);
+    }
+    renderEntry = ({item, index}) => {
+        let icon = null;
+        for (let i=0; i<item.payers.length; i++) {
+            if (item.payers[i]===this.state.openPerson) {
+                icon = (<Icon name='check' color='#32cd32' size={20} containerStyle={styles.icon}/>);
                 break;
             }
         }
         return (
-            <ListItem onPress={() =>{}}
+            <ListItem onPress={() =>{this.evaluateClick(item, index)}}
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}

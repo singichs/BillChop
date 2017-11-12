@@ -7,6 +7,7 @@ import {
     TextInput,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
+import {hosturl} from "../../constants";
 import { NavigationActions } from 'react-navigation'
 import { List, ListItem, Icon} from 'react-native-elements';
 
