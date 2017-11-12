@@ -5,7 +5,8 @@ import {
     Text,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from 'react-navigation';
+import {hosturl} from "../../constants";
 
 const resetAction = NavigationActions.reset({
     index: 0,
@@ -18,24 +19,23 @@ export default class ReviewCapture extends Component<{}> {
     static navigationOptions = {
         title: 'Review Image',
     };
-
     submitPhoto = (image) => {
         const data = new FormData();
-        // data.append('image', {
-        //     uri: image,
-        //     type: 'image/jpeg', // or photo.type
-        //     name: 'image'
-        // });
-        // fetch("http://localhost:8000/chop/upload_receipt", {
-        //     method: 'POST',
-        //     body: data
-        // }).then((response) => {
-        //     if (!response.ok) throw Error(response.statusText);
-        //     return response.json();
-        // }).then((data) => {
-        //         this.props.navigation.navigate('ReceiptItems', {image: image})
-        // }).catch(error => alert(error));
-        this.props.navigation.navigate('ReceiptItems', {image: image});
+        data.append('image', {
+            uri: image,
+            type: 'image/jpeg', // or photo.type
+            name: 'image'
+        });
+        fetch(hosturl+"chop/upload_receipt", {
+            method: 'POST',
+            body: data
+        }).then((response) => {
+            if (!response.ok) throw Error(response.statusText);
+            return response;
+        }).then((data) => {
+                alert(data.json());
+                this.props.navigation.navigate('ReceiptItems', {image: image});
+        }).catch(error => alert(error));
     }
 
 render() {
