@@ -33,6 +33,7 @@ class PeopleList extends Component {
     componentDidMount() {
         if (this.state.contacts.length === 0) {
             this.getContacts();
+            this.getGroups();
         }
         this.makeRemoteRequest();
     }
@@ -49,10 +50,15 @@ class PeopleList extends Component {
         });
     };
 
+    getGroups = () => {
+        //TODO: same request as friend page --> display all groups associated with given user --> append to contacts list
+        // so that you can search through it
+    };
+
     makeRemoteRequest = () => {
         // here we need to request to get contacts... or store in phone? not sure how to do this.
-        // TODO: request user's ID to add to people data
-        // TODO: request ID's of all
+        // TODO: request user's ID to add to people data // or get this at root and pass through
+        // TODO: request ID's of all people in groups
         let items = this.props.parentProps.items;
         for (let i=0; i<items.length; i++) {
             items[i]["payers"]=[];
@@ -199,6 +205,7 @@ class PeopleList extends Component {
     };
 
     addPerson = (index, givenName, familyName, phoneNumber) => {
+        //TODO: remove person from contacts once they are added so user doesn't have to search through them
         let people_temp = this.state.people;
         let temp_ID = this.state.currID + 1;
         let person_temp = {"friend": `${givenName} ${familyName}`, "id": index, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
@@ -209,6 +216,7 @@ class PeopleList extends Component {
     };
 
     removePerson = (index) => {
+        //TODO: add user to contacts once they are removed from list so user can search through them again
         let people_temp = this.state.people;
         people_temp.splice(index, 1);
         this.setState({people: people_temp});

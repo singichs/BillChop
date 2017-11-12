@@ -24,6 +24,7 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Count
@@ -125,7 +126,23 @@ def create_group(request):
 @login_required
 def get_user_groups(request):
     user_groups = UserMembership.objects.filter(user=request.user)
-    return JsonResponse({'groups':list(user_groups.values())})
+    groups = []
+    for group in user_groups:
+        #to_add = ["group_id": group.pk, "group_name": group.name]
+        to_add = {}
+        group_info = Group.objects.get(pk=group.group.pk)
+        to_add["group_id"] = group_info.pk
+        to_add["group_name"] = group_info.name
+        groups.append(to_add)
+    return JsonResponse({"groups": groups})
+    #return JsonResponse({'groups':list(user_groups.values())})
+    for group in user_groups:
+        print (group)
+        group_info = Group.objects.get(pk=group.pk)
+        print (group_info)
+    return HttpResponse("getting user groups")
+
+
 
 # localhost:8000/chop/get_users_in_group/groupName/
 @login_required
@@ -187,7 +204,6 @@ def add_item_to_receipt(request):
     if request.method == "POST":
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
-        print data
         receipt = Receipt.objects.get(pk=data['receipt_id'])
         name = data['name']
         value = data['value']
@@ -274,7 +290,7 @@ def get_user_payments(request, page_num=1):
     data = get_receipt_home(request.user.pk, receipt_memberships)
     
     user_payments = {'payments':  data}
-    return Response(user_payments)
+    return JsonResponse(user_payments)
 
 # email is the same thing username
 @csrf_exempt
@@ -283,18 +299,26 @@ def register(request):
     data = json.loads(body_unicode)
     username = data['username']
     password = data['password']
-    email = data['email']
+    phone_number = data['phoneNumber']
+    firstname = data['firstName']
+    lastname = data['lastName']
+
 
     #try to create user
     try:
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(username, username, password)
         user.profile.venmo = "eecs"
+        user.profile.phone_number = phone_number
+        user.first_name = firstname
+        user.last_name = lastname
         user.save()
     except IntegrityError:
         # user already exists
-        status = 'user already exists'
+        msg = "User already exists"
+        return HttpResponse(msg, status=status.HTTP_401_UNAUTHORIZED)
     else:
-        status = 'new user was created'
+        msg = "New account created"
+        return HttpResponse(msg, status=status.HTTP_200_OK)
    
     return HttpResponse(status)
 
@@ -318,6 +342,7 @@ def add_items_to_users(request):
             print ""
 
 # Add group to be associated with receipt. Also update last used time of group.s
+# put in 
 @csrf_exempt
 def add_group_to_receipt(request):
     body_unicode = request.body.decode('utf-8')
@@ -333,7 +358,7 @@ def add_group_to_receipt(request):
     receipt.group = group
     receipt.save()
     return HttpResponse("Group has been added to receipt")
-
+'''
 @csrf_exempt
 def upload_receipt(request):
     print(request.FILES)
@@ -352,7 +377,7 @@ def upload_receipt(request):
         return HttpResponse('image upload success')
 
     return HttpResponse("image wasn't valid")
-
+'''
 def change_contrast(img, level):
     factor = (259 * (level + 255)) / (255 * (259 - level))
     def contrast(c):
@@ -362,7 +387,6 @@ def change_contrast(img, level):
 # getting rid of the api_view wrapper takes away the csrf
 @csrf_exempt
 def user_login(request):
-    print ("current user: " + str(request.user))
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
     username = data['username']
@@ -370,10 +394,13 @@ def user_login(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return HttpResponse("logged in")
+        msg = "User logged in"
+        #return HttpResponse("Success")
+        return HttpResponse(msg, status=status.HTTP_200_OK)
         # Redirect to a success page.
     else:
-        return HttpResponse("failed to log in")
+        msg = "Failed to log in"
+        return HttpResponse(msg, status=status.HTTP_401_UNAUTHORIZED)
         # Return an 'invalid login' error message.
 
 
@@ -409,10 +436,10 @@ def send_sms(to_number, message):
     auth_token = "be5450946081c391715ea4e18cb12597"
     client = Client(account_sid, auth_token)
 
-    # message = client.messages.create(
-    #     to=to_number,
-    #     from_="+12485957908 ",
-    #     body=message)
+    message = client.messages.create(
+        to=to_number,
+        from_="+12485957908 ",
+        body=message)
     print(message)
 
 # receiptid (receipt membership), firstname, lastname
@@ -457,7 +484,8 @@ def add_user_to_receipt(request):
     return HttpResponse("add user to receipt", status)
 
 
-
+def logout(request):
+    pass
 
 
 

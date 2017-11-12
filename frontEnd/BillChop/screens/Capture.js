@@ -39,8 +39,8 @@ export default class Capture extends Component<{}> {
                     enableTorch={false}
                     brightness={0.3}
                     saturation={0.1}
-                    contrast={1.1}
-                    quality={0.5}
+                    contrast={1.5}
+                    quality={0.8}
                     onRectangleDetect={({ stableCounter, lastDetectionType }) => this.setState({ stableCounter, lastDetectionType })}
                     detectionCountBeforeCapture={5}
                     detectionRefreshRateInMS={50}

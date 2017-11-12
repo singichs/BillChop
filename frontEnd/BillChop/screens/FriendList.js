@@ -7,6 +7,7 @@ import {
     View, Button, TouchableHighlight
 } from 'react-native';
 import { List, ListItem} from 'react-native-elements';
+import {hosturl} from "../constants";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -34,41 +35,40 @@ class PeopleList extends Component {
     }
 
     makeRemoteRequest = () => {
-        // for now, just dummy data later will actually make api request
-        // this link is useful: https://medium.com/react-native-development/
-        // how-to-use-the-flatlist-component-react-native-basics-92c482816fe6
-
-        const fake_data = [
-            {"friend": "EECS 441", "group": true, "id": 7},
-            {"friend": "Ramana Keerthi", "group": false, "id": 0},
-            {"friend": "Mazen Oweiss", "group": false, "id": 1},
-            {"friend": "Katie Matton", "group": false, "id": 2},
-            {"friend": "Sagar Singichetti", "group": false, "id": 3},
-            {"friend": "Will Stager", "group": false, "id": 4},
-            {"friend": "Joe Kunnath", "group": false, "id": 5},
-            {"friend": "Peter Kaplan", "group": false, "id": 6}];
-
-        this.setState({data: fake_data});
+        fetch(hosturl+'/chop/get_user_groups/')
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                this.setState({data: responseJson["groups"]});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     render() {
-        let getPerson = (item) => {
-            return item.item.friend;
+        let getName = (item) => {
+            return item.group_name;
         }
         return (
-            <List>
-                <FlatList
-                    data={this.state.data}
-                    renderItem={({ item }) => (
-                        <ListItem
-                            title={getPerson({item})}
-                            subtitle={item.title}
-                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionHistory', {transactionid: item.id})}
-                        />
-                    )}
-                    keyExtractor={item => item.id}
-                />
-            </List>
+            <View style={styles.container}>
+                <Button style={styles.button} title={"Create New Group"} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup')}}/>
+                <List>
+                    <FlatList
+                        data={this.state.data}
+                        renderItem={({ item }) => (
+                            <ListItem
+                                title={getName(item)}
+                                subtitle={item.title}
+                                onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionHistory', {transactionid: item.group_id})}
+                            />
+                        )}
+                        keyExtractor={item => item.group_id}
+                    />
+                </List>
+            </View>
         );
     }
 }
@@ -77,7 +77,7 @@ class PeopleList extends Component {
 
 export default class FriendList extends Component<{}> {
     static navigationOptions = {
-        title: 'Friends and Groups',
+        title: 'Groups',
     };
     render() {
         return (
@@ -95,4 +95,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         backgroundColor: '#F5FCFF',
     },
+    button: {
+        paddingTop: 40
+    }
 });

@@ -19,6 +19,25 @@ export default class ReviewCapture extends Component<{}> {
         title: 'Review Image',
     };
 
+    submitPhoto = (image) => {
+        const data = new FormData();
+        // data.append('image', {
+        //     uri: image,
+        //     type: 'image/jpeg', // or photo.type
+        //     name: 'image'
+        // });
+        // fetch("http://localhost:8000/chop/upload_receipt", {
+        //     method: 'POST',
+        //     body: data
+        // }).then((response) => {
+        //     if (!response.ok) throw Error(response.statusText);
+        //     return response.json();
+        // }).then((data) => {
+        //         this.props.navigation.navigate('ReceiptItems', {image: image})
+        // }).catch(error => alert(error));
+        this.props.navigation.navigate('ReceiptItems', {image: image});
+    }
+
 render() {
         let image = this.props.navigation.state.params.image;
         return (
@@ -26,7 +45,7 @@ render() {
                 <View style={styles.imageContainer}>
                     <Image source={{uri: image, isStatic:true}} style={styles.image}/>
                 </View>
-                <Button title="Continue" onPress={() => this.props.navigation.navigate('ReceiptItems', {image: image})}/>
+                <Button title="Continue" onPress={() => this.submitPhoto(image)}/>
             </View>
         );
     }
