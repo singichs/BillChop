@@ -118,6 +118,11 @@ def create_group(request):
         return response
 
     new_group = Group.objects.create(name=group_name)
+
+    maker_user = User.objects.get(profile=group_maker)
+    membership = UserMembership.objects.create(user=maker_user, group=new_group)
+    membership.save()
+
     for user in user_info:
         try:
             profile = Profile.objects.get(phone_number=user["phoneNumber"])
@@ -266,8 +271,24 @@ def get_group_receipts(request, group_id):
     receipt_data =[]
 
     for receipt in receipts:
+        to_add = {}
         serializer = ReceiptSerializer(receipt)
-        receipt_data.append(serializer.data)
+        is_owner = False
+        if serializer.data["owner"] == request.user.pk:
+            is_owner = True
+
+        to_add["timestamp"] = serializer.data["timestamp"]
+        to_add["is_owner"] = is_owner
+        to_add["total_cost"] = serializer.data["total_cost"]
+        to_add["tip"] = serializer.data["tip"]
+        to_add["tax"] = serializer.data["tax"]
+        to_add["is_complete"] = serializer.data["is_complete"]
+        to_add["group"] = serializer.data["group"]
+        to_add["owner"] = serializer.data["owner"]
+        #to_add["image"] = serializer.data["image"]
+
+        receipt_data.append(to_add)
+
 
     data = {'receipts': receipt_data}
     
@@ -418,6 +439,7 @@ def upload_receipt(request):
                     items_start = True
                 elif word == "Tax":
                     parsed_items.append(line)
+                elif word[:4] == "XXXX":
                     items_start = False
 
         item_to_price = {}
@@ -430,7 +452,7 @@ def upload_receipt(request):
         return_response = {"items" : item_to_price}
         return JsonResponse(return_response)
 
-    return HttpResponse("image wasn't valid")
+    return JsonResponse("image wasn't valid")
 
 
 def change_contrast(img, level):
