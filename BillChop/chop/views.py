@@ -406,6 +406,7 @@ def upload_receipt(request):
         bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
         ocr_string = image_to_string(bw)
+        print(ocr_string)
         items_start = False
         parsed_items = []
         for line in ocr_string.splitlines():
