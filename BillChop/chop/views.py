@@ -30,6 +30,7 @@ from .forms import ImageUploadForm
 from twilio.rest import Client
 from pytesseract import image_to_string
 from PIL import Image, ImageEnhance
+from django.db.models import Q
 
 # TODO:
 # all functions with post have "@csrf_exempt" for right now, couldn't test otherwise
@@ -220,17 +221,9 @@ def get_group_receipts(request, group_id):
     return JsonResponse(data)
 
 
-# Call http://localhost:8000/chop/get_user_payments/1
-@login_required
-@api_view(['GET'])
-def get_user_payments(request, page_num=1):
+def get_receipt_home(user_pk, receipt_memberships):
 
     data = []
-
-    #Get receipts that user is involved with
-    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
-
-    #Get Receipt information 
     for membership in receipt_memberships:
         receipt = Receipt.objects.get(pk=membership.receipt.pk)
 
@@ -238,7 +231,7 @@ def get_user_payments(request, page_num=1):
         receipt_info["title"] = receipt.title
 
         #If user owns receipt
-        if receipt.owner.pk == request.user.pk:
+        if receipt.owner.pk == user_pk:
             receipt_info["is_owner"] = True
             receipt_info["cost"] = str(receipt.total_cost)
         #If the user does not own receipt
@@ -252,6 +245,20 @@ def get_user_payments(request, page_num=1):
         receipt_info["timestamp"] = receipt.timestamp
 
         data.append(receipt_info)
+
+    return data
+
+
+# Call http://localhost:8000/chop/get_user_payments/1
+@login_required
+@api_view(['GET'])
+def get_user_payments(request, page_num=1):
+
+    #Get receipts that user is involved with
+    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
+
+    #Get Receipt information 
+    data = get_receipt_home(request.user.pk, receipt_memberships)
     
     user_payments = {'payments':  data}
     return Response(user_payments)
@@ -358,3 +365,11 @@ def send_sms(to_number, message):
         body=message)
     print(message.sid)
 
+@csrf_exempt
+def get_friends(request, user_id):
+    receipt_memberships = ReceiptMembership.objects.filter(Q(users=user_id) | Q(users=request.user.pk)).distinct('receipt')
+    data = get_receipt_home(request.user.pk, receipt_memberships)
+    
+    user_payments = {'payments':  data}
+    return JsonResponse(user_payments)
+  
