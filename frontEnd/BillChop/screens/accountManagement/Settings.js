@@ -8,11 +8,20 @@ import {
     Button,
     StatusBar
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
+import { StackNavigator } from 'react-navigation';
 import {hosturl} from "../../constants";
+
+const resetAction = NavigationActions.reset({
+    index: 0,
+    actions: [
+        NavigationActions.navigate({ routeName: 'Login'})
+    ]
+});
 
 export default class Settings extends Component {
     logout = () => {
-        fetch(hosturl+'/chop/user_logout/', {
+        fetch(hosturl+'chop/user_logout/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
@@ -26,6 +35,7 @@ export default class Settings extends Component {
         }).catch((error) => {
                 console.log(error);
         });
+       this.props.navigation.dispatch(resetAction);
     };
     render() {
         return (
