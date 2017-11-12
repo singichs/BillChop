@@ -278,6 +278,7 @@ def get_group_receipts(request, group_id):
             is_owner = True
         print (serializer.data)
 
+        to_add["receipt_id"] = receipt.pk
         to_add["timestamp"] = serializer.data["timestamp"]
         to_add["is_owner"] = is_owner
         to_add["total_cost"] = serializer.data["total_cost"]
