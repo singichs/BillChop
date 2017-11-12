@@ -307,7 +307,6 @@ def get_group_receipts(request, group_id):
 
 
 def get_receipt_home(user_pk, receipt_memberships):
-
     data = []
     for membership in receipt_memberships:
         receipt = Receipt.objects.get(pk=membership.receipt.pk)
@@ -334,19 +333,17 @@ def get_receipt_home(user_pk, receipt_memberships):
     return data
 
 
-# Call http://localhost:8000/chop/get_user_payments/1
-@login_required
-@api_view(['GET'])
-def get_user_payments(request, page_num=1):
-
-    #Get receipts that user is involved with
-    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
-
-    #Get Receipt information 
-    data = get_receipt_home(request.user.pk, receipt_memberships)
-    
-    user_payments = {'payments':  data}
-    return JsonResponse(user_payments)
+# Call http://localhost:8000/chop/get_user_payments
+@csrf_exempt
+def get_user_payments(request):
+    if request.method == "GET":
+        #Get receipts that user is involved with
+        receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
+        #Get Receipt information 
+        data = get_receipt_home(request.user.pk, receipt_memberships)
+        
+        user_payments = {'payments':  data}
+        return JsonResponse(user_payments)
 
 # email is the same thing username
 @csrf_exempt
@@ -497,6 +494,7 @@ def change_contrast(img, level):
     return img.point(contrast)
 
 # getting rid of the api_view wrapper takes away the csrf
+
 @csrf_exempt
 def user_login(request):
     body_unicode = request.body.decode('utf-8')
@@ -530,7 +528,6 @@ def send_notifications(request):
         # also have to make sure owner doesn't get notification of things being sent, maybe confirmation
         receipt = Receipt.objects.get(pk=data["receipt_id"])
         owner = Profile.objects.get(user=receipt.owner)
-        print (owner.first_name + " " + owner.last_name)
         items = Item.objects.filter(receipt=receipt)
         for item in items:
             profile = Profile.objects.get(user=item.user_owns)
