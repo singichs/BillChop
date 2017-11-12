@@ -21,6 +21,7 @@ import ReceiptItems from "./screens/splitProcess/ReceiptItems";
 import TransactionView from "./screens/TransactionView";
 import ReceiptPeople from "./screens/splitProcess/ReceiptPeople";
 import TransactionHistory from "./screens/TransactionHistory";
+import AddGroup from "./screens/AddGroup";
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
@@ -28,7 +29,8 @@ const Navigation = StackNavigator({
     ReceiptItems: {screen: ReceiptItems},
     ReceiptPeople: {screen: ReceiptPeople},
     TransactionView: {screen: TransactionView},
-    TransactionHistory: {screen: TransactionHistory}
+    TransactionHistory: {screen: TransactionHistory},
+    AddGroup: {screen: AddGroup},
 });
 
 export default class App extends Component<{}> {
