@@ -34,12 +34,14 @@ class TransactionList extends Component {
     }
 
     makeRemoteRequests = () => {
-        // TODO hit api endpoints for 1) logged in user's unsaved receipts and 2) their transaction history
-
-        const fake_data = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true,"date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "title": "Costco", "id": 0},
-            {"owner": "Mazen Oweiss", "cost": "123.00", "is_owner": false, "title": "Target","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 1},
-            {"owner": "Katie Matton", "cost": "84.34", "is_owner": true, "title": "Meijer","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 2}];
-        this.setState({data: fake_data});
+        fetch('http://127.0.0.1:8000/chop/get_user_payments/1')
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({data: responseJson["payments"]});
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
     render() {
@@ -50,7 +52,7 @@ class TransactionList extends Component {
             return `You owe ${item.item.owner} $${item.item.cost}`;
         };
         let getDate = (item) => {
-           curr_date = new Date(item.item.date);
+           curr_date = new Date(item.item.timestamp);
            date_str = curr_date.toLocaleString('en-US');
            return date_str;
         };
@@ -69,7 +71,7 @@ class TransactionList extends Component {
                                 onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
                             />
                         )}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.receipt_id}
                     />
                 </List>
             </View>

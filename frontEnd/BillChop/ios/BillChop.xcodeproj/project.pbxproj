@@ -372,7 +372,6 @@
 		2D02E4901E0B4A5D006451C7 /* BillChop-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BillChop-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ED9CB34BD7245439167CE50 /* RNPdfScanner.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPdfScanner.xcodeproj; path = "../node_modules/react-native-document-scanner/ios/RNPdfScanner.xcodeproj"; sourceTree = "<group>"; };
 		3E55D180360D4DA5A0591D8D /* libRCTContacts.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTContacts.a; sourceTree = "<group>"; };
-		2ED9CB34BD7245439167CE50 /* RNPdfScanner.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPdfScanner.xcodeproj; path = "../node_modules/react-native-document-scanner/ios/RNPdfScanner.xcodeproj"; sourceTree = "<group>"; };
 		3F15314F18394A958A264E9F /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		4523C23EEB0D4401885563CA /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		4D74F934453D4D688E7113DB /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -587,7 +586,6 @@
 			children = (
 				5A8DEB1295134E4286EFC418 /* libRCTCamera.a */,
 				DE60B2DD0B8F4BB786219D35 /* libRNVectorIcons.a */,
-				F928D4CA1CAA450C83DE0852 /* libRNPdfScanner.a */,
 				3E55D180360D4DA5A0591D8D /* libRCTContacts.a */,
 				F928D4CA1CAA450C83DE0852 /* libRNPdfScanner.a */,
 			);
@@ -661,7 +659,6 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				8DC4E8A03BBD415E942CBD3C /* RCTCamera.xcodeproj */,
 				FC27C962B9254E329C825BF3 /* RNVectorIcons.xcodeproj */,
-				2ED9CB34BD7245439167CE50 /* RNPdfScanner.xcodeproj */,
 				0F7748388C8C4E2BBAF86CB0 /* RCTContacts.xcodeproj */,
 				2ED9CB34BD7245439167CE50 /* RNPdfScanner.xcodeproj */,
 			);
@@ -802,7 +799,8 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 8T4TQF82KS;
+						DevelopmentTeam = Y423ZK47UY;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1389,9 +1387,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 8T4TQF82KS;
+				DEVELOPMENT_TEAM = Y423ZK47UY;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
@@ -1408,7 +1408,9 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.BillChop7890;
 				PRODUCT_NAME = BillChop;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1417,8 +1419,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8T4TQF82KS;
+				DEVELOPMENT_TEAM = Y423ZK47UY;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
@@ -1435,7 +1439,9 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.BillChop7890;
 				PRODUCT_NAME = BillChop;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
