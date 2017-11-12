@@ -276,12 +276,14 @@ def get_group_receipts(request, group_id):
         is_owner = False
         if serializer.data["owner"] == request.user.pk:
             is_owner = True
+        print (serializer.data)
 
         to_add["timestamp"] = serializer.data["timestamp"]
         to_add["is_owner"] = is_owner
         to_add["total_cost"] = serializer.data["total_cost"]
         to_add["tip"] = serializer.data["tip"]
         to_add["tax"] = serializer.data["tax"]
+        to_add["title"] = serializer.data["title"]
         to_add["is_complete"] = serializer.data["is_complete"]
         to_add["group"] = serializer.data["group"]
         to_add["owner"] = serializer.data["owner"]
