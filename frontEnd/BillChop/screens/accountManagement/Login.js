@@ -13,8 +13,6 @@ import {
 } from 'react-native';
 import { StackNavigator } from 'react-navigation'
 import { NavigationActions } from 'react-navigation'
-import HomeNavigation from '../HomeNavigation';
-import LoginForm from './LoginForm';
 
 export default class Login extends Component<{}> {
     constructor(props) {
@@ -35,11 +33,15 @@ export default class Login extends Component<{}> {
     		this.props.navigation.navigate('HomeNavigation');
     	}
     }
+
+    static navigationOptions = {
+        headerRight: (<Button title="CreateAcct" onPress={()=>{this.props.navigation.navigate('CreateAcct')}}/>)
+    };
     
     render(){
         return (
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
-              <View style={styles.logoContainer}>
+             <View style={styles.logoContainer}>
                 <Image
                   style={styles.logo}
                   source = {require('../../images/BillChop.png')}
@@ -51,8 +53,8 @@ export default class Login extends Component<{}> {
             		barStyle="light-content"
             	/>
          		   <TextInput
-           			  placeholder="username or email"
-           			  placeholderTextColor='rgba(255,255,255,0.7)'
+          			  placeholder="username or email"
+                  placeholderTextColor='rgba(255,255,255,0.7)'
            			  onChangeText={ (username) => this.setState({username}) }
            			  underlineColorAndroid = 'transparent'
            			  returnKeyType="next"
@@ -78,7 +80,7 @@ export default class Login extends Component<{}> {
          		 </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
-    );
+      );
     }
     
     login = () => {
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
 	},
     container:{
       flex:1,
-      backgroundColor: '#4286f4', //white, for now
+      backgroundColor: '#FFFFFF', //white, for now
       paddingLeft: 10,
       paddingRight: 10,
       justifyContent: 'center',
@@ -140,19 +142,19 @@ const styles = StyleSheet.create({
     },
   	input: {
     	height: 40,
-    	backgroundColor: 'rgba(255,255,255,0.2)',
+      width: 300,
+    	backgroundColor: '#bdc3c7',
     	marginBottom: 20,
     	color: '#FFF',
     	paddingHorizontal: 10
   	},
   	buttonContainer: {
+      width: 300,
     	backgroundColor: '#bdc3c7',
     	paddingVertical: 15
   	},
   	buttonText: {
-    	textAlign: 'center',
     	color: '#FFFFFF',
     	fontWeight: '700'
   	}
 });
-
