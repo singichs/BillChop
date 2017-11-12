@@ -42,17 +42,35 @@ class PeopleList extends Component {
         var Contacts = require('react-native-contacts');
         Contacts.getAll((err, contacts) => {
             if (err === 'denied') {
-                //error TODO: implement more comprehensive error handling
-                console.log("could not get contacts");
+                alert("could not get contacts");
             } else {
-                this.setState({contacts: contacts});
+                let temp_contacts = contacts;
+                for (let i = 0; i < contacts.length; i++) {
+                    temp_contacts[i]["type"] = "contact";
+                }
+                this.setState({contacts: temp_contacts});
             }
         });
     };
 
     getGroups = () => {
-        //TODO: same request as friend page --> display all groups associated with given user --> append to contacts list
-        // so that you can search through it
+        fetch(hosturl+'chop/get_user_groups/')
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                let temp_contacts = this.state.contacts;
+                let temp_groups = responseJson(["groups"]);
+                for (let i = 0; i < temp_groups.length; i++) {
+                    temp_groups[i]["type"] = "group";
+                }
+                temp_contacts = temp_contacts.concat(temp_groups);
+                this.setState({contacts: temp_contacts});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     makeRemoteRequest = () => {
@@ -145,12 +163,12 @@ class PeopleList extends Component {
         let icon = (<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem(index)}}/>);
         for (let i=0; i<item.payers.length; i++) {
             if (item.payers[i]===this.state.openPerson) {
-                icon = (<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
+                icon = (<Icon name='check' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
                 break;
             }
         }
         return (
-            <ListItem
+            <ListItem onPress={() =>{}}
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}
@@ -169,19 +187,26 @@ class PeopleList extends Component {
         let results_temp = []
         for (let i = 0; i < results.length; i++) {
             let result = results[i];
-            let temp_result = {"givenName": result["givenName"], "familyName": result["familyName"], "phoneNumber": ""}
-            let p_nums = result["phoneNumbers"];
-            for (let j = 0; j < p_nums.length; j++) {
-                if (p_nums[j]["label"] === 'mobile') {
-                    temp_result["phoneNumber"] = p_nums[j]["number"];
+            if (result["type"] === "contact") {
+                let temp_result = {
+                    "givenName": result["givenName"],
+                    "familyName": result["familyName"],
+                    "phoneNumber": ""
+                }
+                let p_nums = result["phoneNumbers"];
+                for (let j = 0; j < p_nums.length; j++) {
+                    if (p_nums[j]["label"] === 'mobile') {
+                        temp_result["phoneNumber"] = p_nums[j]["number"];
+                    }
+                }
+                if (temp_result["phoneNumber"]) {
+                    results_temp.push(temp_result);
                 }
             }
-            if (temp_result["phoneNumber"]) {
-                results_temp.push(temp_result);
+            else {
+                //result is group
             }
         }
-        console.log("in handle");
-        console.log(results_temp);
         this.setState({results: results_temp});
     };
 

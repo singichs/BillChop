@@ -17,6 +17,7 @@ class ItemList extends Component {
         this.state = {
             loading: false,
             items: [],
+            receipt_id: 0,
             title: "",
             preTaxCost: 0,
             tax: 0,
@@ -31,20 +32,19 @@ class ItemList extends Component {
     }
 
     componentDidMount() {
-        this.makeRemoteRequest();
+        this.updateState();
     }
 
-    makeRemoteRequest = () => {
+    updateState = () => {
         // here we need to request OCR results from image - for now use fake data
         let data = this.props.navigation.state.params.data;
-
-        const fake_data = {"title": "Aroma Cafe", "preTaxCost": 0, "tax": 0, "finalCost": 0}
         let preTaxCost = 0.00;
         for (let i=0; i<data.items.length; i++) {
             preTaxCost+=(1*data.items[i].cost);
         }
         preTaxCost = preTaxCost.toFixed(2);
         this.setState({title: "Costco",
+                        receipt_id: data.receipt_id,
                         preTaxCost: preTaxCost,
                         tax: 0,
                         finalCost: preTaxCost,
@@ -54,7 +54,6 @@ class ItemList extends Component {
 
 
     deleteItem = (index) => {
-        // TODO: connect with api to actually delete item from database as well
         let items = this.state.items;
         let preTaxCost = (this.state.preTaxCost - this.state.items[index].cost).toFixed(2);
         let finalCost = (this.state.finalCost - this.state.items[index].cost).toFixed(2);
@@ -83,7 +82,7 @@ class ItemList extends Component {
                     textInputPlaceholder="Cost: $0.00"
                     textInput = {true}
                     textInputValue = {this.state.newItemCost}
-                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})} //fix this to be new function
+                    textInputOnChangeText = {(text) => this.setState({newItemCost: text})}
                     hideChevron={true}
                     leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem()}}/>}/>;
     };
@@ -92,6 +91,48 @@ class ItemList extends Component {
         let items = this.state.items;
         items[index]["name"] = text;
         this.setState({items: items});
+    };
+    changeItemCost = (index, cost)=> {
+        if (isNaN(cost)) {
+            return;
+        }
+        let items = this.state.items;
+        let oldCost = items[index].cost;
+        items[index]["cost"] = cost;
+        let preTaxCost = ((this.state.preTaxCost*1)-(oldCost*1)+(cost*1)).toFixed(2);
+        let finalCost = ((this.state.finalCost*1)-(oldCost*1)+(cost*1)).toFixed(2);
+        this.setState({items: items, preTaxCost: preTaxCost, finalCost: finalCost});
+    }
+
+    continueToNextPage = () => {
+
+        fetch(hosturl+'chop/create_group/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                receipt_id: this.state.receipt_id,
+                items: this.state.items,
+                tax: this.state.tax,
+                total_cost: this.state.finalCost
+            })
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
+                        title: this.state.title,
+                        preTaxCost: this.state.preTaxCost,
+                        tax: this.state.tax,
+                        finalCost: this.state.finalCost});
+                }
+
+                else{
+                    alert("Invalid receipt item actions");
+                }
+            })
+            .done();
     };
 
     render() {
@@ -107,7 +148,10 @@ class ItemList extends Component {
                         renderItem={({item, index})  => (
                             <ListItem
                                 title={<TextInput onChangeText={(text) => this.changeItemName(index, text)} value={item.name}/>}
-                                rightTitle={`$${item.cost}`}
+                                textInputPlaceholder="Cost: $0.00"
+                                textInput = {true}
+                                textInputValue = {item.cost}
+                                textInputOnChangeText = {(text) => this.changeItemCost(index,text)}
                                 hideChevron={true}
                                 leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.deleteItem(index) }} />}
                             />
@@ -127,11 +171,7 @@ class ItemList extends Component {
                     {`Total: $${this.state.finalCost}`}
                 </Text>
                 </View>
-                <Button title="Continue to Item Assignment" onPress={() => {this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
-                    title: this.state.title,
-                    preTaxCost: this.state.preTaxCost,
-                    tax: this.state.tax,
-                    finalCost: this.state.finalCost})}}/>
+                <Button title="Continue to Item Assignment" onPress={() => {this.continueToNextPage()}}/>
             </View>
         );
     }
