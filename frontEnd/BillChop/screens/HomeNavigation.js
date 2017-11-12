@@ -24,9 +24,14 @@ const HomeScreenNavigator = TabNavigator({
 });
 
 export default class HomeNavigation extends Component<{}> {
-    static navigationOptions = {
-        title: 'Home',
-        headerRight: (<Button title="Settings" onPress={() => this.props.navigation.navigate('Settings')}/>)
+    constructor (props) {
+        super(props);
+    }
+
+    static navigationOptions = ({ navigation }) => {
+        let title = 'Home';
+        let headerRight =  (<Button title="Settings" onPress={() => navigation.navigate('Settings')}/>);
+        return {title, headerRight};
     };
     render() {
         return (
