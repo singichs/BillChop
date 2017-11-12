@@ -38,7 +38,7 @@ export default class Capture extends Component<{}> {
                     overlayColor="rgba(255,130,0, 0.7)"
                     enableTorch={false}
                     brightness={0.3}
-                    saturation={0.1}
+                    saturation={0}
                     contrast={1.1}
                     quality={0.7}
                     onRectangleDetect={({ stableCounter, lastDetectionType }) => this.setState({ stableCounter, lastDetectionType })}
