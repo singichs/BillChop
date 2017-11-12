@@ -36,7 +36,7 @@ class TransactionList extends Component {
 
 
     makeRemoteRequests = () => {
-        fetch(hosturl+'chop/get_user_payments/1/')
+        fetch(hosturl+'chop/get_user_payments/')
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
