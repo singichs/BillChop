@@ -171,7 +171,8 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 10,
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
+        paddingBottom: 20
     },
     icon: {
         marginRight: 20
