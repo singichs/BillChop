@@ -24,6 +24,7 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Count
@@ -368,14 +369,14 @@ def user_login(request):
     password = data['password']
     user = authenticate(request, username=username, password=password)
     if user is not None:
-        print ("logged in As")
-        print (user)
         login(request, user)
-        return HttpResponse("logged in")
+        msg = "User logged in"
+        #return HttpResponse("Success")
+        return HttpResponse(msg, status=status.HTTP_200_OK)
         # Redirect to a success page.
     else:
-        print ("Failed to log in")
-        return HttpResponse("failed to log in")
+        msg = "Failed to log in"
+        return HttpResponse(msg, status=status.HTTP_401_UNAUTHORIZED)
         # Return an 'invalid login' error message.
 
 
