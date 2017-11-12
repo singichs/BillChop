@@ -13,6 +13,7 @@ import {
 import { StackNavigator } from 'react-navigation'
 import { NavigationActions } from 'react-navigation'
 import CreateAcct from './CreateAcct';
+import {hosturl} from "../../constants";
 
 const resetAction = NavigationActions.reset({
     index: 0,
@@ -37,7 +38,7 @@ export default class Login extends Component<{}> {
     _loadInitialState = async () => {
     	var value = await AsyncStorage.getItem('user');
     	if(value !== null){
-    		this.props.navigation.navigate('HomeNavigation');
+    		this.props.navigation.navigate('Home');
     	}
     }
     
@@ -90,7 +91,7 @@ export default class Login extends Component<{}> {
     
     login = () => {
 
-		fetch('http://127.0.0.1:8000/chop/user_login/', {
+		fetch(hosturl+'chop/user_login/', {
 			method:'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -101,17 +102,14 @@ export default class Login extends Component<{}> {
 				password: this.state.password
 			})
 		})
-
-		//.then((response) => response.json())
 		.then((res) => {
-		    resJSON = res.json();
 			if(res.status === 200) {
 				//AsyncStorage.setItem('user', res.user);
                 this.props.navigation.dispatch(resetAction);
 			}
 			
 			else{
-				alert(res.message);
+				alert("Incorrect login credentials. Please try again");
 			}
 		}) 
 		.done();

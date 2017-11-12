@@ -187,7 +187,7 @@ class PeopleList extends Component {
 
     hideSearch = () => {
         this.searchBar.hide();
-        this.setState({searchShown: false });
+        this.setState({searchShown: false, results: []});
     };
 
     showSearch = () => {
@@ -254,8 +254,7 @@ class PeopleList extends Component {
                                     title={`${item.givenName} ${item.familyName}`}
                                     rightTitle={`${item.phoneNumber}`}
                                     hideChevron={true}
-                                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon}
-                                                    onPress={() =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)}}/>}
+                                    onPress={() =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)}}
                                 />
                             )}
                             keyExtractor={(item, index) => index}
@@ -365,6 +364,7 @@ const styles = StyleSheet.create({
         marginRight: 20
     },
     button: {
-        paddingTop: 40
+        paddingTop: 40,
+        marginTop: 100
     }
 });

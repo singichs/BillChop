@@ -14,6 +14,7 @@ import {
 import { NavigationActions } from 'react-navigation';
 import { StackNavigator } from 'react-navigation';
 import Login from './Login';
+import {hosturl} from "../../constants";
 
 export default class CreateAcct extends Component<{}> {
     constructor(props) {
@@ -132,11 +133,11 @@ export default class CreateAcct extends Component<{}> {
             this.props.navigation.navigate('Login'); //For now, we will eventually get to use the code below...
           }
 
-          /*fetch('http://192.5454.25.2:3000/users', {
+          fetch(hosturl+'chop/register/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify ({
               username: this.state.username,
@@ -146,20 +147,17 @@ export default class CreateAcct extends Component<{}> {
               lastName: this.state.lastName
             })
          })
-    
-        .then((response) => response.json())
         .then((res) => {
-    
-        if(res.success === true) {
-          AsyncStorage.setItem('user', res.user);
-          this.props.navigation.navigate('Login');
-        }
-      
-        else{
-          alert(res.message);
-        }
-      }) 
-      .done();*/
+            if(res.status === 200) {
+              //AsyncStorage.setItem('user', res.user);
+              this.props.navigation.navigate('Login');
+            }
+
+            else{
+              alert(res.message);
+            }
+        })
+        .done();
     }
 }
 

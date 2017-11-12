@@ -5,15 +5,32 @@ import {
     TextInput,
     TouchableOpacity,
     Text,
-    KeyboardAvoidingView,
+    Button,
     StatusBar
 } from 'react-native';
+import {hosturl} from "../../constants";
 
 export default class Settings extends Component {
+    logout = () => {
+        fetch(hosturl+'/chop/user_logout/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then((response) => {
+            if (!response.ok) throw Error(response.statusText);
+            return response.json();
+        }).then((responseJson) => {
+                this.setState({data: responseJson["groups"]});
+        }).catch((error) => {
+                console.log(error);
+        });
+    };
     render() {
         return (
             <View style={styles.container}>
-                <Text>Test</Text>
+                <Button title="Logout" onPress={() => this.logout()}/>
             </View>
         );
     }

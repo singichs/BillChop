@@ -56,6 +56,7 @@ class TransactionHistory extends Component {
         };
         return (
             <View>
+                <Text style={styles.text}> {"Group History"} </Text>
                 <List>
                     <FlatList
                     data={this.state.data}
@@ -77,16 +78,63 @@ class TransactionHistory extends Component {
     }
 }
 
+class GroupMembers extends Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            loading: false,
+            data: [],
+            page: 1,
+            seed: 1,
+            error: null,
+            refreshing: false,
+        };
+    }
+
+    componentDidMount() {
+        this.makeRemoteRequests();
+    }
+
+    makeRemoteRequests = () => {
+        // TODO hit api endpoints for 1) logged in user's unsaved receipts and 2) their transaction history
+
+        const fake_data = [{"name": "Ramana", "id": 7}, {"name": "Katie", "id": 21}];
+        this.setState({data: fake_data});
+    };
+
+    render() {
+        return (
+            <View>
+                <Text style={styles.text}> {"Group Members"} </Text>
+                <List>
+                    <FlatList
+                        data={this.state.data}
+                        renderItem={({ item }) => (
+                            <ListItem
+                                title={item.name}
+                                hideChevron={true}
+                            />
+                        )}
+                        keyExtractor={item => item.id}
+                    />
+                </List>
+            </View>
+        );
+    }
+}
+
 
 
 export default class Home extends Component<{}> {
     static navigationOptions = {
-        title: 'Transaction History',
+        title: 'Group History',
     };
     render() {
         return (
             <View style={styles.container}>
                 <TransactionHistory screenProps={this.props.screenProps}/>
+                <GroupMembers/>
             </View>
         );
     }
@@ -104,5 +152,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center',
         marginTop: 20
+    },
+    text: {
+        paddingTop: 20,
+        fontWeight: 'bold',
+        paddingLeft: 5,
     },
 });

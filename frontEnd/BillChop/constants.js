@@ -1,0 +1,1 @@
+export const hosturl = "http://35.2.96.248:8000/";
