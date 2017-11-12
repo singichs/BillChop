@@ -418,7 +418,7 @@
     "pk": 5,
     "fields": {
         "password": "pbkdf2_sha256$36000$gBo3nTv9Vc0Q$FkWdWswYQKWgyqQk1wds/DEUaMKA/tsjk7mXdoK7RRQ=",
-        "last_login": null,
+        "last_login": "2017-11-12T14:47:27.619Z",
         "is_superuser": false,
         "username": "joekunnath",
         "first_name": "",
@@ -651,10 +651,20 @@
     "model": "chop.usermembership",
     "pk": 1,
     "fields": {
-        "user": 3,
+        "user": 5,
         "group": 1,
         "date_joined": "2017-10-30",
         "role": "nerd"
+    }
+},
+{
+    "model": "chop.usermembership",
+    "pk": 2,
+    "fields": {
+        "user": 5,
+        "group": 2,
+        "date_joined": "2017-11-12",
+        "role": "roleboi"
     }
 },
 {

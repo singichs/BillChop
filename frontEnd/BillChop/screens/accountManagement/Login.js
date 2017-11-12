@@ -13,7 +13,13 @@ import {
 import { StackNavigator } from 'react-navigation'
 import { NavigationActions } from 'react-navigation'
 import CreateAcct from './CreateAcct';
-import HomeNavigation from './../HomeNavigation';
+
+const resetAction = NavigationActions.reset({
+    index: 0,
+    actions: [
+        NavigationActions.navigate({ routeName: 'Home'})
+    ]
+});
 
 export default class Login extends Component<{}> {
     constructor(props) {
@@ -24,7 +30,7 @@ export default class Login extends Component<{}> {
     	}
     }
     
-    /*componentDidMount() {
+    componentDidMount() {
     	this._loadInitialState().done();
     }	
     
@@ -33,7 +39,7 @@ export default class Login extends Component<{}> {
     	if(value !== null){
     		this.props.navigation.navigate('HomeNavigation');
     	}
-    }*/
+    }
     
     render(){
         return (
@@ -83,9 +89,8 @@ export default class Login extends Component<{}> {
     }
     
     login = () => {
-      this.props.navigation.navigate('HomeNavigation');
 
-		/*fetch('http://192.5454.25.2:3000/users', {
+		fetch('http://127.0.0.1:8000/chop/user_login/', {
 			method:'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -96,20 +101,20 @@ export default class Login extends Component<{}> {
 				password: this.state.password
 			})
 		})
-		
-		.then((response) => response.json())
+
+		//.then((response) => response.json())
 		.then((res) => {
-		
-			if(res.success === true) {
-				AsyncStorage.setItem('user', res.user);
-				this.props.navigation.navigate('HomeNavigation');
+		    resJSON = res.json();
+			if(res.status === 200) {
+				//AsyncStorage.setItem('user', res.user);
+                this.props.navigation.dispatch(resetAction);
 			}
 			
 			else{
 				alert(res.message);
 			}
 		}) 
-		.done();*/
+		.done();
    }
 }
 

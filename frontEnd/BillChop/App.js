@@ -22,9 +22,11 @@ import TransactionView from "./screens/TransactionView";
 import ReceiptPeople from "./screens/splitProcess/ReceiptPeople";
 import TransactionHistory from "./screens/TransactionHistory";
 import AddGroup from "./screens/AddGroup";
+import Settings from "./screens/accountManagement/Settings"
 
 const Navigation = StackNavigator({
     Home: { screen: HomeNavigation },
+    Settings: { screen: Settings},
     ReviewCapture: {screen: ReviewCapture },
     ReceiptItems: {screen: ReceiptItems},
     ReceiptPeople: {screen: ReceiptPeople},

@@ -24,6 +24,7 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework import status
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Count
@@ -297,18 +298,26 @@ def register(request):
     data = json.loads(body_unicode)
     username = data['username']
     password = data['password']
-    email = data['email']
+    phone_number = data['phonenumber']
+    firstname = data['firstname']
+    lastname = data['lastname']
+
 
     #try to create user
     try:
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(username, username, password)
         user.profile.venmo = "eecs"
+        user.profile.phone_number = phone_number
+        user.first_name = firstname
+        user.last_name = lastname
         user.save()
     except IntegrityError:
         # user already exists
-        status = 'user already exists'
+        msg = "User already exists"
+        return HttpResponse(msg, status=status.HTTP_401_UNAUTHORIZED)
     else:
-        status = 'new user was created'
+        msg = "New account created"
+        return HttpResponse(msg, status=status.HTTP_200_OK)
    
     return HttpResponse(status)
 
@@ -368,14 +377,14 @@ def user_login(request):
     password = data['password']
     user = authenticate(request, username=username, password=password)
     if user is not None:
-        print ("logged in As")
-        print (user)
         login(request, user)
-        return HttpResponse("logged in")
+        msg = "User logged in"
+        #return HttpResponse("Success")
+        return HttpResponse(msg, status=status.HTTP_200_OK)
         # Redirect to a success page.
     else:
-        print ("Failed to log in")
-        return HttpResponse("failed to log in")
+        msg = "Failed to log in"
+        return HttpResponse(msg, status=status.HTTP_401_UNAUTHORIZED)
         # Return an 'invalid login' error message.
 
 
@@ -459,7 +468,8 @@ def add_user_to_receipt(request):
     return HttpResponse("add user to receipt", status)
 
 
-
+def logout(request):
+    pass
 
 
 
