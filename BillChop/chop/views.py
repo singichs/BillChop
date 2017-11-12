@@ -394,10 +394,10 @@ def send_sms(to_number, message):
     auth_token = "be5450946081c391715ea4e18cb12597"
     client = Client(account_sid, auth_token)
 
-    # message = client.messages.create(
-    #     to=to_number,
-    #     from_="+12485957908 ",
-    #     body=message)
+    message = client.messages.create(
+        to=to_number,
+        from_="+12485957908 ",
+        body=message)
     print(message)
 
 # receiptid (receipt membership), firstname, lastname

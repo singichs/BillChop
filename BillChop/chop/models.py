@@ -63,7 +63,6 @@ class Item(models.Model):
     name = models.CharField(max_length=30) #optional
     value = models.DecimalField(max_digits=5, decimal_places=2) #optional
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE) #optional
-    user_owns = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_owns')
     user = models.ManyToManyField(User)
     # make functions that return cost per user
     def __str__(self):

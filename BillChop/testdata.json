@@ -1,0 +1,396 @@
+[
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$cOcRHk67N5aS$M5WzxGx/hDyB4dE8ETQ/u7/hRbnYCQUeTslihSsbMBY=",
+        "last_login": "2017-11-12T06:43:24.636Z",
+        "is_superuser": true,
+        "username": "peter",
+        "first_name": "",
+        "last_name": "",
+        "email": "p@p.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:14:10.292Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$zjM77Tqd8Upc$CswUqMQW3CIBCTIIIjbR/8AspJYGm3ASG/Bz3pFyNiM=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "Ramana",
+        "first_name": "",
+        "last_name": "",
+        "email": "ramanak@umich.edu",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:15:18.925Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$hBcYI0lmiUpG$wPu6amDmLX69gFHM73FWl8l5AwaVBhmEu1ZLfcSigVM=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "test_owner",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-12T06:49:48.781Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$34AaT9WU7KGu$tMIlz/Nkf7YPtN3+58LNNNzQZzF2Gr+YSEvQAq80tbU=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "Sagar",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-12T06:57:00.453Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$gBo3nTv9Vc0Q$FkWdWswYQKWgyqQk1wds/DEUaMKA/tsjk7mXdoK7RRQ=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "joekunnath",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-12T06:58:04.538Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "chop.group",
+    "pk": 1,
+    "fields": {
+        "name": "eecs441squaaa",
+        "date_created": "2017-10-30",
+        "last_used": "2017-10-30"
+    }
+},
+{
+    "model": "chop.group",
+    "pk": 2,
+    "fields": {
+        "name": "joe&sags_group",
+        "date_created": "2017-11-12",
+        "last_used": "2017-11-12"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 1,
+    "fields": {
+        "user": 1,
+        "first_name": "peter",
+        "last_name": "peterlast",
+        "venmo": "petervenmo",
+        "phone_number": "+1"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "first_name": "ramana",
+        "last_name": "keerthi",
+        "venmo": "ramanavenmo",
+        "phone_number": "+1"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 3,
+    "fields": {
+        "user": 3,
+        "first_name": "test",
+        "last_name": "owner",
+        "venmo": "testownervenmo",
+        "phone_number": "+1"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 4,
+    "fields": {
+        "user": 4,
+        "first_name": "Sagar",
+        "last_name": "Singichetti",
+        "venmo": "singichs",
+        "phone_number": "+15174200697"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 5,
+    "fields": {
+        "user": 5,
+        "first_name": "Joe",
+        "last_name": "Kunnath",
+        "venmo": "joevenmo",
+        "phone_number": "+17349683081"
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 1,
+    "fields": {
+        "photo_bucket": "sample-s3-bucket",
+        "image": "",
+        "timestamp": "2017-10-30",
+        "total_cost": "40.00",
+        "tip": "0.00",
+        "tax": "5.00",
+        "title": "alcohol",
+        "is_complete": false,
+        "group": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 2,
+    "fields": {
+        "photo_bucket": "2",
+        "image": "",
+        "timestamp": "2017-11-12",
+        "total_cost": "20.00",
+        "tip": "0.00",
+        "tax": "0.00",
+        "title": "Meijer",
+        "is_complete": false,
+        "group": 1,
+        "owner": 5
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 3,
+    "fields": {
+        "photo_bucket": "3",
+        "image": "",
+        "timestamp": "2017-11-12",
+        "total_cost": "13.00",
+        "tip": "0.00",
+        "tax": "0.00",
+        "title": "The Store",
+        "is_complete": false,
+        "group": 1,
+        "owner": 4
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 4,
+    "fields": {
+        "photo_bucket": "4",
+        "image": "",
+        "timestamp": "2017-11-12",
+        "total_cost": "12.00",
+        "tip": "0.00",
+        "tax": "3.00",
+        "title": "Joe&sag_shop",
+        "is_complete": false,
+        "group": 2,
+        "owner": 5
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 1,
+    "fields": {
+        "name": "ciroc",
+        "value": "35.00",
+        "receipt": 1,
+        "user": [
+            2
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 2,
+    "fields": {
+        "name": "Lean Cuisine",
+        "value": "5.00",
+        "receipt": 2,
+        "user": [
+            4
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 3,
+    "fields": {
+        "name": "Purple Drank",
+        "value": "6.00",
+        "receipt": 2,
+        "user": [
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 4,
+    "fields": {
+        "name": "Atlantic Salmon",
+        "value": "7.00",
+        "receipt": 2,
+        "user": [
+            4,
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 5,
+    "fields": {
+        "name": "KitKat",
+        "value": "2.00",
+        "receipt": 2,
+        "user": [
+            4
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 6,
+    "fields": {
+        "name": "Crunk",
+        "value": "4.00",
+        "receipt": 3,
+        "user": [
+            4
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 7,
+    "fields": {
+        "name": "fewd",
+        "value": "4.00",
+        "receipt": 3,
+        "user": [
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 8,
+    "fields": {
+        "name": "fries",
+        "value": "5.00",
+        "receipt": 3,
+        "user": [
+            2
+        ]
+    }
+},
+{
+    "model": "chop.usermembership",
+    "pk": 1,
+    "fields": {
+        "user": 3,
+        "group": 1,
+        "date_joined": "2017-10-30",
+        "role": "nerd"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 1,
+    "fields": {
+        "users": 2,
+        "receipt": 1,
+        "notified": false,
+        "outstanding_payment": "35.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 2,
+    "fields": {
+        "users": 4,
+        "receipt": 2,
+        "notified": false,
+        "outstanding_payment": "10.50"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 3,
+    "fields": {
+        "users": 5,
+        "receipt": 2,
+        "notified": false,
+        "outstanding_payment": "9.50"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 4,
+    "fields": {
+        "users": 4,
+        "receipt": 3,
+        "notified": false,
+        "outstanding_payment": "4.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 5,
+    "fields": {
+        "users": 5,
+        "receipt": 3,
+        "notified": false,
+        "outstanding_payment": "4.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 6,
+    "fields": {
+        "users": 2,
+        "receipt": 3,
+        "notified": false,
+        "outstanding_payment": "5.00"
+    }
+}
+]
