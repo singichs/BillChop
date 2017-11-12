@@ -118,6 +118,11 @@ def create_group(request):
         return response
 
     new_group = Group.objects.create(name=group_name)
+
+    maker_user = User.objects.get(profile=group_maker)
+    membership = UserMembership.objects.create(user=maker_user, group=new_group)
+    membership.save()
+
     for user in user_info:
         try:
             profile = Profile.objects.get(phone_number=user["phoneNumber"])
