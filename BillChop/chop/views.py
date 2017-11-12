@@ -278,6 +278,9 @@ def get_group_receipts(request, group_id):
             is_owner = True
         print (serializer.data)
 
+        profile = Profile.objects.get(pk=serializer.data["owner"])
+        print (profile.first_name)
+
         to_add["receipt_id"] = receipt.pk
         to_add["timestamp"] = serializer.data["timestamp"]
         to_add["is_owner"] = is_owner
@@ -287,7 +290,7 @@ def get_group_receipts(request, group_id):
         to_add["title"] = serializer.data["title"]
         to_add["is_complete"] = serializer.data["is_complete"]
         to_add["group"] = serializer.data["group"]
-        to_add["owner"] = serializer.data["owner"]
+        to_add["owner"] = profile.first_name + " " + profile.last_name
         #to_add["image"] = serializer.data["image"]
 
         receipt_data.append(to_add)
@@ -390,7 +393,7 @@ def add_items_to_users(request):
             pass
 
 # Add group to be associated with receipt. Also update last used time of group.s
-# put in 
+# add everyone to receipt membership table???
 @csrf_exempt
 def add_group_to_receipt(request):
     body_unicode = request.body.decode('utf-8')
@@ -403,6 +406,9 @@ def add_group_to_receipt(request):
 
     group.last_used = datetime.datetime.now()
     group.save()
+
+    # add each user in group to receipt membership
+
     receipt.group = group
     receipt.save()
     return HttpResponse("Group has been added to receipt")
@@ -560,6 +566,9 @@ def add_user_to_receipt(request):
                 profile.first_name = username
                 profile.last_name = ""
                 new_user.save()
+                receipt = Receipt.objects.get(pk=receipt_id)
+                membership = ReceiptMembership.objects.create(users=new_user, receipt=receipt, outstanding_payment=0)
+                membership.save()
                 profile.save
                 return JsonResponse({'user_id': new_user.pk})
             except IntegrityError:
