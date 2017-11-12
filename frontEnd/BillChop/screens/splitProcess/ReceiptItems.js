@@ -17,6 +17,7 @@ class ItemList extends Component {
         this.state = {
             loading: false,
             items: [],
+            receipt_id: 0,
             title: "",
             preTaxCost: 0,
             tax: 0,
@@ -31,20 +32,19 @@ class ItemList extends Component {
     }
 
     componentDidMount() {
-        this.makeRemoteRequest();
+        this.updateState();
     }
 
-    makeRemoteRequest = () => {
+    updateState = () => {
         // here we need to request OCR results from image - for now use fake data
         let data = this.props.navigation.state.params.data;
-
-        const fake_data = {"title": "Aroma Cafe", "preTaxCost": 0, "tax": 0, "finalCost": 0}
         let preTaxCost = 0.00;
         for (let i=0; i<data.items.length; i++) {
             preTaxCost+=(1*data.items[i].cost);
         }
         preTaxCost = preTaxCost.toFixed(2);
         this.setState({title: "Costco",
+                        receipt_id: data.receipt_id,
                         preTaxCost: preTaxCost,
                         tax: 0,
                         finalCost: preTaxCost,
@@ -54,7 +54,6 @@ class ItemList extends Component {
 
 
     deleteItem = (index) => {
-        // TODO: connect with api to actually delete item from database as well
         let items = this.state.items;
         let preTaxCost = (this.state.preTaxCost - this.state.items[index].cost).toFixed(2);
         let finalCost = (this.state.finalCost - this.state.items[index].cost).toFixed(2);
@@ -105,6 +104,37 @@ class ItemList extends Component {
         this.setState({items: items, preTaxCost: preTaxCost, finalCost: finalCost});
     }
 
+    continueToNextPage = () => {
+
+        fetch(hosturl+'chop/create_group/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                receipt_id: this.state.receipt_id,
+                items: this.state.items,
+                tax: this.state.tax,
+                total_cost: this.state.finalCost
+            })
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
+                        title: this.state.title,
+                        preTaxCost: this.state.preTaxCost,
+                        tax: this.state.tax,
+                        finalCost: this.state.finalCost});
+                }
+
+                else{
+                    alert("Invalid receipt item actions");
+                }
+            })
+            .done();
+    };
+
     render() {
         return (
             <View style={styles.container}>
@@ -141,11 +171,7 @@ class ItemList extends Component {
                     {`Total: $${this.state.finalCost}`}
                 </Text>
                 </View>
-                <Button title="Continue to Item Assignment" onPress={() => {this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
-                    title: this.state.title,
-                    preTaxCost: this.state.preTaxCost,
-                    tax: this.state.tax,
-                    finalCost: this.state.finalCost})}}/>
+                <Button title="Continue to Item Assignment" onPress={() => {this.continueToNextPage()}}/>
             </View>
         );
     }
