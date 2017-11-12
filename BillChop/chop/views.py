@@ -467,7 +467,7 @@ def upload_receipt(request):
             item_price = -1
             for word in item.split():
                 if RepresentsInt(word):
-                    if len(item) > 1:
+                    if len(item.split()) > 1:
                         item_and_price = item.split(word,1)[1]
                         item_and_price = item_and_price.replace(",", ".")
                         for w in item_and_price.split():

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
+import {hosturl} from "../constants";
 
 class GroupView extends Component {
     constructor (props) {
@@ -130,6 +131,7 @@ class GroupView extends Component {
         })
             .then((res) => {
                 if(res.status === 201) {
+                    this.props.navigation.state.params.refresh();
                     this.props.navigation.goBack();
                 }
 
