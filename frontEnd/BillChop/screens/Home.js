@@ -7,6 +7,7 @@ import {
     View, Button, TouchableHighlight
 } from 'react-native';
 import { List, ListItem} from 'react-native-elements';
+import {hosturl} from './../constants.js';
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -35,7 +36,7 @@ class TransactionList extends Component {
 
 
     makeRemoteRequests = () => {
-        fetch('http://127.0.0.1:8000/chop/get_user_payments/1/')
+        fetch(hosturl+'chop/get_user_payments/1/')
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();

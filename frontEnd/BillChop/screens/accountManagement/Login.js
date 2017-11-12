@@ -13,6 +13,7 @@ import {
 import { StackNavigator } from 'react-navigation'
 import { NavigationActions } from 'react-navigation'
 import CreateAcct from './CreateAcct';
+import {hosturl} from "../../constants";
 
 const resetAction = NavigationActions.reset({
     index: 0,
@@ -90,7 +91,7 @@ export default class Login extends Component<{}> {
     
     login = () => {
 
-		fetch('http://127.0.0.1:8000/chop/user_login/', {
+		fetch(hosturl+'/chop/user_login/', {
 			method:'POST',
 			headers: {
 				'Accept': 'application/json',
