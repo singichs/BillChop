@@ -21,6 +21,12 @@ export default class Capture extends Component<{}> {
     });
     evalPicture =(data)=>{
         this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data.croppedImage});
+        this.setState({
+            image: null,
+            initialImage: null,
+            rectangleCoordinates: null,
+            stableCounter: 0
+        })
     }
     takePicture =()=> {
         const options = {};
@@ -28,7 +34,6 @@ export default class Capture extends Component<{}> {
         this.scanner.capture();
     };
     render() {
-        console.log(this.state);
         return (
             <View style={styles.container}>
                 <DocumentScanner
@@ -42,7 +47,7 @@ export default class Capture extends Component<{}> {
                     contrast={1.5}
                     quality={0.8}
                     onRectangleDetect={({ stableCounter, lastDetectionType }) => this.setState({ stableCounter, lastDetectionType })}
-                    detectionCountBeforeCapture={5}
+                    detectionCountBeforeCapture={50000000}
                     detectionRefreshRateInMS={50}
                     captureMultiple>
                     <Text style={styles.capture} onPress={this.takePicture.bind(this)}>[CAPTURE]</Text>

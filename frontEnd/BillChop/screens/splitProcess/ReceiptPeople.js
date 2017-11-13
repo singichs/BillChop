@@ -10,6 +10,7 @@ import {
 import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
 import Collapsible from 'react-native-collapsible';
+import {hosturl} from "../../constants";
 
 class PeopleList extends Component {
     constructor (props) {
@@ -35,31 +36,51 @@ class PeopleList extends Component {
             this.getContacts();
             this.getGroups();
         }
-        this.makeRemoteRequest();
+        this.makeRequestForItems();
+        this.makeRequestForPeople();
     }
 
     getContacts = () => {
         var Contacts = require('react-native-contacts');
         Contacts.getAll((err, contacts) => {
             if (err === 'denied') {
-                //error TODO: implement more comprehensive error handling
-                console.log("could not get contacts");
+                alert("could not get contacts");
             } else {
-                this.setState({contacts: contacts});
+                let temp_contacts = contacts;
+                for (let i = 0; i < contacts.length; i++) {
+                    temp_contacts[i]["type"] = "contact";
+                }
+                this.setState({contacts: temp_contacts});
             }
         });
     };
 
     getGroups = () => {
-        //TODO: same request as friend page --> display all groups associated with given user --> append to contacts list
-        // so that you can search through it
+        fetch(hosturl+'chop/get_user_groups/')
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                let temp_contacts = this.state.contacts;
+                let temp_groups = responseJson(["groups"]);
+                for (let i = 0; i < temp_groups.length; i++) {
+                    temp_groups[i]["type"] = "group";
+                }
+                temp_contacts = temp_contacts.concat(temp_groups);
+                this.setState({contacts: temp_contacts});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
-    makeRemoteRequest = () => {
-        // here we need to request to get contacts... or store in phone? not sure how to do this.
-        // TODO: request user's ID to add to people data // or get this at root and pass through
-        // TODO: request ID's of all people in groups
+    makeRequestForItems = () => {
         let items = this.props.parentProps.items;
+        let last_page = this.props.parentProps.lastPage;
+        if (last_page == "Home") {
+            //populate items make request to get items
+        }
         for (let i=0; i<items.length; i++) {
             items[i]["payers"]=[];
         }
@@ -69,6 +90,13 @@ class PeopleList extends Component {
         });
 
     };
+
+    makeRequestForPeople = () => {
+        // here we need to request to get contacts... or store in phone? not sure how to do this.
+        // TODO: query database for people
+
+    };
+
     //function that calculates total costs after adding or removing an item. Called before item.payers is modified!
     calculateTotal = (itemIndex, isAdd)=> {
         let items=this.state.items;
@@ -85,7 +113,7 @@ class PeopleList extends Component {
             }
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
-                    people[j].total=(people[j].total*1)+(newTotal * 1);
+                    people[j].total=((people[j].total*1)+(newTotal * 1)).toFixed(2);
                 }
             }
         }
@@ -100,7 +128,7 @@ class PeopleList extends Component {
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
                     let new_people_total = (people[j].total * 1) - (newTotal * 1);
-                    people[j].total = new_people_total;
+                    people[j].total = new_people_total.toFixed(2);
                 }
             }
         }
@@ -132,7 +160,7 @@ class PeopleList extends Component {
         let person = this.state.openPerson;
         this.calculateTotal(itemIndex, false);
         for (let i=0; i<items[itemIndex].payers.length; i++) {
-            if (items[itemIndex].payers[i]===this.state.openPerson) {
+            if (items[itemIndex].payers[i]===person) {
                 items[itemIndex].payers.splice(i,1);
                 break;
             }
@@ -141,16 +169,25 @@ class PeopleList extends Component {
             items: items
         });
     };
-    renderEntry = ({item, index}) => {
-        let icon = (<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem(index)}}/>);
+    evaluateClick = (item, index) => {
         for (let i=0; i<item.payers.length; i++) {
             if (item.payers[i]===this.state.openPerson) {
-                icon = (<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
+                this.removeItem(index);
+                return;
+            }
+        }
+        this.addItem(index);
+    }
+    renderEntry = ({item, index}) => {
+        let icon = null;
+        for (let i=0; i<item.payers.length; i++) {
+            if (item.payers[i]===this.state.openPerson) {
+                icon = (<Icon name='check' color='#32cd32' size={20} containerStyle={styles.icon}/>);
                 break;
             }
         }
         return (
-            <ListItem
+            <ListItem onPress={() =>{this.evaluateClick(item, index)}}
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}
@@ -169,25 +206,32 @@ class PeopleList extends Component {
         let results_temp = []
         for (let i = 0; i < results.length; i++) {
             let result = results[i];
-            let temp_result = {"givenName": result["givenName"], "familyName": result["familyName"], "phoneNumber": ""}
-            let p_nums = result["phoneNumbers"];
-            for (let j = 0; j < p_nums.length; j++) {
-                if (p_nums[j]["label"] === 'mobile') {
-                    temp_result["phoneNumber"] = p_nums[j]["number"];
+            if (result["type"] === "contact") {
+                let temp_result = {
+                    "givenName": result["givenName"],
+                    "familyName": result["familyName"],
+                    "phoneNumber": ""
+                }
+                let p_nums = result["phoneNumbers"];
+                for (let j = 0; j < p_nums.length; j++) {
+                    if (p_nums[j]["label"] === 'mobile') {
+                        temp_result["phoneNumber"] = p_nums[j]["number"];
+                    }
+                }
+                if (temp_result["phoneNumber"]) {
+                    results_temp.push(temp_result);
                 }
             }
-            if (temp_result["phoneNumber"]) {
-                results_temp.push(temp_result);
+            else {
+                //result is group
             }
         }
-        console.log("in handle");
-        console.log(results_temp);
         this.setState({results: results_temp});
     };
 
     hideSearch = () => {
         this.searchBar.hide();
-        this.setState({searchShown: false });
+        this.setState({searchShown: false, results: []});
     };
 
     showSearch = () => {
@@ -208,7 +252,7 @@ class PeopleList extends Component {
         //TODO: remove person from contacts once they are added so user doesn't have to search through them
         let people_temp = this.state.people;
         let temp_ID = this.state.currID + 1;
-        let person_temp = {"friend": `${givenName} ${familyName}`, "id": index, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
+        let person_temp = {"friend": `${givenName} ${familyName}`, "id": temp_ID, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
         people_temp.push(person_temp);
         let results_temp = this.state.results;
         results_temp.splice(index,1);
@@ -218,6 +262,17 @@ class PeopleList extends Component {
     removePerson = (index) => {
         //TODO: add user to contacts once they are removed from list so user can search through them again
         let people_temp = this.state.people;
+        let items=this.state.items;
+        let id = people_temp[index].id;
+        for (let i=0; i<items.length; i++) {
+            for (let j=0; j<items[i].payers.length; j++) {
+                if (items[i].payers[j]===id) {
+                    this.calculateTotal(i,false);
+                    items[i].payers.splice(j,1);
+                    break;
+                }
+            }
+        }
         people_temp.splice(index, 1);
         this.setState({people: people_temp});
     };
@@ -254,8 +309,7 @@ class PeopleList extends Component {
                                     title={`${item.givenName} ${item.familyName}`}
                                     rightTitle={`${item.phoneNumber}`}
                                     hideChevron={true}
-                                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon}
-                                                    onPress={() =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)}}/>}
+                                    onPress={() =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)}}
                                 />
                             )}
                             keyExtractor={(item, index) => index}
@@ -365,6 +419,7 @@ const styles = StyleSheet.create({
         marginRight: 20
     },
     button: {
-        paddingTop: 40
+        paddingTop: 40,
+        marginTop: 100
     }
 });

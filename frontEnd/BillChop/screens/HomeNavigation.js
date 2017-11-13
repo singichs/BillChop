@@ -20,8 +20,10 @@ const instructions = Platform.select({
 const HomeScreenNavigator = TabNavigator({
     FriendList: {screen: FriendList},
     Home: {screen: Home},
-    Capture: { screen: Capture },
-});
+    Capture: { screen: Capture }},
+    {
+        initialRouteName: 'Home'
+    });
 
 export default class HomeNavigation extends Component<{}> {
     constructor (props) {

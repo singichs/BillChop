@@ -36,7 +36,7 @@ class TransactionList extends Component {
 
 
     makeRemoteRequests = () => {
-        fetch(hosturl+'chop/get_user_payments/1/')
+        fetch(hosturl+'chop/get_user_payments/')
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
@@ -73,7 +73,14 @@ class TransactionList extends Component {
                                 rightTitle={item.title}
                                 titleContainerStyle={{ backgroundColor: '#F5FCFF'}}
                                 rightTitleContainerStyle={{backgroundColor: '#F5FCFF'}}
-                                onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
+                                onPress={() => this.props.screenProps.rootNavigation.navigate('ReceiptPeople', {items: [],
+                                    title: "",
+                                    preTaxCost: 0.00,
+                                    tax: 0.00,
+                                    finalCost: 0.00,
+                                    receipt_id: item.receipt_id,
+                                    lastPage: "Home",
+                                })}
                             />
                         )}
                         keyExtractor={item => item.receipt_id}

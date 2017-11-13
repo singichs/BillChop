@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
+import {hosturl} from "../constants";
 
 class GroupView extends Component {
     constructor (props) {
@@ -84,7 +85,7 @@ class GroupView extends Component {
 
     hideSearch = () => {
         this.searchBar.hide();
-        this.setState({searchShown: false });
+        this.setState({searchShown: false, results: [] });
     };
 
     showSearch = () => {
@@ -97,7 +98,7 @@ class GroupView extends Component {
             return (<Text>{""}</Text>);
         }
         else {
-            return(<Button title={"Search for More Members"} style={styles.button} onPress={showSearchFn}/>);
+            return(<Button title={"Search for Members to Add"} style={styles.button} onPress={showSearchFn}/>);
         }
     };
 
@@ -108,8 +109,37 @@ class GroupView extends Component {
     };
 
     saveGroup = () => {
-        //TODO send post request to save group
-        this.props.navigation.goBack();
+        let temp_members = this.state.group.members;
+        for (let i = 0; i < temp_members.length; i++) {
+            let formatNumber = temp_members[i].phoneNumber;
+            formatNumber = formatNumber.replace(/\+/g, "");
+            formatNumber = formatNumber.replace(/\(/g, "");
+            formatNumber = formatNumber.replace(/\)/g, "");
+            formatNumber = formatNumber.replace(/\s/g, "");
+            temp_members[i].phoneNumber = formatNumber;
+        }
+        fetch(hosturl+'chop/create_group/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                group_name: this.state.group["name"],
+                users: temp_members
+            })
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    this.props.navigation.state.params.refresh();
+                    this.props.navigation.goBack();
+                }
+
+                else{
+                    alert("Invalid group");
+                }
+            })
+            .done();
     };
 
 
@@ -121,8 +151,7 @@ class GroupView extends Component {
                     ref={(ref) => this.searchBar = ref}
                     data={this.state.contacts}
                     handleResults={this._handleGroupResults}
-                    hideBack
-                    onX={this.hideSearch}
+                    onBack={this.hideSearch}
                 />
                 <View style={styles.listContainer}>
                     <List>
@@ -159,7 +188,9 @@ class GroupView extends Component {
                         />
                     </List>
                     <Text style={styles.text}> {"Enter Group Name:"} </Text>
-                    <TextInput onChangeText={(text) => this.changeGroupName(text)} value={this.state.group["name"]}/>
+                    <View style={styles.inputContainer}>
+                        <TextInput onChangeText={(text) => this.changeGroupName(text)} placeholder="Enter Group Name" value={this.state.group["name"]}/>
+                    </View>
                     <Button title={"Save Group"} style={styles.button} onPress={() =>{this.saveGroup()}}/>
                 </View>
             </View>);
@@ -198,5 +229,13 @@ const styles = StyleSheet.create({
     },
     button: {
         paddingTop: 40
+    },
+    textInput: {
+        fontSize: 18,
+    },
+    inputContainer: {
+        paddingTop: 20,
+        paddingBottom: 20,
+        backgroundColor: '#f8f8ff'
     }
 });

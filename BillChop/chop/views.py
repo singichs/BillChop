@@ -12,7 +12,7 @@ from chop.models import UserMembership
 from chop.serializers import *
 from datetime import *
 from decimal import *
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -33,6 +33,7 @@ from pytesseract import image_to_string
 from PIL import Image, ImageEnhance
 from django.db.models import Q
 import datetime
+from PIL import ImageFilter
 
 
 # TODO:
@@ -101,7 +102,10 @@ def create_group(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
     group_name = data["group_name"]
-    user_ids = data["user_ids"]
+    user_info = data["users"]
+    
+    # don't forget to add to group - Joe
+    group_maker = request.user.pk 
 
     if len(group_name) > 30:
         response = HttpResponse("Group name provided was too long")
@@ -113,14 +117,39 @@ def create_group(request):
         return response
 
     new_group = Group.objects.create(name=group_name)
-    # Assuming the users already exist
-    for user_id in user_ids:
-        profile = Profile.objects.get(pk=user_id)
-        #Todo: Figure out if something else should be default for the role
-        # Create user membership for this user to the new group
-        m1 = UserMembership(user = profile.user, group = new_group, role="")
-        m1.save()
-    return HttpResponse(status=204)
+
+    maker_user = User.objects.get(profile=group_maker)
+    membership = UserMembership.objects.create(user=maker_user, group=new_group)
+    membership.save()
+
+    for user in user_info:
+        try:
+            profile = Profile.objects.get(phone_number=user["phoneNumber"])
+            db_user = User.objects.get(profile=profile.pk)
+            membership = UserMembership.objects.create(user=db_user, group=new_group)
+            membership.save()
+            #return JsonResponse({'user_id': user.pk})
+        except:
+            try:
+                    # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
+                    # CAN'T BE CREATED
+                new_username = user["givenName"] + "." + user["familyName"]
+                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
+                new_user.save()
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = user["phoneNumber"]
+                profile.first_name = user["givenName"]
+                profile.last_name = user["familyName"]
+                membership = UserMembership.objects.create(user=new_user, group=new_group)
+                new_user.save()
+                membership.save()
+                profile.save()
+            except IntegrityError:
+                # user already exists
+                message = 'user already exists'
+                return HttpResponseBadRequest
+    return HttpResponse(status=status.HTTP_201_CREATED)
 
 @login_required
 def get_user_groups(request):
@@ -154,7 +183,12 @@ def get_users_in_group(request, group_id):
     #Todo: check if user is in group? or is that done in the frontend?
     group = Group.objects.get(pk=group_id)
     users = UserMembership.objects.filter(group=group)
-    return JsonResponse({'users':list(users.values())})
+    data = []
+    for user in users:
+        profile = Profile.objects.get(user=user.user.pk)
+        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk}
+        data.append(to_add)
+    return JsonResponse(data, safe=False)
 
 @csrf_exempt
 def add_users_to_group(request):
@@ -241,8 +275,30 @@ def get_group_receipts(request, group_id):
     receipt_data =[]
 
     for receipt in receipts:
+        to_add = {}
         serializer = ReceiptSerializer(receipt)
-        receipt_data.append(serializer.data)
+        is_owner = False
+        if serializer.data["owner"] == request.user.pk:
+            is_owner = True
+        print (serializer.data)
+
+        profile = Profile.objects.get(pk=serializer.data["owner"])
+        print (profile.first_name)
+
+        to_add["receipt_id"] = receipt.pk
+        to_add["timestamp"] = serializer.data["timestamp"]
+        to_add["is_owner"] = is_owner
+        to_add["total_cost"] = serializer.data["total_cost"]
+        to_add["tip"] = serializer.data["tip"]
+        to_add["tax"] = serializer.data["tax"]
+        to_add["title"] = serializer.data["title"]
+        to_add["is_complete"] = serializer.data["is_complete"]
+        to_add["group"] = serializer.data["group"]
+        to_add["owner"] = profile.first_name + " " + profile.last_name
+        #to_add["image"] = serializer.data["image"]
+
+        receipt_data.append(to_add)
+
 
     data = {'receipts': receipt_data}
     
@@ -250,7 +306,6 @@ def get_group_receipts(request, group_id):
 
 
 def get_receipt_home(user_pk, receipt_memberships):
-
     data = []
     for membership in receipt_memberships:
         receipt = Receipt.objects.get(pk=membership.receipt.pk)
@@ -277,19 +332,17 @@ def get_receipt_home(user_pk, receipt_memberships):
     return data
 
 
-# Call http://localhost:8000/chop/get_user_payments/1
-@login_required
-@api_view(['GET'])
-def get_user_payments(request, page_num=1):
-
-    #Get receipts that user is involved with
-    receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
-
-    #Get Receipt information 
-    data = get_receipt_home(request.user.pk, receipt_memberships)
-    
-    user_payments = {'payments':  data}
-    return JsonResponse(user_payments)
+# Call http://localhost:8000/chop/get_user_payments
+@csrf_exempt
+def get_user_payments(request):
+    if request.method == "GET":
+        #Get receipts that user is involved with
+        receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
+        #Get Receipt information 
+        data = get_receipt_home(request.user.pk, receipt_memberships)
+        
+        user_payments = {'payments':  data}
+        return JsonResponse(user_payments)
 
 # email is the same thing username
 @csrf_exempt
@@ -338,10 +391,10 @@ def add_items_to_users(request):
                 receipt_item.user.add(user["id"])
 
         except Exception:
-            print ""
+            pass
 
 # Add group to be associated with receipt. Also update last used time of group.s
-# put in 
+# add everyone to receipt membership table???
 @csrf_exempt
 def add_group_to_receipt(request):
     body_unicode = request.body.decode('utf-8')
@@ -352,31 +405,90 @@ def add_group_to_receipt(request):
     group = Group.objects.get(pk=group_id)
     receipt = Receipt.objects.get(pk=receipt_id)
 
+    users = UserMembership.objects.filter(group=group.pk)
+    for user in users:
+        membership = ReceiptMembership.objects.create(users=user.user, receipt=receipt, outstanding_payment=0)
+        membership.save()
+
     group.last_used = datetime.datetime.now()
     group.save()
+
+    # add each user in group to receipt membership
+
     receipt.group = group
     receipt.save()
     return HttpResponse("Group has been added to receipt")
-'''
+
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+def RepresentsFloat(s):
+    try: 
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 @csrf_exempt
 def upload_receipt(request):
     print(request.FILES)
     form = ImageUploadForm(request.POST, request.FILES)
     if form.is_valid():
-        receipt = Receipt.objects.get(pk=1)
-        receipt.image = form.cleaned_data['image']
-        receipt.save()
+        new_receipt = Receipt.objects.create(image=form.cleaned_data['image'], total_cost = 0, tip = 0, tax = 0, title = '', is_complete = False, owner_id = request.user.pk)
         img = Image.open(form.cleaned_data['image'].file)
-        enhancer = ImageEnhance.Contrast(img)
-        new_img = enhancer.enhance(35)
-        new_img.show()
-        print(type(new_img))
+        img = img.filter(ImageFilter.UnsharpMask(percent=250))
+        bw = img.convert('L')
+        enhancer2 = ImageEnhance.Contrast(bw)
+        bw = enhancer2.enhance(1.5)
+        bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
-        print(image_to_string(new_img))
-        return HttpResponse('image upload success')
+        ocr_string = image_to_string(bw)
+        items_start = False
+        parsed_items = []
+        for line in ocr_string.splitlines():
+            for word in line.split():
+                if word[:4] == "XXXX":
+                    items_start = False
+                elif items_start:
+                    parsed_items.append(line)
+                    break
+                elif word.lower() == "member":
+                    items_start = True
 
-    return HttpResponse("image wasn't valid")
-'''
+        return_response = []
+        for item in parsed_items:
+            items_and_prices = {}
+            item_name = ""
+            item_price = -1
+            for word in item.split():
+                if RepresentsInt(word):
+                    if len(item.split()) > 1:
+                        item_and_price = item.split(word,1)[1]
+                        item_and_price = item_and_price.replace(",", ".")
+                        for w in item_and_price.split():
+                            if RepresentsFloat(w):
+                                item_name = item_and_price.split(w,1)[0]
+                                item_price = w
+                                break
+
+            if item_name != "" and item_name != " ":
+                if item_name in items_and_prices:
+                    items_and_prices["quantity"] += 1
+                else:
+                    if item_price != -1:
+                        items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
+                        return_response.append(items_and_prices)
+
+        data = {"items" : return_response, "receipt_id" : new_receipt.pk}
+        return JsonResponse(data)
+
+    return JsonResponse("image wasn't valid")
+
+
 def change_contrast(img, level):
     factor = (259 * (level + 255)) / (255 * (259 - level))
     def contrast(c):
@@ -384,6 +496,7 @@ def change_contrast(img, level):
     return img.point(contrast)
 
 # getting rid of the api_view wrapper takes away the csrf
+
 @csrf_exempt
 def user_login(request):
     body_unicode = request.body.decode('utf-8')
@@ -417,10 +530,10 @@ def send_notifications(request):
         # also have to make sure owner doesn't get notification of things being sent, maybe confirmation
         receipt = Receipt.objects.get(pk=data["receipt_id"])
         owner = Profile.objects.get(user=receipt.owner)
-        print (owner.first_name + " " + owner.last_name)
         items = Item.objects.filter(receipt=receipt)
+        # add users to object
         for item in items:
-            profile = Profile.objects.get(user=item.user_owns)
+            profile = Profile.objects.filter(user=item.users)
             # properly get receipt owner's name - this doesn't work - sending works fine
             msg = "Hello " + profile.first_name + ", you owe " + owner.first_name + " " + owner.last_name + " $" + str(item.value)
             send_sms(profile.phone_number, msg)
@@ -442,6 +555,7 @@ def send_sms(to_number, message):
     print(message)
 '''
 # receiptid (receipt membership), firstname, lastname
+# NEED TO FIX FOR UPDATING PROFILE - JOE HELP FIX - potantially fixed - need to push
 @csrf_exempt
 def add_user_to_receipt(request):
     if request.method == "POST":
@@ -471,9 +585,17 @@ def add_user_to_receipt(request):
                 # CAN'T BE CREATED
                 new_username = data['firstname'] + "." + data['lastname']
                 new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
-                new_user.profile.venmo = "eecs"
-                new_user.profile.phone_number = phone_number
+
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = phone_number
+                profile.first_name = username
+                profile.last_name = ""
                 new_user.save()
+                receipt = Receipt.objects.get(pk=receipt_id)
+                membership = ReceiptMembership.objects.create(users=new_user, receipt=receipt, outstanding_payment=0)
+                membership.save()
+                profile.save
                 return JsonResponse({'user_id': new_user.pk})
             except IntegrityError:
                 # user already exists
@@ -482,12 +604,60 @@ def add_user_to_receipt(request):
     
     return HttpResponse("add user to receipt", status)
 
+@csrf_exempt
+def add_user_to_app(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        username = data['firstname']
+        password = data['lastname']
+        phone_number = data['phone_number']
 
-def logout(request):
-    pass
+        try:
+            profile = Profile.objects.get(phone_number=phone_number)
+            user = User.objects.get(profile=profile)
+            # user_payments = {'payments':  data}
+            return JsonResponse({"user_id": user.pk}, safe=False)
+
+        except:
+            print ("no similar number found")
+            try:
+                # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
+                # CAN'T BE CREATED
+                new_username = data['firstname'] + "." + data['lastname']
+                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
+
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = phone_number
+                profile.first_name = username
+                profile.last_name = ""
+                new_user.save()
+                profile.save()
+                return JsonResponse({"user_id": new_user.pk}, safe=False)
+            except IntegrityError:
+                # user already exists
+                status = 'user already exists'
+                print (status)
+                return JsonResponse({}, safe=False)
+    
+    return JsonResponse({}, safe=False)
 
 
+@csrf_exempt
+def user_logout(request):
+    if request.method == "POST":
+        #context = RequestContext(request)
+        logout(request)
+        # Redirect back to index page.
+        return HttpResponse(status=status.HTTP_200_OK)
 
+def check_logged_in(request):
+    if request.method == "GET":
+        if (request.user.pk):
+            return HttpResponse(status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @csrf_exempt
@@ -497,4 +667,51 @@ def get_mutual_transactions(request, user_id):
     
     user_payments = {'payments':  data}
     return JsonResponse(user_payments)
-  
+
+
+@csrf_exempt
+def add_receipt_information(request):
+    if request.method == "POST":
+    #try:
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        receipt_id = data["receipt_id"]
+        items = data["items"]
+        tax = data["tax"]
+        total_cost = data["total_cost"]
+        receipt = Receipt.objects.get(pk=receipt_id)
+        receipt.tax = tax
+        receipt.total_cost = total_cost
+        receipt.save()
+        result = []
+
+        for item in items:
+            new_item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
+            new_item.save()
+            item_info = {"name": item["name"], "cost": item["cost"], "item_id": new_item.pk}
+            result.append(item_info)
+        return JsonResponse({"items": result})
+    #except:
+        return JsonResponse({})
+
+@csrf_exempt 
+def get_items_for_receipt(request, receipt_id):
+    if request.method == "GET":
+        result = []
+        items = Item.objects.filter(receipt=receipt_id)
+        print (items)
+        for item in items:
+            to_add = {}
+            to_add["name"] = item.name
+            to_add["cost"] = item.value
+            to_add["item_id"] = item.pk
+            result.append(to_add)
+        return JsonResponse({"items": result})
+
+
+
+
+
+
+
+

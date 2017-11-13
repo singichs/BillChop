@@ -35,7 +35,7 @@ class PeopleList extends Component {
     }
 
     makeRemoteRequest = () => {
-        fetch(hosturl+'/chop/get_user_groups/')
+        fetch(hosturl+'chop/get_user_groups/')
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
@@ -54,14 +54,13 @@ class PeopleList extends Component {
         }
         return (
             <View style={styles.container}>
-                <Button style={styles.button} title={"Create New Group"} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup')}}/>
+                <Button style={styles.button} title={"Create New Group"} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup', {refresh: () => {this.makeRemoteRequest()}})}}/>
                 <List>
                     <FlatList
                         data={this.state.data}
                         renderItem={({ item }) => (
                             <ListItem
                                 title={getName(item)}
-                                subtitle={item.title}
                                 onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionHistory', {transactionid: item.group_id})}
                             />
                         )}

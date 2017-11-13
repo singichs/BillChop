@@ -5,7 +5,8 @@ import {
     Text,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from 'react-navigation';
+import {hosturl} from "../../constants";
 
 const resetAction = NavigationActions.reset({
     index: 0,
@@ -18,24 +19,34 @@ export default class ReviewCapture extends Component<{}> {
     static navigationOptions = {
         title: 'Review Image',
     };
-
+    constructor(props) {
+        super(props);
+        this.state = {rendering: false};
+    }
     submitPhoto = (image) => {
         const data = new FormData();
-        // data.append('image', {
-        //     uri: image,
-        //     type: 'image/jpeg', // or photo.type
-        //     name: 'image'
-        // });
-        // fetch("http://localhost:8000/chop/upload_receipt", {
-        //     method: 'POST',
-        //     body: data
-        // }).then((response) => {
-        //     if (!response.ok) throw Error(response.statusText);
-        //     return response.json();
-        // }).then((data) => {
-        //         this.props.navigation.navigate('ReceiptItems', {image: image})
-        // }).catch(error => alert(error));
-        this.props.navigation.navigate('ReceiptItems', {image: image});
+        data.append('image', {
+            uri: encodeURIComponent(image),
+            type: 'image/jpeg', // or photo.type
+            name: 'test.jpeg'
+        });
+        if(this.state.rendering===false) {
+            fetch(hosturl+"chop/upload_receipt", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: data
+            }).then((response) => {
+                this.setState({rendering: false});
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            }).then((data) => {
+                this.props.navigation.navigate('ReceiptItems', {data: data});
+            }).catch(error => alert(error));
+        }
+        this.setState({rendering: true});
     }
 
 render() {

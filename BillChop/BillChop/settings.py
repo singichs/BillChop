@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['.ngrok.io', '127.0.0.1', 'localhost','billchop-dev.us-east-1.elasticbeanstalk.com']
 
 
+
 #CSRF_COOKIE_DOMAIN = '127.0.0.1'
 
 # Application definition

@@ -7,6 +7,7 @@ import {
     View, Button, TouchableHighlight
 } from 'react-native';
 import { List, ListItem} from 'react-native-elements';
+import {hosturl} from "../constants";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -34,12 +35,18 @@ class TransactionHistory extends Component {
     }
 
     makeRemoteRequests = () => {
-    // TODO hit api endpoints for 1) logged in user's unsaved receipts and 2) their transaction history
-
-    const fake_data = [{"owner": "Ramana Keerthi", "cost": "40.00", "is_owner": true,"date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "title": "Costco", "id": 0},
-        {"owner": "Ramana Keerthi", "cost": "123.00", "is_owner": false, "title": "Target","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 1},
-        {"owner": "Ramana Keerthi", "cost": "84.34", "is_owner": true, "title": "Meijer","date":  "Fri Nov 10 2017 16:17:03 GMT-0500 (EST)", "id": 2}];
-    this.setState({data: fake_data});
+        let gID = this.props.navigation.state.params.transactionid;
+        fetch(`${hosturl}chop/get_group_receipts/${gID}`)
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                this.setState({data: responseJson["receipts"]});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 };
 
     render() {
@@ -47,10 +54,10 @@ class TransactionHistory extends Component {
             if (item.item.is_owner) {
                 return `You are owed $${item.item.cost}`;
             }
-            return `You owe ${item.item.owner} $${item.item.cost}`;
+            return `You owe ${item.item.owner} $${item.item.total_cost}`;
         };
         let getDate = (item) => {
-            curr_date = new Date(item.item.date);
+            curr_date = new Date(item.item.timestamp);
             date_str = curr_date.toLocaleString('en-US');
             return date_str;
         };
@@ -67,10 +74,10 @@ class TransactionHistory extends Component {
                             rightTitle={item.title}
                             titleContainerStyle={{ backgroundColor: '#F5FCFF'}}
                             rightTitleContainerStyle={{backgroundColor: '#F5FCFF'}}
-                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.id})}
+                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.receipt_id})}
                         />
                     )}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.receipt_id}
                     />
                 </List>
             </View>
@@ -97,10 +104,19 @@ class GroupMembers extends Component {
     }
 
     makeRemoteRequests = () => {
-        // TODO hit api endpoints for 1) logged in user's unsaved receipts and 2) their transaction history
 
-        const fake_data = [{"name": "Ramana", "id": 7}, {"name": "Katie", "id": 21}];
-        this.setState({data: fake_data});
+        let gID = this.props.navigation.state.params.transactionid;
+        fetch(`${hosturl}chop/get_users_in_group/${gID}`)
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                this.setState({data: responseJson});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     render() {
@@ -116,7 +132,7 @@ class GroupMembers extends Component {
                                 hideChevron={true}
                             />
                         )}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.user_id}
                     />
                 </List>
             </View>
@@ -133,8 +149,8 @@ export default class Home extends Component<{}> {
     render() {
         return (
             <View style={styles.container}>
-                <TransactionHistory screenProps={this.props.screenProps}/>
-                <GroupMembers/>
+                <TransactionHistory navigation={this.props.navigation}/>
+                <GroupMembers navigation={this.props.navigation}/>
             </View>
         );
     }
