@@ -34,6 +34,8 @@ from PIL import Image, ImageEnhance
 from django.db.models import Q
 import datetime
 from PIL import ImageFilter
+from twilio.rest import Client
+
 
 
 # TODO:
@@ -547,7 +549,7 @@ def send_notifications(request):
         return HttpResponse(status=status.HTTP_201_CREATED)
 
 
-'''
+
 # make sure the to_number is in the format like from_ (below) = "+1xxxxxxxxxx"
 def send_sms(to_number, message):
     account_sid = "ACfca8839f241f252e7015e95f8627f8b1"
@@ -559,7 +561,7 @@ def send_sms(to_number, message):
         from_="+12485957908 ",
         body=message)
     print(message)
-'''
+
 # receiptid (receipt membership), firstname, lastname
 # NEED TO FIX FOR UPDATING PROFILE - JOE HELP FIX - potantially fixed - need to push
 @csrf_exempt
