@@ -632,25 +632,27 @@ def get_mutual_transactions(request, user_id):
 @csrf_exempt
 def add_receipt_information(request):
     if request.method == "POST":
-        try:
-            body_unicode = request.body.decode('utf-8')
-            data = json.loads(body_unicode)
-            receipt_id = data["receipt_id"]
-            items = data["items"]
-            tax = data["tax"]
-            total_cost = data["total_cost"]
-            receipt = Receipt.objects.get(pk=receipt_id)
-            receipt.tax = tax
-            receipt.total_cost = total_cost
-            receipt.save()
+    #try:
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        receipt_id = data["receipt_id"]
+        items = data["items"]
+        tax = data["tax"]
+        total_cost = data["total_cost"]
+        receipt = Receipt.objects.get(pk=receipt_id)
+        receipt.tax = tax
+        receipt.total_cost = total_cost
+        receipt.save()
+        result = []
 
-            for item in items:
-                item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
-                item.save()
-
-            return HttpResponse(status=status.HTTP_200_OK)
-        except:
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        for item in items:
+            new_item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
+            new_item.save()
+            item_info = {"name": item["name"], "cost": item["cost"], "item_id": new_item.pk}
+            result.append(item_info)
+        return JsonResponse({"items": result})
+    #except:
+        return JsonResponse({})
 
 
 

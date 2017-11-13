@@ -161,7 +161,7 @@ class PeopleList extends Component {
         let person = this.state.openPerson;
         this.calculateTotal(itemIndex, false);
         for (let i=0; i<items[itemIndex].payers.length; i++) {
-            if (items[itemIndex].payers[i]===this.state.openPerson) {
+            if (items[itemIndex].payers[i]===person) {
                 items[itemIndex].payers.splice(i,1);
                 break;
             }
@@ -253,7 +253,7 @@ class PeopleList extends Component {
         //TODO: remove person from contacts once they are added so user doesn't have to search through them
         let people_temp = this.state.people;
         let temp_ID = this.state.currID + 1;
-        let person_temp = {"friend": `${givenName} ${familyName}`, "id": index, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
+        let person_temp = {"friend": `${givenName} ${familyName}`, "id": temp_ID, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
         people_temp.push(person_temp);
         let results_temp = this.state.results;
         results_temp.splice(index,1);
@@ -275,6 +275,17 @@ class PeopleList extends Component {
     removePerson = (index) => {
         //TODO: add user to contacts once they are removed from list so user can search through them again
         let people_temp = this.state.people;
+        let items=this.state.items;
+        let id = people_temp[index].id;
+        for (let i=0; i<items.length; i++) {
+            for (let j=0; j<items[i].payers.length; j++) {
+                if (items[i].payers[j]===id) {
+                    this.calculateTotal(i,false);
+                    items[i].payers.splice(j,1);
+                    break;
+                }
+            }
+        }
         people_temp.splice(index, 1);
         this.setState({people: people_temp});
     };
