@@ -1,1 +1,1 @@
-export const hosturl = "http://35.2.96.248:8000/";
+export const hosturl = "http://billchop-dev.us-east-1.elasticbeanstalk.com/";

@@ -52,13 +52,13 @@ class TransactionHistory extends Component {
     render() {
         let getString = (item) => {
             if (item.item.is_owner) {
-                return `You are owed $${item.item.cost}`;
+                return `You are owed $${item.item.total_cost}`;
             }
             return `You owe ${item.item.owner} $${item.item.total_cost}`;
         };
         let getDate = (item) => {
-            curr_date = new Date(item.item.timestamp);
-            date_str = curr_date.toLocaleString('en-US');
+            let curr_date = new Date(item.item.timestamp);
+            let date_str = curr_date.toLocaleString('en-US');
             return date_str;
         };
         return (
@@ -148,7 +148,7 @@ class GroupMembers extends Component {
 
 
 
-export default class Home extends Component<{}> {
+export default class TransHistory extends Component<{}> {
     static navigationOptions = {
         title: 'Group History',
     };
