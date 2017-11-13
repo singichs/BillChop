@@ -120,23 +120,24 @@ class ItemList extends Component {
                 total_cost: this.state.finalCost
             })
         })
-            .then((res) => {
-                if(res.status === 200) {
-                    this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
-                        title: this.state.title,
-                        preTaxCost: this.state.preTaxCost,
-                        tax: this.state.tax,
-                        finalCost: this.state.finalCost,
-                        receipt_id: this.state.receipt_id,
-                        lastPage: "ReceiptItems",
-                    });
-                }
-
-                else{
-                    alert("Invalid receipt item actions");
-                }
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
             })
-            .done();
+            .then((responseJson) => {
+                let item_list = responseJson["items"];
+                this.props.navigation.navigate('ReceiptPeople', {items: item_list,
+                    title: this.state.title,
+                    preTaxCost: this.state.preTaxCost,
+                    tax: this.state.tax,
+                    finalCost: this.state.finalCost,
+                    receipt_id: this.state.receipt_id,
+                    lastPage: "ReceiptItems",
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     render() {

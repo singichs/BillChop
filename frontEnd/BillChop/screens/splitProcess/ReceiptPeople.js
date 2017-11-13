@@ -20,6 +20,7 @@ class PeopleList extends Component {
             people: [{"friend": "You", "id":0, "total": 0.00, "isCollapsed": false}],
             contacts: [],
             results: [],
+            items: [],
             page: 1,
             seed: 1,
             currID: 0,
@@ -223,7 +224,7 @@ class PeopleList extends Component {
                 }
             }
             else {
-                //result is group
+                results_temp.push(result);
             }
         }
         this.setState({results: results_temp});
@@ -259,6 +260,18 @@ class PeopleList extends Component {
         this.setState({people: people_temp, results: results_temp, currID: temp_ID});
     };
 
+    addGroup = (index, groupID) => {
+        //TODO: remove group from contacts once they are added so user doesn't have to search through them
+        let people_temp = this.state.people;
+        let temp_ID = this.state.currID + 1;
+
+        let person_temp = {"friend": `${givenName} ${familyName}`, "id": index, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
+        people_temp.push(person_temp);
+        let results_temp = this.state.results;
+        results_temp.splice(index,1);
+        this.setState({people: people_temp, results: results_temp, currID: temp_ID});
+    };
+
     removePerson = (index) => {
         //TODO: add user to contacts once they are removed from list so user can search through them again
         let people_temp = this.state.people;
@@ -272,6 +285,30 @@ class PeopleList extends Component {
                 return "Resend Notification";
             }
             return "Notify People of Amounts Owed";
+        };
+        let getResultStr = (item) => {
+            if(item.type === "contact") {
+                return `${item.givenName} ${item.familyName}`;
+            }
+            else {
+                return `${item.group_name}`;
+            }
+        };
+        let getResultTitle = (item) => {
+            if(item.type === "contact") {
+                return `${item.phoneNumber}`;
+            }
+            else {
+                return "";
+            }
+        };
+        let getAddFunction = (item, index) => {
+            if(item.type === "contact") {
+                return () =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)};
+            }
+            else {
+                return () =>{this.addGroup(index, item.group_id)}
+            }
         };
         return (
             <View style={styles.container}>
@@ -295,10 +332,10 @@ class PeopleList extends Component {
                             extraData={this.state}
                             renderItem={({item, index})  => (
                                 <ListItem
-                                    title={`${item.givenName} ${item.familyName}`}
-                                    rightTitle={`${item.phoneNumber}`}
+                                    title={getResultStr(item)}
+                                    rightTitle={getResultTitle(item)}
                                     hideChevron={true}
-                                    onPress={() =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)}}
+                                    onPress={getAddFunction(item, index)}
                                 />
                             )}
                             keyExtractor={(item, index) => index}
