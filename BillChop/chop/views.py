@@ -532,8 +532,9 @@ def send_notifications(request):
         receipt = Receipt.objects.get(pk=data["receipt_id"])
         owner = Profile.objects.get(user=receipt.owner)
         items = Item.objects.filter(receipt=receipt)
+        # add users to object
         for item in items:
-            profile = Profile.objects.get(user=item.user_owns)
+            profile = Profile.objects.filter(user=item.users)
             # properly get receipt owner's name - this doesn't work - sending works fine
             msg = "Hello " + profile.first_name + ", you owe " + owner.first_name + " " + owner.last_name + " $" + str(item.value)
             send_sms(profile.phone_number, msg)
@@ -693,6 +694,20 @@ def add_receipt_information(request):
         return JsonResponse({"items": result})
     #except:
         return JsonResponse({})
+
+@csrf_exempt 
+def get_items_for_receipt(request, receipt_id):
+    if request.method == "GET":
+        result = []
+        items = Item.objects.filter(receipt=receipt_id)
+        print (items)
+        for item in items:
+            to_add = {}
+            to_add["name"] = item.name
+            to_add["cost"] = item.value
+            to_add["item_id"] = item.pk
+            result.append(to_add)
+        return JsonResponse({"items": result})
 
 
 

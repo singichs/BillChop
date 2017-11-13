@@ -35,6 +35,8 @@ urlpatterns = [
 	url(r'^add_user_to_app', views.add_user_to_app, name='add_user_to_app'),
 	url(r'^get_mutual_transactions/(?P<user_id>\d+)/$', views.get_mutual_transactions, name='get_mutual_transactions'),
 	url(r'^add_receipt_information', views.add_receipt_information, name='add_receipt_information'),
+	url(r'^get_items_for_receipt/(?P<receipt_id>\d+)/$', views.get_items_for_receipt, name='get_items_for_receipt'),
+
 
 ]
 
