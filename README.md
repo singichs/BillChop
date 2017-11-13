@@ -41,7 +41,7 @@ Set up Postgres & Django locally on your machine.
 Note: To get a JSON version of the current models in the DB run this, change auth.user to whichever model you want:
 ```$python manage.py dumpdata auth.User --indent 4 > users.json```
 
-## Front End Set Up
+## Front End Setup
 The following are the instructions for how to setup your environment to run BillChop on your machine!
 
 Go to our github repository at www.github.com/PeterKaplan/BillChop and clone it to your Home Directory!
