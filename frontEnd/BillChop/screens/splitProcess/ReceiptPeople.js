@@ -78,6 +78,10 @@ class PeopleList extends Component {
         // TODO: request user's ID to add to people data // or get this at root and pass through
         // TODO: request ID's of all people in groups
         let items = this.props.parentProps.items;
+        let last_page = this.props.parentProps.lastPage;
+        if (last_page == "Home") {
+            //populate items make request to get items
+        }
         for (let i=0; i<items.length; i++) {
             items[i]["payers"]=[];
         }
@@ -159,16 +163,25 @@ class PeopleList extends Component {
             items: items
         });
     };
-    renderEntry = ({item, index}) => {
-        let icon = (<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.addItem(index)}}/>);
+    evaluateClick = (item, index) => {
         for (let i=0; i<item.payers.length; i++) {
             if (item.payers[i]===this.state.openPerson) {
-                icon = (<Icon name='check' color='#32cd32' size={20} containerStyle={styles.icon} onPress={() =>{this.removeItem(index)}} />);
+                this.removeItem(index);
+                return;
+            }
+        }
+        this.addItem(index);
+    }
+    renderEntry = ({item, index}) => {
+        let icon = null;
+        for (let i=0; i<item.payers.length; i++) {
+            if (item.payers[i]===this.state.openPerson) {
+                icon = (<Icon name='check' color='#32cd32' size={20} containerStyle={styles.icon}/>);
                 break;
             }
         }
         return (
-            <ListItem onPress={() =>{}}
+            <ListItem onPress={() =>{this.evaluateClick(item, index)}}
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}

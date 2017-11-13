@@ -7,6 +7,7 @@ import {
     TextInput,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
+import {hosturl} from "../../constants";
 import { NavigationActions } from 'react-navigation'
 import { List, ListItem, Icon} from 'react-native-elements';
 
@@ -106,7 +107,7 @@ class ItemList extends Component {
 
     continueToNextPage = () => {
 
-        fetch(hosturl+'chop/create_group/', {
+        fetch(hosturl+'chop/add_receipt_information/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
@@ -120,12 +121,15 @@ class ItemList extends Component {
             })
         })
             .then((res) => {
-                if(res.status === 201) {
+                if(res.status === 200) {
                     this.props.navigation.navigate('ReceiptPeople', {items: this.state.items,
                         title: this.state.title,
                         preTaxCost: this.state.preTaxCost,
                         tax: this.state.tax,
-                        finalCost: this.state.finalCost});
+                        finalCost: this.state.finalCost,
+                        receipt_id: this.state.receipt_id,
+                        lastPage: "ReceiptItems",
+                    });
                 }
 
                 else{
