@@ -10,6 +10,7 @@ import {
 import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
 import Collapsible from 'react-native-collapsible';
+import {hosturl} from "../../constants";
 
 class PeopleList extends Component {
     constructor (props) {
@@ -35,7 +36,8 @@ class PeopleList extends Component {
             this.getContacts();
             this.getGroups();
         }
-        this.makeRemoteRequest();
+        this.makeRequestForItems();
+        this.makeRequestForPeople();
     }
 
     getContacts = () => {
@@ -73,10 +75,7 @@ class PeopleList extends Component {
             });
     };
 
-    makeRemoteRequest = () => {
-        // here we need to request to get contacts... or store in phone? not sure how to do this.
-        // TODO: request user's ID to add to people data // or get this at root and pass through
-        // TODO: request ID's of all people in groups
+    makeRequestForItems = () => {
         let items = this.props.parentProps.items;
         let last_page = this.props.parentProps.lastPage;
         if (last_page == "Home") {
@@ -91,6 +90,13 @@ class PeopleList extends Component {
         });
 
     };
+
+    makeRequestForPeople = () => {
+        // here we need to request to get contacts... or store in phone? not sure how to do this.
+        // TODO: query database for people
+
+    };
+
     //function that calculates total costs after adding or removing an item. Called before item.payers is modified!
     calculateTotal = (itemIndex, isAdd)=> {
         let items=this.state.items;
@@ -107,7 +113,7 @@ class PeopleList extends Component {
             }
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
-                    people[j].total=(people[j].total*1)+(newTotal * 1);
+                    people[j].total=((people[j].total*1)+(newTotal * 1)).toFixed(2);
                 }
             }
         }
@@ -122,7 +128,7 @@ class PeopleList extends Component {
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
                     let new_people_total = (people[j].total * 1) - (newTotal * 1);
-                    people[j].total = new_people_total;
+                    people[j].total = new_people_total.toFixed(2);
                 }
             }
         }
@@ -246,7 +252,7 @@ class PeopleList extends Component {
         //TODO: remove person from contacts once they are added so user doesn't have to search through them
         let people_temp = this.state.people;
         let temp_ID = this.state.currID + 1;
-        let person_temp = {"friend": `${givenName} ${familyName}`, "id": index, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
+        let person_temp = {"friend": `${givenName} ${familyName}`, "id": temp_ID, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
         people_temp.push(person_temp);
         let results_temp = this.state.results;
         results_temp.splice(index,1);
