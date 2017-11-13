@@ -21,6 +21,8 @@ class PeopleList extends Component {
             contacts: [],
             results: [],
             items: [],
+            ids: [],
+            receipt_id: 0,
             page: 1,
             seed: 1,
             currID: 0,
@@ -38,7 +40,6 @@ class PeopleList extends Component {
             this.getGroups();
         }
         this.makeRequestForItems();
-        this.makeRequestForPeople();
     }
 
     getContacts = () => {
@@ -79,22 +80,28 @@ class PeopleList extends Component {
     makeRequestForItems = () => {
         let items = this.props.parentProps.items;
         let last_page = this.props.parentProps.lastPage;
+        let receipt_id = this.props.parentProps.receipt_id;
         if (last_page == "Home") {
-            //populate items make request to get items
+            fetch(`${hosturl} chop/get_items_for_receipt/${receipt_id}`)
+                .then((response) => {
+                    if (!response.ok) throw Error(response.statusText);
+                    return response.json();
+                })
+                .then((responseJson) => {
+                    items = responseJson["items"];
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
         for (let i=0; i<items.length; i++) {
             items[i]["payers"]=[];
         }
         this.setState({
             items: items,
-            openPerson: -1
+            openPerson: -1,
+            receipt_id: receipt_id,
         });
-
-    };
-
-    makeRequestForPeople = () => {
-        // here we need to request to get contacts... or store in phone? not sure how to do this.
-        // TODO: query database for people
 
     };
 
@@ -249,34 +256,68 @@ class PeopleList extends Component {
         }
     };
 
-    addPerson = (index, givenName, familyName, phoneNumber) => {
-        //TODO: remove person from contacts once they are added so user doesn't have to search through them
-        let people_temp = this.state.people;
-        let temp_ID = this.state.currID + 1;
-        let person_temp = {"friend": `${givenName} ${familyName}`, "id": temp_ID, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
-        people_temp.push(person_temp);
-        let results_temp = this.state.results;
-        results_temp.splice(index,1);
-        this.setState({people: people_temp, results: results_temp, currID: temp_ID});
+    addPerson = (givenName, familyName, phoneNumber) => {
+        fetch(hosturl+'chop/add_user_to_receipt/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                firstname: givenName,
+                lastname: familyName,
+                phone_number: phoneNumber
+            })
+        })
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                let personID = responseJson["user_id"];
+                if (this.state.ids.includes(personID) === false) {
+                    let people_temp = this.state.people;
+                    let temp_id_list = this.state.ids;
+                    temp_id_list = temp_id_list.push(personID);
+                    let person_temp = {"friend": `${givenName} ${familyName}`, "id": personID, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
+                    people_temp.push(person_temp);
+                    people_temp.push(person_temp);
+                    this.setState({people: people_temp, ids: temp_id_list});
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
-    addGroup = (index, groupID) => {
-        //TODO: remove group from contacts once they are added so user doesn't have to search through them
-        let people_temp = this.state.people;
-        let temp_ID = this.state.currID + 1;
-
-        let person_temp = {"friend": `${givenName} ${familyName}`, "id": index, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
-        people_temp.push(person_temp);
-        let results_temp = this.state.results;
-        results_temp.splice(index,1);
-        this.setState({people: people_temp, results: results_temp, currID: temp_ID});
+    addGroup = (groupID) => {
+        fetch(`${hosturl}chop/get_users_in_group/${groupID}`)
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                let people_temp = this.state.people;
+                let user_list = responseJson;
+                let temp_id_list = this.state.ids;
+                for (let i = 0; i < user_list.length; i++) {
+                    let user = user_list[i];
+                    if (this.state.ids.includes(user["user_id"]) === false) {
+                        temp_id_list = temp_id_list.push(user["user_id"]);
+                        let person_temp = {"friend": user["name"], "id": user["user_id"], "total": 0.00, "isCollapsed": false};
+                        people_temp.push(person_temp);
+                    }
+                }
+                this.setState({people: people_temp, ids: temp_id_list});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
-    removePerson = (index) => {
-        //TODO: add user to contacts once they are removed from list so user can search through them again
+    removePerson = (index, id) => {
         let people_temp = this.state.people;
         let items=this.state.items;
-        let id = people_temp[index].id;
         for (let i=0; i<items.length; i++) {
             for (let j=0; j<items[i].payers.length; j++) {
                 if (items[i].payers[j]===id) {
@@ -287,7 +328,9 @@ class PeopleList extends Component {
             }
         }
         people_temp.splice(index, 1);
-        this.setState({people: people_temp});
+        let id_list = this.state.ids;
+        id_list = id_list.filter(function(x){return x === id});
+        this.setState({people: people_temp, ids: id_list});
     };
 
     render() {
@@ -315,10 +358,10 @@ class PeopleList extends Component {
         };
         let getAddFunction = (item, index) => {
             if(item.type === "contact") {
-                return () =>{this.addPerson(index, item.givenName, item.familyName, item.phoneNumber)};
+                return () =>{this.addPerson(item.givenName, item.familyName, item.phoneNumber)};
             }
             else {
-                return () =>{this.addGroup(index, item.group_id)}
+                return () =>{this.addGroup(item.group_id)}
             }
         };
         return (
@@ -371,7 +414,7 @@ class PeopleList extends Component {
                                     title={<View><Text>{item.friend}</Text></View>}
                                     rightTitle={`$${item.total}`}
                                     hideChevron={true}
-                                    leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removePerson(index)}}/> }
+                                    leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removePerson(index, item.id)}}/> }
                                     />
                                     <Collapsible collapsed={item.id!==this.state.openPerson}>
                                         <FlatList
