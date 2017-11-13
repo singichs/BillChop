@@ -26,6 +26,7 @@ urlpatterns = [
 	url(r'^register', views.register, name='register'),
 	#url(r'^upload_receipt', views.upload_receipt, name='upload_receipt'),
 	url(r'^user_logout/$', views.user_logout, name='user_logout'),
+	url(r'^check_logged_in/$', views.check_logged_in, name='check_logged_in'),
 	url(r'^upload_receipt', views.upload_receipt, name='upload_receipt'),
 	url(r'^logout/$', auth_views.logout, name='logout'),
 	url(r'^user_login/$', views.user_login, name='user_login'),
