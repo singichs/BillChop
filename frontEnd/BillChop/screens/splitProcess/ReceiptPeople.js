@@ -197,6 +197,31 @@ class PeopleList extends Component {
     };
     charge = () => {
         // TODO: use apis to send twilio request
+        let people = [];
+        for (let i=0; i<this.state.people; i++) {
+            if (this.state.people[i].name!="You") {
+                people.push({phoneNumber: state.people[i].phoneNumber, amount:state.people[i].total});
+            }
+        }
+        fetch(hosturl+'chop/send_notifications/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                people: people,
+            })
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    alert("success");
+                }
+                else{
+                    alert("Could not send texts at this time");
+                }
+            })
+            .done();
         // for now just change text and button to reflect that people have been charged
         this.setState({charged: true});
     };
