@@ -605,6 +605,46 @@ def add_user_to_receipt(request):
     return HttpResponse("add user to receipt", status)
 
 @csrf_exempt
+def add_user_to_app(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        username = data['firstname']
+        password = data['lastname']
+        phone_number = data['phone_number']
+
+        try:
+            profile = Profile.objects.get(phone_number=phone_number)
+            user = User.objects.get(profile=profile)
+            # user_payments = {'payments':  data}
+            return JsonResponse({"user_id": user.pk}, safe=False)
+
+        except:
+            print ("no similar number found")
+            try:
+                # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
+                # CAN'T BE CREATED
+                new_username = data['firstname'] + "." + data['lastname']
+                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
+
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = phone_number
+                profile.first_name = username
+                profile.last_name = ""
+                new_user.save()
+                profile.save()
+                return JsonResponse({"user_id": new_user.pk}, safe=False)
+            except IntegrityError:
+                # user already exists
+                status = 'user already exists'
+                print (status)
+                return JsonResponse({}, safe=False)
+    
+    return JsonResponse({}, safe=False)
+
+
+@csrf_exempt
 def user_logout(request):
     if request.method == "POST":
         #context = RequestContext(request)

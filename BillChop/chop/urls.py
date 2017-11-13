@@ -32,6 +32,7 @@ urlpatterns = [
 	url(r'^user_login/$', views.user_login, name='user_login'),
 	url(r'^send_notifications/$', views.send_notifications, name='send_notifications'),
 	url(r'^add_user_to_receipt', views.add_user_to_receipt, name='add_user_to_receipt'),
+	url(r'^add_user_to_app', views.add_user_to_app, name='add_user_to_app'),
 	url(r'^get_mutual_transactions/(?P<user_id>\d+)/$', views.get_mutual_transactions, name='get_mutual_transactions'),
 	url(r'^add_receipt_information', views.add_receipt_information, name='add_receipt_information'),
 
