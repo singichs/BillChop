@@ -10,6 +10,7 @@ import {
 import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
 import Collapsible from 'react-native-collapsible';
+import {hosturl} from "../../constants";
 
 class PeopleList extends Component {
     constructor (props) {
@@ -107,7 +108,7 @@ class PeopleList extends Component {
             }
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
-                    people[j].total=(people[j].total*1)+(newTotal * 1);
+                    people[j].total=((people[j].total*1)+(newTotal * 1)).toFixed(2);
                 }
             }
         }
@@ -122,7 +123,7 @@ class PeopleList extends Component {
             for (let j=0; j<people.length; j++) {
                 if (people[j].id === this.state.openPerson) {
                     let new_people_total = (people[j].total * 1) - (newTotal * 1);
-                    people[j].total = new_people_total;
+                    people[j].total = new_people_total.toFixed(2);
                 }
             }
         }
