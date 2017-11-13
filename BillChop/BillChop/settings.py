@@ -25,10 +25,10 @@ SECRET_KEY = '1l@eb-8!p1yq#)^1wq^2r@tdv5aod4^$nh710vhc(9odhsv9gv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.ngrok.io', '127.0.0.1', 'localhost','django-env.tjaxdh4e6k.us-east-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['.ngrok.io', '127.0.0.1', 'localhost','billchop-dev.us-east-1.elasticbeanstalk.com']
 
 
-CSRF_COOKIE_DOMAIN = '127.0.0.1'
+#CSRF_COOKIE_DOMAIN = '127.0.0.1'
 
 # Application definition
 
@@ -145,3 +145,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
