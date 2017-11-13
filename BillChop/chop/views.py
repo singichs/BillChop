@@ -29,12 +29,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Count
 from .forms import ImageUploadForm
-from twilio.rest import Client
 from pytesseract import image_to_string
 from PIL import Image, ImageEnhance
 from django.db.models import Q
 import datetime
 from PIL import ImageFilter
+from twilio.rest import Client
+
 
 
 # TODO:
@@ -527,19 +528,25 @@ def send_notifications(request):
     if request.method == "POST":
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
+        receipt_id = data["receipt_id"]
+        users_and_cost = data["people"]
         # should do checking to make sure that person making request owns receipt
         # also have to make sure owner doesn't get notification of things being sent, maybe confirmation
-        receipt = Receipt.objects.get(pk=data["receipt_id"])
+        receipt = Receipt.objects.get(pk=receipt_id)
         owner = Profile.objects.get(user=receipt.owner)
         items = Item.objects.filter(receipt=receipt)
         # add users to object
-        for item in items:
-            profile = Profile.objects.filter(user=item.users)
+        for user in users_and_cost:
+            # print ("user")
+            # print (user)
+            # get all people for a given item
+            #profiles = Profile.objects.filter(user__in=item.user)
             # properly get receipt owner's name - this doesn't work - sending works fine
-            msg = "Hello " + profile.first_name + ", you owe " + owner.first_name + " " + owner.last_name + " $" + str(item.value)
-            send_sms(profile.phone_number, msg)
+            msg = "Hello, you owe " + owner.first_name + " " + owner.last_name + " $" + str(user["cost"])
+            # print (msg)
+            send_sms(user["phoneNumber"], msg)
         # return status code
-        return HttpResponse("notifications sent")
+        return HttpResponse(status=status.HTTP_201_CREATED)
 
 
 
