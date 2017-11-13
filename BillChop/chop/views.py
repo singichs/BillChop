@@ -536,13 +536,14 @@ def send_notifications(request):
         owner = Profile.objects.get(user=receipt.owner)
         items = Item.objects.filter(receipt=receipt)
         # add users to object
+        print(data)
         for user in users_and_cost:
-            # print ("user")
-            # print (user)
+            print ("user")
+            print (user)
             # get all people for a given item
             #profiles = Profile.objects.filter(user__in=item.user)
             # properly get receipt owner's name - this doesn't work - sending works fine
-            msg = "Hello, you owe " + owner.first_name + " " + owner.last_name + " $" + str(user["cost"])
+            msg = "Hello, you owe " + owner.first_name + " " + owner.last_name + " $" + str(user["amount"])
             # print (msg)
             send_sms(user["phoneNumber"], msg)
         # return status code

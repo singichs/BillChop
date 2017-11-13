@@ -198,11 +198,12 @@ class PeopleList extends Component {
     charge = () => {
         // TODO: use apis to send twilio request
         let people = [];
-        for (let i=0; i<this.state.people; i++) {
-            if (this.state.people[i].name!="You") {
-                people.push({phoneNumber: state.people[i].phoneNumber, amount:state.people[i].total});
+        for (let i=0; i<this.state.people.length; i++) {
+            if (this.state.people[i].friend!=="You") {
+                people.push({phoneNumber: this.state.people[i].phoneNumber, amount: this.state.people[i].total});
             }
         }
+        alert(this.props.parentProps.receipt_id);
         fetch(hosturl+'chop/send_notifications/', {
             method:'POST',
             headers: {
@@ -211,6 +212,7 @@ class PeopleList extends Component {
             },
             body: JSON.stringify ({
                 people: people,
+                receipt_id: this.props.parentProps.receipt_id
             })
         })
             .then((res) => {
