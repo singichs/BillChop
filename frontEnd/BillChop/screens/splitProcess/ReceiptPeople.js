@@ -36,7 +36,8 @@ class PeopleList extends Component {
             this.getContacts();
             this.getGroups();
         }
-        this.makeRemoteRequest();
+        this.makeRequestForItems();
+        this.makeRequestForPeople();
     }
 
     getContacts = () => {
@@ -74,10 +75,7 @@ class PeopleList extends Component {
             });
     };
 
-    makeRemoteRequest = () => {
-        // here we need to request to get contacts... or store in phone? not sure how to do this.
-        // TODO: request user's ID to add to people data // or get this at root and pass through
-        // TODO: request ID's of all people in groups
+    makeRequestForItems = () => {
         let items = this.props.parentProps.items;
         let last_page = this.props.parentProps.lastPage;
         if (last_page == "Home") {
@@ -92,6 +90,13 @@ class PeopleList extends Component {
         });
 
     };
+
+    makeRequestForPeople = () => {
+        // here we need to request to get contacts... or store in phone? not sure how to do this.
+        // TODO: query database for people
+
+    };
+
     //function that calculates total costs after adding or removing an item. Called before item.payers is modified!
     calculateTotal = (itemIndex, isAdd)=> {
         let items=this.state.items;
