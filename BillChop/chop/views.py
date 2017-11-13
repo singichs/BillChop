@@ -612,6 +612,14 @@ def user_logout(request):
         # Redirect back to index page.
         return HttpResponse(status=status.HTTP_200_OK)
 
+def check_logged_in(request):
+    if request.method == "GET":
+        if (request.user.pk):
+            return HttpResponse(status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
 @csrf_exempt
 def get_mutual_transactions(request, user_id):
     receipt_memberships = ReceiptMembership.objects.filter(Q(users=user_id) | Q(users=request.user.pk)).distinct('receipt')
