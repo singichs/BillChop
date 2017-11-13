@@ -25,7 +25,7 @@ SECRET_KEY = '1l@eb-8!p1yq#)^1wq^2r@tdv5aod4^$nh710vhc(9odhsv9gv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.ngrok.io', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['.ngrok.io', '127.0.0.1', 'localhost','django-env.tjaxdh4e6k.us-east-1.elasticbeanstalk.com']
 
 
 CSRF_COOKIE_DOMAIN = '127.0.0.1'
@@ -78,16 +78,28 @@ WSGI_APPLICATION = 'BillChop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chop_db',
-        'USER': 'peter',
-        'PASSWORD': 'peter',
-        'HOST': '',
-        'PORT': '',
+if 'RDS_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'chop_db',
+            'USER': 'peter',
+            'PASSWORD': 'peter',
+            'HOST': '',
+            'PORT': '',
+        }
+    }
 
 
 # Password validation
