@@ -31,15 +31,19 @@ class PeopleList extends Component {
             searchShown: false,
             refreshing: false,
         };
-        this.state.people.state = { friend: '', id: 0, payers: [{name: '', quantity: 0, cost: 0}], nonPayers: [{name: '', quantity: 0, cost: 0}] };
+
     }
 
     componentDidMount() {
         if (this.state.contacts.length === 0) {
             this.getContacts();
-            this.getGroups();
+            //this.getGroups();
         }
         this.makeRequestForItems();
+        let last_page = this.props.parentProps.lastPage;
+        if (last_page === "Home") {
+            this.makeRequestForPeople();
+        }
     }
 
     getContacts = () => {
@@ -77,32 +81,57 @@ class PeopleList extends Component {
             });
     };
 
+    makeRequestForPeople = () => {
+        let receipt_id = this.props.parentProps.receipt_id;
+        fetch(`${hosturl} chop/get_people_for_receipt/${receipt_id}`)
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+                let temp_people = responseJson["people"];
+                for (let i = 0; i < temp_people.length; ++i) {
+                    temp_people[i]["isCollapsed"] = false;
+                }
+                this.setState({people: temp_people});
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     makeRequestForItems = () => {
         let items = this.props.parentProps.items;
         let last_page = this.props.parentProps.lastPage;
         let receipt_id = this.props.parentProps.receipt_id;
-        if (last_page == "Home") {
+        if (last_page === "Home") {
             fetch(`${hosturl} chop/get_items_for_receipt/${receipt_id}`)
                 .then((response) => {
                     if (!response.ok) throw Error(response.statusText);
                     return response.json();
                 })
                 .then((responseJson) => {
-                    items = responseJson["items"];
+                    let prev_items = responseJson["items"];
+                    this.setState({
+                        items: prev_items,
+                        openPerson: -1,
+                        receipt_id: receipt_id,
+                    });
                 })
                 .catch((error) => {
                     console.log(error);
                 });
         }
-        for (let i=0; i<items.length; i++) {
-            items[i]["payers"]=[];
+        else {
+            for (let i = 0; i < items.length; i++) {
+                items[i]["payers"] = [];
+            }
+            this.setState({
+                items: items,
+                openPerson: -1,
+                receipt_id: receipt_id,
+            });
         }
-        this.setState({
-            items: items,
-            openPerson: -1,
-            receipt_id: receipt_id,
-        });
-
     };
 
     //function that calculates total costs after adding or removing an item. Called before item.payers is modified!
@@ -211,7 +240,8 @@ class PeopleList extends Component {
                 people.push({phoneNumber: this.state.people[i].phoneNumber, amount: this.state.people[i].total});
             }
         }
-        alert(this.props.parentProps.receipt_id);
+        let receipt_id = this.props.parentProps.receipt_id;
+        alert(receipt_id);
         fetch(hosturl+'chop/send_notifications/', {
             method:'POST',
             headers: {
@@ -232,7 +262,29 @@ class PeopleList extends Component {
                 }
             })
             .done();
+        fetch(hosturl+'chop/save_receipt/'+receipt_id, {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                items: this.state.items,
+                people: this.state.people
+            })
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    alert("success");
+                }
+                else{
+                    alert("Couldn't save receipt");
+                }
+            })
+            .done();
         // for now just change text and button to reflect that people have been charged
+        // save state of receipt
+
         this.setState({charged: true});
     };
 
