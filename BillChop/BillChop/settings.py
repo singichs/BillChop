@@ -25,7 +25,7 @@ SECRET_KEY = '1l@eb-8!p1yq#)^1wq^2r@tdv5aod4^$nh710vhc(9odhsv9gv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.ngrok.io', '127.0.0.1', 'localhost', '35.2.96.248', 'billchop-dev.us-east-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['.ngrok.io', '127.0.0.1', 'localhost', '35.3.52.61', 'billchop-dev.us-east-1.elasticbeanstalk.com']
 
 
 

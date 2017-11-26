@@ -74,7 +74,13 @@ class TransactionHistory extends Component {
                             rightTitle={item.title}
                             titleContainerStyle={{ backgroundColor: '#F5FCFF'}}
                             rightTitleContainerStyle={{backgroundColor: '#F5FCFF'}}
-                            onPress={() => this.props.screenProps.rootNavigation.navigate('TransactionView', {transactionid: item.receipt_id})}
+                            onPress={() => this.props.screenProps.rootNavigation.navigate('ReceiptPeople', {items: [],
+                                title: "",
+                                preTaxCost: 0.00,
+                                tax: 0.00,
+                                finalCost: 0.00,
+                                receipt_id: item.receipt_id,
+                                lastPage: "Home",})}
                         />
                     )}
                     keyExtractor={item => item.receipt_id}
