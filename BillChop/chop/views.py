@@ -625,18 +625,19 @@ def add_user_to_app(request):
         password = data['lastname']
         phone_number = data['phone_number']
 
-        try:
+
+        if Profile.objects.filter(phone_number=phone_number).exists():
             profile = Profile.objects.get(phone_number=phone_number)
             user = User.objects.get(profile=profile)
             # user_payments = {'payments':  data}
             return JsonResponse({"user_id": user.pk}, safe=False)
-
-        except:
-            print ("no similar number found")
+        else:
             try:
                 # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
                 # CAN'T BE CREATED
                 new_username = data['firstname'] + "." + data['lastname']
+                latest_id = User.objects.latest('pk').pk
+                new_username += str(latest_id + 1)
                 new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
 
                 profile = Profile.objects.get(user=new_user)
@@ -723,7 +724,6 @@ def get_items_for_receipt(request, receipt_id):
             to_add["payers"] = []
             users = item.user.all()
             for x in users:
-                print x.pk
                 to_add["payers"].append(x.pk)
 
             # data = serializers.serialize("xml", item.user.all())
