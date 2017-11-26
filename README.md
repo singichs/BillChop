@@ -11,6 +11,9 @@ https://facebook.github.io/react-native/docs/getting-started.html
 
 
 ## Backend Setup 
+
+Our backend is currently being hosted on AWS, but these are the steps we took to set our backend up locally.
+
 Set up Postgres & Django locally on your machine. 
 1. Download Postgres from here: http://postgresapp.com/ and start it up
 
