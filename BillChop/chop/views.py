@@ -772,12 +772,14 @@ def save_receipt(request, receipt_id):
         ReceiptMembership.objects.filter(receipt=receipt).delete()
         total_cost = 0
         for person in data["people"]:
-            print (person)
-            print (person["id"])
+            # print (person)
+            # print (person["id"])
             user = User.objects.get(pk=person["id"])
-            membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=person["total"])
-            membership.save()
-            total_cost += person["total"]
+            if not ReceiptMembership.objects.filter(users=user, receipt=receipt).exists():
+                # print ("new receipt membership")
+                membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=person["total"])
+                membership.save()
+                total_cost += person["total"]
         Item.objects.filter(receipt=receipt).delete()
         for item in data["items"]:
             new_item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
