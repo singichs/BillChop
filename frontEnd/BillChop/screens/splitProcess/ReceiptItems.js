@@ -21,7 +21,8 @@ class ItemList extends Component {
             receipt_id: 0,
             title: "",
             preTaxCost: 0,
-            tax: 0,
+            tax: 0.00,
+            tip: 0.00,
             finalCost: 0,
             page: 1,
             seed: 1,
@@ -93,6 +94,26 @@ class ItemList extends Component {
         items[index]["name"] = text;
         this.setState({items: items});
     };
+    changeTax = (text) => {
+        if (isNaN(text)) {
+            return;
+        }
+        let total = this.state.finalCost;
+        let oldTax = this.state.tax;
+        total=((total*1)-(oldTax*1)).toFixed(2);
+        total=((total*1)+(text*1)).toFixed(2);
+        this.setState({tax: text, finalCost: total});
+    };
+    changeTip = (text) => {
+        if (isNaN(text)) {
+            return;
+        }
+        let total = this.state.finalCost;
+        let oldTip = this.state.tip;
+        total=((total*1)-(oldTip*1)).toFixed(2);
+        total=((total*1)+(text*1)).toFixed(2);
+        this.setState({tip: text, finalCost: total});
+    };
     changeItemCost = (index, cost)=> {
         if (isNaN(cost)) {
             return;
@@ -117,6 +138,7 @@ class ItemList extends Component {
                 receipt_id: this.state.receipt_id,
                 items: this.state.items,
                 tax: this.state.tax,
+                tip: this.state.tip,
                 total_cost: this.state.finalCost
             })
         })
@@ -130,6 +152,7 @@ class ItemList extends Component {
                     title: this.state.title,
                     preTaxCost: this.state.preTaxCost,
                     tax: this.state.tax,
+                    tip: this.state.tip,
                     finalCost: this.state.finalCost,
                     receipt_id: this.state.receipt_id,
                     lastPage: "ReceiptItems",
@@ -165,16 +188,21 @@ class ItemList extends Component {
                         ListFooterComponent={this.renderFooter}
                     />
                 </List>
-                <View style={styles.summary}>
-                <Text style={styles.footer1}>
-                    {`Sub-Total: $${this.state.preTaxCost}`}
-                </Text>
-                <Text style={styles.footer1}>
-                    {`Tax: $${this.state.tax}`}
-                </Text>
-                <Text style={styles.footer2}>
-                    {`Total: $${this.state.finalCost}`}
-                </Text>
+                <View>
+                    <Text style={styles.footer1}>
+                        {`Sub-Total: $${this.state.preTaxCost}`}
+                    </Text>
+                    <View style={styles.container2}>
+                        <Text style={styles.taxFooter}>{"Tax: $"}</Text>
+                        <TextInput onChangeText={(text) => this.changeTax(text)} placeholder={`${this.state.tax}`} value={`${this.state.tax}`} style={styles.inputFooter}/>
+                    </View>
+                    <View style={styles.container2}>
+                        <Text style={styles.taxFooter}>{"Tip: $"}</Text>
+                        <TextInput onChangeText={(text) => this.changeTip(text)} placeholder={`${this.state.tip}`} value={`${this.state.tip}`} style={styles.inputFooter}/>
+                    </View>
+                    <Text style={styles.footer2}>
+                        {`Total: $${this.state.finalCost}`}
+                    </Text>
                 </View>
                 <Button title="Continue to Item Assignment" onPress={() => {this.continueToNextPage()}}/>
             </View>
@@ -202,6 +230,15 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         backgroundColor: '#F5FCFF'
     },
+    container2: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 6
+    },
     header: {
         fontWeight: 'bold',
         fontSize: 20,
@@ -219,6 +256,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         paddingBottom: 20
+    },
+    taxFooter: {
+        fontSize: 16
+    },
+    inputFooter: {
+        fontSize: 16,
+        height: 20,
+        width: 50
     },
     icon: {
         marginRight: 20

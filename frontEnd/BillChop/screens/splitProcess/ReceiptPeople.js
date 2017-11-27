@@ -37,7 +37,7 @@ class PeopleList extends Component {
     componentDidMount() {
         if (this.state.contacts.length === 0) {
             this.getContacts();
-            //this.getGroups();
+            this.getGroups();
         }
         this.makeRequestForItems();
         let last_page = this.props.parentProps.lastPage;
@@ -56,6 +56,8 @@ class PeopleList extends Component {
                 for (let i = 0; i < contacts.length; i++) {
                     temp_contacts[i]["type"] = "contact";
                 }
+                let prev_contacts = this.state.contacts;
+                temp_contacts = temp_contacts.concat(prev_contacts);
                 this.setState({contacts: temp_contacts});
             }
         });
@@ -69,7 +71,7 @@ class PeopleList extends Component {
             })
             .then((responseJson) => {
                 let temp_contacts = this.state.contacts;
-                let temp_groups = responseJson(["groups"]);
+                let temp_groups = responseJson["groups"];
                 for (let i = 0; i < temp_groups.length; i++) {
                     temp_groups[i]["type"] = "group";
                 }
@@ -78,6 +80,7 @@ class PeopleList extends Component {
             })
             .catch((error) => {
                 console.log(error);
+                alert(error);
             });
     };
 
@@ -237,12 +240,12 @@ class PeopleList extends Component {
         let people = [];
         for (let i=0; i<this.state.people.length; i++) {
             if (this.state.people[i].friend!=="You") {
-                people.push({phoneNumber: this.state.people[i].phoneNumber, amount: this.state.people[i].total});
+                people.push({phoneNumber: this.state.people[i].phoneNumber,
+                    amount: ((this.state.people[i].total*1)+(((this.state.people[i].total*1)/(this.props.parentProps.preTaxCost*1))*(this.props.parentProps.tip*1))).toFixed(2)});
             }
         }
         let receipt_id = this.props.parentProps.receipt_id;
-        alert(receipt_id);
-        fetch(hosturl+'chop/send_notifications/', {
+        fetch('http://ec2-54-164-72-146.compute-1.amazonaws.com:8000/chop/send_notifications/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
@@ -297,7 +300,8 @@ class PeopleList extends Component {
                 let temp_result = {
                     "givenName": result["givenName"],
                     "familyName": result["familyName"],
-                    "phoneNumber": ""
+                    "phoneNumber": "",
+                    "type": result["type"]
                 }
                 let p_nums = result["phoneNumbers"];
                 for (let j = 0; j < p_nums.length; j++) {
@@ -336,13 +340,14 @@ class PeopleList extends Component {
     };
 
     addPerson = (givenName, familyName, phoneNumber) => {
-        fetch(hosturl+'chop/add_user_to_receipt/', {
+        fetch(hosturl+'chop/add_user_to_app/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify ({
+                receipt_id: this.state.receipt_id,
                 firstname: givenName,
                 lastname: familyName,
                 phone_number: phoneNumber
@@ -354,18 +359,24 @@ class PeopleList extends Component {
             })
             .then((responseJson) => {
                 let personID = responseJson["user_id"];
-                if (this.state.ids.includes(personID) === false) {
+                let personExists = false;
+                for (let i=0; i<this.state.ids.length; i++) {
+                    if (this.state.ids[i] === personID) {
+                        personExists = true;
+                    }
+                }
+                if (personExists === false) {
                     let people_temp = this.state.people;
                     let temp_id_list = this.state.ids;
-                    temp_id_list = temp_id_list.push(personID);
+                    temp_id_list.push(personID);
                     let person_temp = {"friend": `${givenName} ${familyName}`, "id": personID, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
-                    people_temp.push(person_temp);
                     people_temp.push(person_temp);
                     this.setState({people: people_temp, ids: temp_id_list});
                 }
             })
             .catch((error) => {
                 console.log(error);
+                alert(error);
             });
     };
 
@@ -382,7 +393,7 @@ class PeopleList extends Component {
                 for (let i = 0; i < user_list.length; i++) {
                     let user = user_list[i];
                     if (this.state.ids.includes(user["user_id"]) === false) {
-                        temp_id_list = temp_id_list.push(user["user_id"]);
+                        temp_id_list.push(user["user_id"]);
                         let person_temp = {"friend": user["name"], "id": user["user_id"], "total": 0.00, "isCollapsed": false};
                         people_temp.push(person_temp);
                     }
@@ -392,6 +403,26 @@ class PeopleList extends Component {
             .catch((error) => {
                 console.log(error);
             });
+        fetch(hosturl+'chop/add_group_to_receipt', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                group_id: groupID,
+                receipt_id: this.state.receipt_id
+            })
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    alert("success");
+                }
+                else{
+                    alert("Couldn't add group to receipt.");
+                }
+            })
+            .done();
     };
 
     removePerson = (index, id) => {
@@ -408,7 +439,12 @@ class PeopleList extends Component {
         }
         people_temp.splice(index, 1);
         let id_list = this.state.ids;
-        id_list = id_list.filter(function(x){return x === id});
+        for (let k=0; k<id_list.length; k++) {
+            if (id_list[k] === id) {
+                id_list.splice(k, 1);
+                break;
+            }
+        }
         this.setState({people: people_temp, ids: id_list});
     };
 
@@ -432,7 +468,7 @@ class PeopleList extends Component {
                 return `${item.phoneNumber}`;
             }
             else {
-                return "";
+                return " ";
             }
         };
         let getAddFunction = (item, index) => {
@@ -515,6 +551,9 @@ class PeopleList extends Component {
                     </Text>
                     <Text style={styles.footer1}>
                         {`Tax: $${this.props.parentProps.tax}`}
+                    </Text>
+                    <Text style={styles.footer1}>
+                        {`Tip: $${this.props.parentProps.tip}`}
                     </Text>
                     <Text style={styles.footer2}>
                         {`Total: $${this.props.parentProps.finalCost}`}

@@ -35,7 +35,6 @@ from PIL import Image, ImageEnhance
 from django.db.models import Q
 import datetime
 from PIL import ImageFilter
-from twilio.rest import Client
 
 
 
@@ -523,50 +522,50 @@ def user_login(request):
         # Return an 'invalid login' error message.
 
 
-# add "twilio" to requirements
-# could also just put this into view.payup
-# things required: receipt items and the userid for each item - so just receipt id
-# so if the receipt id is sent, then we can get all items within that receipt
-# and get each user per item and send that value to them
-@csrf_exempt
-def send_notifications(request):
-    if request.method == "POST":
-        body_unicode = request.body.decode('utf-8')
-        data = json.loads(body_unicode)
-        receipt_id = data["receipt_id"]
-        users_and_cost = data["people"]
-        # should do checking to make sure that person making request owns receipt
-        # also have to make sure owner doesn't get notification of things being sent, maybe confirmation
-        receipt = Receipt.objects.get(pk=receipt_id)
-        owner = Profile.objects.get(user=receipt.owner)
-        items = Item.objects.filter(receipt=receipt)
-        # add users to object
-        print(data)
-        for user in users_and_cost:
-            print ("user")
-            print (user)
-            # get all people for a given item
-            #profiles = Profile.objects.filter(user__in=item.user)
-            # properly get receipt owner's name - this doesn't work - sending works fine
-            msg = "Hello, you owe " + owner.first_name + " " + owner.last_name + " $" + str(user["amount"])
-            # print (msg)
-            send_sms(user["phoneNumber"], msg)
-        # return status code
-        return HttpResponse(status=status.HTTP_201_CREATED)
+# # add "twilio" to requirements
+# # could also just put this into view.payup
+# # things required: receipt items and the userid for each item - so just receipt id
+# # so if the receipt id is sent, then we can get all items within that receipt
+# # and get each user per item and send that value to them
+# @csrf_exempt
+# def send_notifications(request):
+#     if request.method == "POST":
+#         body_unicode = request.body.decode('utf-8')
+#         data = json.loads(body_unicode)
+#         receipt_id = data["receipt_id"]
+#         users_and_cost = data["people"]
+#         # should do checking to make sure that person making request owns receipt
+#         # also have to make sure owner doesn't get notification of things being sent, maybe confirmation
+#         receipt = Receipt.objects.get(pk=receipt_id)
+#         owner = Profile.objects.get(user=receipt.owner)
+#         items = Item.objects.filter(receipt=receipt)
+#         # add users to object
+#         print(data)
+#         for user in users_and_cost:
+#             print ("user")
+#             print (user)
+#             # get all people for a given item
+#             #profiles = Profile.objects.filter(user__in=item.user)
+#             # properly get receipt owner's name - this doesn't work - sending works fine
+#             msg = "Hello, you owe " + owner.first_name + " " + owner.last_name + " $" + str(user["amount"])
+#             # print (msg)
+#             send_sms(user["phoneNumber"], msg)
+#         # return status code
+#         return HttpResponse(status=status.HTTP_201_CREATED)
 
 
 
-# make sure the to_number is in the format like from_ (below) = "+1xxxxxxxxxx"
-def send_sms(to_number, message):
-    account_sid = "ACfca8839f241f252e7015e95f8627f8b1"
-    auth_token = "be5450946081c391715ea4e18cb12597"
-    client = Client(account_sid, auth_token)
+# # make sure the to_number is in the format like from_ (below) = "+1xxxxxxxxxx"
+# def send_sms(to_number, message):
+#     account_sid = "ACfca8839f241f252e7015e95f8627f8b1"
+#     auth_token = "be5450946081c391715ea4e18cb12597"
+#     client = Client(account_sid, auth_token)
 
-    message = client.messages.create(
-        to=to_number,
-        from_="+12485957908 ",
-        body=message)
-    print(message)
+#     message = client.messages.create(
+#         to=to_number,
+#         from_="+12485957908 ",
+#         body=message)
+#     print(message)
 
 # receiptid (receipt membership), firstname, lastname
 # NEED TO FIX FOR UPDATING PROFILE - JOE HELP FIX - potantially fixed - need to push
