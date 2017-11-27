@@ -341,7 +341,9 @@ def get_receipt_home(user_pk, receipt_memberships):
 def get_user_payments(request):
     if request.method == "GET":
         #Get receipts that user is involved with
-        receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
+        # print ("user pk val: " + str(request.user.pk))
+        # print (ReceiptMembership.objects.filter(users=request.user.pk).exists())
+        receipt_memberships = ReceiptMembership.objects.filter(users=request.user)
         #Get Receipt information 
         data = get_receipt_home(request.user.pk, receipt_memberships)
         
@@ -742,7 +744,7 @@ def get_items_for_receipt(request, receipt_id):
 @csrf_exempt 
 def get_people_for_receipt(request, receipt_id):
     if request.method == "GET":
-
+        # change to set receipt object to actual receipt object
         receipt_memberships = ReceiptMembership.objects.filter(receipt=receipt_id)
         print (receipt_memberships)
         people = []
