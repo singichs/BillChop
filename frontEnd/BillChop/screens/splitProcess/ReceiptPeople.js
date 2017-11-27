@@ -245,7 +245,7 @@ class PeopleList extends Component {
         }
         let receipt_id = this.props.parentProps.receipt_id;
         alert(receipt_id);
-        fetch(hosturl+'chop/send_notifications/', {
+        fetch('http://ec2-54-164-72-146.compute-1.amazonaws.com:8000/chop/send_notifications/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
