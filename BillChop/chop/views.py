@@ -409,18 +409,21 @@ def add_group_to_receipt(request):
 
     group = Group.objects.get(pk=group_id)
     receipt = Receipt.objects.get(pk=receipt_id)
+    # receipt.group.add(group)
+    # receipt.save()
 
     users = UserMembership.objects.filter(group=group.pk)
     for user in users:
-        membership = ReceiptMembership.objects.create(users=user.user, receipt=receipt, outstanding_payment=0)
-        membership.save()
+        if not ReceiptMembership.objects.filter(users=user.user, receipt=receipt).exists():
+            membership = ReceiptMembership.objects.create(users=user.user, receipt=receipt, outstanding_payment=0)
+            membership.save()
 
     group.last_used = datetime.datetime.now()
     group.save()
 
     # add each user in group to receipt membership
 
-    receipt.group = group
+    receipt.group.add(group)
     receipt.save()
     return HttpResponse("Group has been added to receipt")
 
@@ -770,7 +773,7 @@ def save_receipt(request, receipt_id):
         data = json.loads(body_unicode)
         receipt = Receipt.objects.get(pk=receipt_id)
         ReceiptMembership.objects.filter(receipt=receipt).delete()
-        total_cost = 0
+        #total_cost = 0
         for person in data["people"]:
             # print (person)
             # print (person["id"])
@@ -779,14 +782,14 @@ def save_receipt(request, receipt_id):
                 # print ("new receipt membership")
                 membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=person["total"])
                 membership.save()
-                total_cost += person["total"]
+                #total_cost += person["total"]
         Item.objects.filter(receipt=receipt).delete()
         for item in data["items"]:
             new_item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
             for user_id in item["payers"]:
                 new_item.user.add(User.objects.get(pk=user_id))
             new_item.save()
-        receipt.total_cost = total_cost
+        #receipt.total_cost = total_cost
         receipt.title = data["title"]
         receipt.save()
 
