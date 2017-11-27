@@ -36,7 +36,7 @@ class PeopleList extends Component {
 
     componentDidMount() {
         if (this.state.contacts.length === 0) {
-            //this.getContacts();
+            this.getContacts();
             this.getGroups();
         }
         this.makeRequestForItems();
@@ -56,6 +56,8 @@ class PeopleList extends Component {
                 for (let i = 0; i < contacts.length; i++) {
                     temp_contacts[i]["type"] = "contact";
                 }
+                let prev_contacts = this.state.contacts;
+                temp_contacts = temp_contacts.concat(prev_contacts);
                 this.setState({contacts: temp_contacts});
             }
         });
