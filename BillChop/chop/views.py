@@ -785,6 +785,7 @@ def save_receipt(request, receipt_id):
                 new_item.user.add(User.objects.get(pk=user_id))
             new_item.save()
         receipt.total_cost = total_cost
+        receipt.title = data["title"]
         receipt.save()
 
 
