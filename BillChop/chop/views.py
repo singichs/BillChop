@@ -340,7 +340,9 @@ def get_receipt_home(user_pk, receipt_memberships):
 def get_user_payments(request):
     if request.method == "GET":
         #Get receipts that user is involved with
-        receipt_memberships = ReceiptMembership.objects.filter(users=request.user.pk)
+        # print ("user pk val: " + str(request.user.pk))
+        # print (ReceiptMembership.objects.filter(users=request.user.pk).exists())
+        receipt_memberships = ReceiptMembership.objects.filter(users=request.user)
         #Get Receipt information 
         data = get_receipt_home(request.user.pk, receipt_memberships)
         
@@ -407,20 +409,23 @@ def add_group_to_receipt(request):
 
     group = Group.objects.get(pk=group_id)
     receipt = Receipt.objects.get(pk=receipt_id)
+    # receipt.group.add(group)
+    # receipt.save()
 
     users = UserMembership.objects.filter(group=group.pk)
     for user in users:
-        membership = ReceiptMembership.objects.create(users=user.user, receipt=receipt, outstanding_payment=0)
-        membership.save()
+        if not ReceiptMembership.objects.filter(users=user.user, receipt=receipt).exists():
+            membership = ReceiptMembership.objects.create(users=user.user, receipt=receipt, outstanding_payment=0)
+            membership.save()
 
     group.last_used = datetime.datetime.now()
     group.save()
 
     # add each user in group to receipt membership
 
-    receipt.group = group
+    receipt.group.add(group)
     receipt.save()
-    return HttpResponse("Group has been added to receipt")
+    return JsonResponse(status=201)
 
 def RepresentsInt(s):
     try: 
@@ -667,9 +672,9 @@ def user_logout(request):
 def check_logged_in(request):
     if request.method == "GET":
         if (request.user.pk):
-            return HttpResponse(status=status.HTTP_200_OK)
+            return JsonResponse({"user_id": request.user.pk}, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @csrf_exempt
@@ -741,7 +746,7 @@ def get_items_for_receipt(request, receipt_id):
 @csrf_exempt 
 def get_people_for_receipt(request, receipt_id):
     if request.method == "GET":
-
+        # change to set receipt object to actual receipt object
         receipt_memberships = ReceiptMembership.objects.filter(receipt=receipt_id)
         print (receipt_memberships)
         people = []
@@ -768,23 +773,43 @@ def save_receipt(request, receipt_id):
         data = json.loads(body_unicode)
         receipt = Receipt.objects.get(pk=receipt_id)
         ReceiptMembership.objects.filter(receipt=receipt).delete()
-        total_cost = 0
+        #total_cost = 0
         for person in data["people"]:
+            # print (person)
+            # print (person["id"])
             user = User.objects.get(pk=person["id"])
-            membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=person["total"])
-            membership.save()
-            total_cost += person["total"]
+            if not ReceiptMembership.objects.filter(users=user, receipt=receipt).exists():
+                # print ("new receipt membership")
+                membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=person["total"])
+                membership.save()
+                #total_cost += person["total"]
         Item.objects.filter(receipt=receipt).delete()
         for item in data["items"]:
             new_item = Item.objects.create(name=item["name"], value=item["cost"], receipt=receipt)
             for user_id in item["payers"]:
                 new_item.user.add(User.objects.get(pk=user_id))
             new_item.save()
-        receipt.total_cost = total_cost
+        #receipt.total_cost = total_cost
+        receipt.title = data["title"]
         receipt.save()
 
 
-        return JsonResponse({"people": receipt_id}) 
+        return JsonResponse({"people": receipt_id}, status=201) 
+
+
+@csrf_exempt
+def delete_all(request):
+    if request.method == "POST":
+        ReceiptMembership.objects.all().delete()
+        UserMembership.objects.all().delete()
+        Item.objects.all().delete()
+        Receipt.objects.all().delete()
+        Profile.objects.all().delete()
+        Group.objects.all().delete()
+        User.objects.all().delete()
+
+        return JsonResponse({"operation": "delete"}, status=200) 
+
 
 
 
