@@ -240,11 +240,11 @@ class PeopleList extends Component {
         let people = [];
         for (let i=0; i<this.state.people.length; i++) {
             if (this.state.people[i].friend!=="You") {
-                people.push({phoneNumber: this.state.people[i].phoneNumber, amount: this.state.people[i].total});
+                people.push({phoneNumber: this.state.people[i].phoneNumber,
+                    amount: ((this.state.people[i].total*1)+(((this.state.people[i].total*1)/(this.props.parentProps.preTaxCost*1))*(this.props.parentProps.tip*1))).toFixed(2)});
             }
         }
         let receipt_id = this.props.parentProps.receipt_id;
-        alert(receipt_id);
         fetch('http://ec2-54-164-72-146.compute-1.amazonaws.com:8000/chop/send_notifications/', {
             method:'POST',
             headers: {
@@ -551,6 +551,9 @@ class PeopleList extends Component {
                     </Text>
                     <Text style={styles.footer1}>
                         {`Tax: $${this.props.parentProps.tax}`}
+                    </Text>
+                    <Text style={styles.footer1}>
+                        {`Tip: $${this.props.parentProps.tip}`}
                     </Text>
                     <Text style={styles.footer2}>
                         {`Total: $${this.props.parentProps.finalCost}`}
