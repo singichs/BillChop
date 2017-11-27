@@ -21,7 +21,7 @@ class ItemList extends Component {
             receipt_id: 0,
             title: "",
             preTaxCost: 0,
-            tax: 0,
+            tax: 0.00,
             finalCost: 0,
             page: 1,
             seed: 1,
@@ -92,6 +92,9 @@ class ItemList extends Component {
         let items = this.state.items;
         items[index]["name"] = text;
         this.setState({items: items});
+    };
+    changeTax = (text) => {
+        this.setState({tax: text});
     };
     changeItemCost = (index, cost)=> {
         if (isNaN(cost)) {
@@ -165,16 +168,17 @@ class ItemList extends Component {
                         ListFooterComponent={this.renderFooter}
                     />
                 </List>
-                <View style={styles.summary}>
-                <Text style={styles.footer1}>
-                    {`Sub-Total: $${this.state.preTaxCost}`}
-                </Text>
-                <Text style={styles.footer1}>
-                    {`Tax: $${this.state.tax}`}
-                </Text>
-                <Text style={styles.footer2}>
-                    {`Total: $${this.state.finalCost}`}
-                </Text>
+                <View>
+                    <Text style={styles.footer1}>
+                        {`Sub-Total: $${this.state.preTaxCost}`}
+                    </Text>
+                    <View style={styles.container2}>
+                        <Text style={styles.taxFooter}> {"Tax: $"} </Text>
+                        <TextInput style={styles.inputFooter} onChangeText={(text) => this.changeTax(text)} placeholder={`${this.state.tax}`} value={`${this.state.tax}`}/>
+                    </View>
+                    <Text style={styles.footer2}>
+                        {`Total: $${this.state.finalCost}`}
+                    </Text>
                 </View>
                 <Button title="Continue to Item Assignment" onPress={() => {this.continueToNextPage()}}/>
             </View>
@@ -202,6 +206,15 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         backgroundColor: '#F5FCFF'
     },
+    container2: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 6
+    },
     header: {
         fontWeight: 'bold',
         fontSize: 20,
@@ -219,6 +232,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         paddingBottom: 20
+    },
+    taxFooter: {
+        fontSize: 16
+    },
+    inputFooter: {
+        fontSize: 16,
     },
     icon: {
         marginRight: 20
