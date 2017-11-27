@@ -393,7 +393,7 @@ class PeopleList extends Component {
                 for (let i = 0; i < user_list.length; i++) {
                     let user = user_list[i];
                     if (this.state.ids.includes(user["user_id"]) === false) {
-                        temp_id_list = temp_id_list.push(user["user_id"]);
+                        temp_id_list.push(user["user_id"]);
                         let person_temp = {"friend": user["name"], "id": user["user_id"], "total": 0.00, "isCollapsed": false};
                         people_temp.push(person_temp);
                     }
