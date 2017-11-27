@@ -36,8 +36,8 @@ class PeopleList extends Component {
 
     componentDidMount() {
         if (this.state.contacts.length === 0) {
-            this.getContacts();
-            //this.getGroups();
+            //this.getContacts();
+            this.getGroups();
         }
         this.makeRequestForItems();
         let last_page = this.props.parentProps.lastPage;
@@ -69,7 +69,7 @@ class PeopleList extends Component {
             })
             .then((responseJson) => {
                 let temp_contacts = this.state.contacts;
-                let temp_groups = responseJson(["groups"]);
+                let temp_groups = responseJson["groups"];
                 for (let i = 0; i < temp_groups.length; i++) {
                     temp_groups[i]["type"] = "group";
                 }
@@ -78,6 +78,7 @@ class PeopleList extends Component {
             })
             .catch((error) => {
                 console.log(error);
+                alert(error);
             });
     };
 
@@ -297,7 +298,8 @@ class PeopleList extends Component {
                 let temp_result = {
                     "givenName": result["givenName"],
                     "familyName": result["familyName"],
-                    "phoneNumber": ""
+                    "phoneNumber": "",
+                    "type": result["type"]
                 }
                 let p_nums = result["phoneNumbers"];
                 for (let j = 0; j < p_nums.length; j++) {
@@ -336,13 +338,14 @@ class PeopleList extends Component {
     };
 
     addPerson = (givenName, familyName, phoneNumber) => {
-        fetch(hosturl+'chop/add_user_to_receipt/', {
+        fetch(hosturl+'chop/add_user_to_app/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify ({
+                receipt_id: this.state.receipt_id,
                 firstname: givenName,
                 lastname: familyName,
                 phone_number: phoneNumber
@@ -354,18 +357,24 @@ class PeopleList extends Component {
             })
             .then((responseJson) => {
                 let personID = responseJson["user_id"];
-                if (this.state.ids.includes(personID) === false) {
+                let personExists = false;
+                for (let i=0; i<this.state.ids.length; i++) {
+                    if (this.state.ids[i] === personID) {
+                        personExists = true;
+                    }
+                }
+                if (personExists === false) {
                     let people_temp = this.state.people;
                     let temp_id_list = this.state.ids;
-                    temp_id_list = temp_id_list.push(personID);
+                    temp_id_list.push(personID);
                     let person_temp = {"friend": `${givenName} ${familyName}`, "id": personID, "total": 0.00, "isCollapsed": false, "phoneNumber": phoneNumber};
-                    people_temp.push(person_temp);
                     people_temp.push(person_temp);
                     this.setState({people: people_temp, ids: temp_id_list});
                 }
             })
             .catch((error) => {
                 console.log(error);
+                alert(error);
             });
     };
 
@@ -408,7 +417,12 @@ class PeopleList extends Component {
         }
         people_temp.splice(index, 1);
         let id_list = this.state.ids;
-        id_list = id_list.filter(function(x){return x === id});
+        for (let k=0; k<id_list.length; k++) {
+            if (id_list[k] === id) {
+                id_list.splice(k, 1);
+                break;
+            }
+        }
         this.setState({people: people_temp, ids: id_list});
     };
 
@@ -432,7 +446,7 @@ class PeopleList extends Component {
                 return `${item.phoneNumber}`;
             }
             else {
-                return "";
+                return " ";
             }
         };
         let getAddFunction = (item, index) => {
