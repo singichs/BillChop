@@ -786,7 +786,7 @@ def save_receipt(request, receipt_id):
         receipt.save()
 
 
-        return JsonResponse({"people": receipt_id}) 
+        return JsonResponse({"people": receipt_id}, status=201) 
 
 
 
