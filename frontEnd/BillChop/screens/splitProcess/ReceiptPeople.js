@@ -403,6 +403,26 @@ class PeopleList extends Component {
             .catch((error) => {
                 console.log(error);
             });
+        fetch(hosturl+'chop/add_group_to_receipt', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                group_id: groupID,
+                receipt_id: this.state.receipt_id
+            })
+        })
+            .then((res) => {
+                if(res.status === 201) {
+                    alert("success");
+                }
+                else{
+                    alert("Couldn't add group to receipt.");
+                }
+            })
+            .done();
     };
 
     removePerson = (index, id) => {
