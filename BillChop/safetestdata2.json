@@ -1,0 +1,998 @@
+[
+{
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+        "name": "Can add log entry",
+        "content_type": 1,
+        "codename": "add_logentry"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+        "name": "Can change log entry",
+        "content_type": 1,
+        "codename": "change_logentry"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+        "name": "Can delete log entry",
+        "content_type": 1,
+        "codename": "delete_logentry"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+        "name": "Can add group",
+        "content_type": 2,
+        "codename": "add_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+        "name": "Can change group",
+        "content_type": 2,
+        "codename": "change_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+        "name": "Can delete group",
+        "content_type": 2,
+        "codename": "delete_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+        "name": "Can add permission",
+        "content_type": 3,
+        "codename": "add_permission"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+        "name": "Can change permission",
+        "content_type": 3,
+        "codename": "change_permission"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+        "name": "Can delete permission",
+        "content_type": 3,
+        "codename": "delete_permission"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+        "name": "Can add user",
+        "content_type": 4,
+        "codename": "add_user"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+        "name": "Can change user",
+        "content_type": 4,
+        "codename": "change_user"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+        "name": "Can delete user",
+        "content_type": 4,
+        "codename": "delete_user"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+        "name": "Can add content type",
+        "content_type": 5,
+        "codename": "add_contenttype"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+        "name": "Can change content type",
+        "content_type": 5,
+        "codename": "change_contenttype"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+        "name": "Can delete content type",
+        "content_type": 5,
+        "codename": "delete_contenttype"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+        "name": "Can add session",
+        "content_type": 6,
+        "codename": "add_session"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+        "name": "Can change session",
+        "content_type": 6,
+        "codename": "change_session"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+        "name": "Can delete session",
+        "content_type": 6,
+        "codename": "delete_session"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+        "name": "Can add item",
+        "content_type": 7,
+        "codename": "add_item"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+        "name": "Can change item",
+        "content_type": 7,
+        "codename": "change_item"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+        "name": "Can delete item",
+        "content_type": 7,
+        "codename": "delete_item"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+        "name": "Can add receipt",
+        "content_type": 8,
+        "codename": "add_receipt"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+        "name": "Can change receipt",
+        "content_type": 8,
+        "codename": "change_receipt"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+        "name": "Can delete receipt",
+        "content_type": 8,
+        "codename": "delete_receipt"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+        "name": "Can add receipt membership",
+        "content_type": 9,
+        "codename": "add_receiptmembership"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+        "name": "Can change receipt membership",
+        "content_type": 9,
+        "codename": "change_receiptmembership"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+        "name": "Can delete receipt membership",
+        "content_type": 9,
+        "codename": "delete_receiptmembership"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+        "name": "Can add group",
+        "content_type": 10,
+        "codename": "add_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+        "name": "Can change group",
+        "content_type": 10,
+        "codename": "change_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+        "name": "Can delete group",
+        "content_type": 10,
+        "codename": "delete_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+        "name": "Can add profile",
+        "content_type": 11,
+        "codename": "add_profile"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+        "name": "Can change profile",
+        "content_type": 11,
+        "codename": "change_profile"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+        "name": "Can delete profile",
+        "content_type": 11,
+        "codename": "delete_profile"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+        "name": "Can add user membership",
+        "content_type": 12,
+        "codename": "add_usermembership"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+        "name": "Can change user membership",
+        "content_type": 12,
+        "codename": "change_usermembership"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+        "name": "Can delete user membership",
+        "content_type": 12,
+        "codename": "delete_usermembership"
+    }
+},
+{
+    "model": "chop.group",
+    "pk": 1,
+    "fields": {
+        "name": "eecs441squaaa",
+        "date_created": "2017-10-30",
+        "last_used": "2017-10-30"
+    }
+},
+{
+    "model": "chop.group",
+    "pk": 2,
+    "fields": {
+        "name": "joe&sags_group",
+        "date_created": "2017-11-12",
+        "last_used": "2017-11-12"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$cOcRHk67N5aS$M5WzxGx/hDyB4dE8ETQ/u7/hRbnYCQUeTslihSsbMBY=",
+        "last_login": "2017-11-12T06:43:24.636Z",
+        "is_superuser": true,
+        "username": "peter",
+        "first_name": "",
+        "last_name": "",
+        "email": "p@p.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:14:10.292Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$zjM77Tqd8Upc$CswUqMQW3CIBCTIIIjbR/8AspJYGm3ASG/Bz3pFyNiM=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "Ramana",
+        "first_name": "",
+        "last_name": "",
+        "email": "ramanak@umich.edu",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-08T16:15:18.925Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$hBcYI0lmiUpG$wPu6amDmLX69gFHM73FWl8l5AwaVBhmEu1ZLfcSigVM=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "test_owner",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-12T06:49:48.781Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$34AaT9WU7KGu$tMIlz/Nkf7YPtN3+58LNNNzQZzF2Gr+YSEvQAq80tbU=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "Sagar",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-12T06:57:00.453Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$gBo3nTv9Vc0Q$FkWdWswYQKWgyqQk1wds/DEUaMKA/tsjk7mXdoK7RRQ=",
+        "last_login": "2017-11-27T17:46:13.656Z",
+        "is_superuser": false,
+        "username": "joekunnath",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-12T06:58:04.538Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 6,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$tOZlj5p0LABH$r0S8SJLxhUSdjvQMvWfwpMNLFkH5mZpkW/e0ZnhM2Lo=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "jkhgkjhg.ofalltrades",
+        "first_name": "",
+        "last_name": "",
+        "email": "jkhgkjhg.ofalltrades",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-26T23:43:41.434Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 8,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$Ml8PdbRMT4Hu$fs3wdg6CsalZ66QBXWkg9o/UKopTMtcZIgAgrYzFLBA=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "jkhgkjhg.ofalltrades7",
+        "first_name": "",
+        "last_name": "",
+        "email": "jkhgkjhg.ofalltrades7",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-26T23:48:08.669Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 9,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$EZqUknlPbRER$lnJZRyJbkDA3pFlqXa0V1iE+HawbJgUX3TmAeazLnZ0=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "jkhgkjhg.ofalltrades9",
+        "first_name": "",
+        "last_name": "",
+        "email": "jkhgkjhg.ofalltrades9",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-26T23:48:17.605Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 10,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$8YGDp7LWrqp7$IvL7te+t1Yy6t+r7e5pOtipFBx/jFQYjjxKZSZ0wsb0=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "jadsf.oboi10",
+        "first_name": "",
+        "last_name": "",
+        "email": "jadsf.oboi10",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-26T23:49:08.411Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 11,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$H8scCeVqrXDl$RlVxjC9hq1u54h99wNPVAqS7t+NgZuMdSgl4fWc0uv4=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "sf.oboi11",
+        "first_name": "",
+        "last_name": "",
+        "email": "sf.oboi11",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-26T23:50:40.433Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 12,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$CRNXFP4JJkGg$K4VO5G9CTDcz60QH1dlzGri6Z8Cr8r2OtjWQ0p4llcE=",
+        "last_login": "2017-11-27T17:21:42.418Z",
+        "is_superuser": false,
+        "username": "break",
+        "first_name": "f",
+        "last_name": "meUp",
+        "email": "break",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-11-27T17:21:22.309Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 1,
+    "fields": {
+        "user": 1,
+        "first_name": "peter",
+        "last_name": "peterlast",
+        "venmo": "petervenmo",
+        "phone_number": "+1"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "first_name": "ramana",
+        "last_name": "keerthi",
+        "venmo": "ramanavenmo",
+        "phone_number": "+1"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 3,
+    "fields": {
+        "user": 3,
+        "first_name": "test",
+        "last_name": "owner",
+        "venmo": "testownervenmo",
+        "phone_number": "+1"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 4,
+    "fields": {
+        "user": 4,
+        "first_name": "Sagar",
+        "last_name": "Singichetti",
+        "venmo": "singichs",
+        "phone_number": "+15174200697"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 5,
+    "fields": {
+        "user": 5,
+        "first_name": "Joe",
+        "last_name": "Kunnath",
+        "venmo": "joevenmo",
+        "phone_number": "+17349683081"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 6,
+    "fields": {
+        "user": 6,
+        "first_name": "jkhgkjhg",
+        "last_name": "",
+        "venmo": "eecs",
+        "phone_number": "+173234234"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 7,
+    "fields": {
+        "user": 8,
+        "first_name": "jkhgkjhg",
+        "last_name": "",
+        "venmo": "eecs",
+        "phone_number": "+1734"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 8,
+    "fields": {
+        "user": 9,
+        "first_name": "jkhgkjhg",
+        "last_name": "",
+        "venmo": "eecs",
+        "phone_number": "+173khjkjhlk4"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 9,
+    "fields": {
+        "user": 10,
+        "first_name": "jadsf",
+        "last_name": "",
+        "venmo": "eecs",
+        "phone_number": "+1736664"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 10,
+    "fields": {
+        "user": 11,
+        "first_name": "sf",
+        "last_name": "",
+        "venmo": "eecs",
+        "phone_number": "+76678678687"
+    }
+},
+{
+    "model": "chop.profile",
+    "pk": 11,
+    "fields": {
+        "user": 12,
+        "first_name": "moo",
+        "last_name": "asd",
+        "venmo": "eecs",
+        "phone_number": "17349995555"
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 1,
+    "fields": {
+        "photo_bucket": "sample-s3-bucket",
+        "image": "",
+        "timestamp": "2017-10-30",
+        "total_cost": "40.00",
+        "tip": "0.00",
+        "tax": "5.00",
+        "title": "alcohol",
+        "is_complete": false,
+        "group": 1,
+        "owner": 1
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 2,
+    "fields": {
+        "photo_bucket": "2",
+        "image": "",
+        "timestamp": "2017-11-12",
+        "total_cost": "20.00",
+        "tip": "0.00",
+        "tax": "0.00",
+        "title": "Meijer",
+        "is_complete": false,
+        "group": 1,
+        "owner": 5
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 3,
+    "fields": {
+        "photo_bucket": "3",
+        "image": "",
+        "timestamp": "2017-11-12",
+        "total_cost": "13.00",
+        "tip": "0.00",
+        "tax": "0.00",
+        "title": "The Store",
+        "is_complete": false,
+        "group": 1,
+        "owner": 4
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 4,
+    "fields": {
+        "photo_bucket": "4",
+        "image": "",
+        "timestamp": "2017-11-12",
+        "total_cost": "12.00",
+        "tip": "0.00",
+        "tax": "3.00",
+        "title": "Joe&sag_shop",
+        "is_complete": false,
+        "group": 2,
+        "owner": 5
+    }
+},
+{
+    "model": "chop.receipt",
+    "pk": 5,
+    "fields": {
+        "photo_bucket": "d",
+        "image": "",
+        "timestamp": "2017-11-26",
+        "total_cost": "62.00",
+        "tip": "2.00",
+        "tax": "2.00",
+        "title": "Fake Receipt",
+        "is_complete": false,
+        "group": 1,
+        "owner": 5
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 1,
+    "fields": {
+        "name": "ciroc",
+        "value": "35.00",
+        "receipt": 1,
+        "user": [
+            2
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 2,
+    "fields": {
+        "name": "Lean Cuisine",
+        "value": "5.00",
+        "receipt": 2,
+        "user": [
+            4
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 3,
+    "fields": {
+        "name": "Purple Drank",
+        "value": "6.00",
+        "receipt": 2,
+        "user": [
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 4,
+    "fields": {
+        "name": "Atlantic Salmon",
+        "value": "7.00",
+        "receipt": 2,
+        "user": [
+            4,
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 5,
+    "fields": {
+        "name": "KitKat",
+        "value": "2.00",
+        "receipt": 2,
+        "user": [
+            4
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 6,
+    "fields": {
+        "name": "Crunk",
+        "value": "4.00",
+        "receipt": 3,
+        "user": [
+            4
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 7,
+    "fields": {
+        "name": "fewd",
+        "value": "4.00",
+        "receipt": 3,
+        "user": [
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 8,
+    "fields": {
+        "name": "fries",
+        "value": "5.00",
+        "receipt": 3,
+        "user": [
+            4,
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 29,
+    "fields": {
+        "name": "dog food",
+        "value": "1.00",
+        "receipt": 5,
+        "user": [
+            3,
+            4
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 30,
+    "fields": {
+        "name": "secret sauce",
+        "value": "3.00",
+        "receipt": 5,
+        "user": [
+            5
+        ]
+    }
+},
+{
+    "model": "chop.item",
+    "pk": 31,
+    "fields": {
+        "name": "gravy",
+        "value": "6.00",
+        "receipt": 5,
+        "user": [
+            4
+        ]
+    }
+},
+{
+    "model": "chop.usermembership",
+    "pk": 1,
+    "fields": {
+        "user": 3,
+        "group": 1,
+        "date_joined": "2017-10-30",
+        "role": "nerd"
+    }
+},
+{
+    "model": "chop.usermembership",
+    "pk": 2,
+    "fields": {
+        "user": 5,
+        "group": 2,
+        "date_joined": "2017-11-12",
+        "role": "roleboi"
+    }
+},
+{
+    "model": "chop.usermembership",
+    "pk": 3,
+    "fields": {
+        "user": 5,
+        "group": 1,
+        "date_joined": "2017-11-27",
+        "role": "asdf"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 1,
+    "fields": {
+        "users": 2,
+        "receipt": 1,
+        "notified": false,
+        "outstanding_payment": "35.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 2,
+    "fields": {
+        "users": 4,
+        "receipt": 2,
+        "notified": false,
+        "outstanding_payment": "10.50"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 3,
+    "fields": {
+        "users": 5,
+        "receipt": 2,
+        "notified": false,
+        "outstanding_payment": "9.50"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 4,
+    "fields": {
+        "users": 4,
+        "receipt": 3,
+        "notified": false,
+        "outstanding_payment": "4.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 5,
+    "fields": {
+        "users": 5,
+        "receipt": 3,
+        "notified": false,
+        "outstanding_payment": "4.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 6,
+    "fields": {
+        "users": 2,
+        "receipt": 3,
+        "notified": false,
+        "outstanding_payment": "5.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 36,
+    "fields": {
+        "users": 3,
+        "receipt": 5,
+        "notified": false,
+        "outstanding_payment": "6.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 37,
+    "fields": {
+        "users": 4,
+        "receipt": 5,
+        "notified": false,
+        "outstanding_payment": "44.00"
+    }
+},
+{
+    "model": "chop.receiptmembership",
+    "pk": 38,
+    "fields": {
+        "users": 5,
+        "receipt": 5,
+        "notified": false,
+        "outstanding_payment": "12.00"
+    }
+}
+]

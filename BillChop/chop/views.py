@@ -669,9 +669,9 @@ def user_logout(request):
 def check_logged_in(request):
     if request.method == "GET":
         if (request.user.pk):
-            return HttpResponse(status=status.HTTP_200_OK)
+            return JsonResponse({"user_id": request.user.pk}, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            return JsonResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @csrf_exempt
@@ -789,6 +789,21 @@ def save_receipt(request, receipt_id):
 
 
         return JsonResponse({"people": receipt_id}, status=201) 
+
+
+@csrf_exempt
+def delete_all(request):
+    if request.method == "POST":
+        ReceiptMembership.objects.all().delete()
+        UserMembership.objects.all().delete()
+        Item.objects.all().delete()
+        Receipt.objects.all().delete()
+        Profile.objects.all().delete()
+        Group.objects.all().delete()
+        User.objects.all().delete()
+
+        return JsonResponse({"operation": "delete"}, status=200) 
+
 
 
 
