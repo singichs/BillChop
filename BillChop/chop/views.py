@@ -422,7 +422,7 @@ def add_group_to_receipt(request):
 
     receipt.group = group
     receipt.save()
-    return HttpResponse("Group has been added to receipt")
+    return JsonResponse(status=201)
 
 def RepresentsInt(s):
     try: 
