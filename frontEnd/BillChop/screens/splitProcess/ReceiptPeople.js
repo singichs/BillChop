@@ -66,7 +66,10 @@ class PeopleList extends Component {
                    if (this.state.people[i]["friend"] === "You") {
                        let temp_people =  this.state.people;
                        temp_people[i]["id"] = (user_id * 1);
-                       this.setState({people: temp_people});
+                       let temp_ids = this.state.ids;
+                       let id_int = user_id * 1;
+                       temp_ids.push(id_int);
+                       this.setState({people: temp_people, ids: temp_ids});
                            break;
                    }
                    if (this.state.people[i]["id"] = user_id) {
@@ -130,10 +133,12 @@ class PeopleList extends Component {
             })
             .then((responseJson) => {
                 let temp_people = responseJson["people"];
+                let temp_ids = [];
                 for (let i = 0; i < temp_people.length; ++i) {
                     temp_people[i]["isCollapsed"] = false;
+                    temp_ids.push(temp_people[i]["id"]);
                 }
-                this.setState({people: temp_people});
+                this.setState({people: temp_people, ids: temp_ids});
                 this.getUserId();
             })
             .catch((error) => {
@@ -427,7 +432,7 @@ class PeopleList extends Component {
                     let user = user_list[i];
                     if (this.state.ids.includes(user["user_id"]) === false) {
                         temp_id_list.push(user["user_id"]);
-                        let person_temp = {"friend": user["name"], "id": user["user_id"], "total": 0.00, "isCollapsed": false};
+                        let person_temp = {"friend": user["name"], "id": user["user_id"], "phoneNumber": user["phoneNumber"], "total": 0.00, "isCollapsed": false};
                         people_temp.push(person_temp);
                     }
                 }

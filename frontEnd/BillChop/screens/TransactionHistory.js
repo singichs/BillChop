@@ -45,7 +45,7 @@ class TransactionHistory extends Component {
                 this.setState({data: responseJson["receipts"]});
             })
             .catch((error) => {
-                console.log(error);
+                alert(error);
             });
 };
 
