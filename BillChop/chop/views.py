@@ -290,7 +290,7 @@ def get_group_receipts(request, group_id):
 
     data = {'receipts': receipt_data}
     
-    return JsonResponse(data)
+    return JsonResponse(data, status=201)
 
 
 def get_receipt_home(user_pk, receipt_memberships):
