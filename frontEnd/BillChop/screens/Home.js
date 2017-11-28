@@ -42,6 +42,7 @@ class TransactionList extends Component {
                 return response.json();
             })
             .then((responseJson) => {
+                console.log(responseJson["payments"]);
                 this.setState({data: responseJson["payments"]});
             })
             .catch((error) => {

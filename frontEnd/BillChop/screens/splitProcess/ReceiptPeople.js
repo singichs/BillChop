@@ -22,9 +22,11 @@ class PeopleList extends Component {
             results: [],
             items: [],
             ids: [],
+            my_id: 0,
             receipt_id: 0,
             page: 1,
             seed: 1,
+            tip: 0,
             currID: 0,
             charged: false,
             error: null,
@@ -40,11 +42,46 @@ class PeopleList extends Component {
             this.getGroups();
         }
         this.makeRequestForItems();
+        if (!this.props.parentProps.tip) {
+            this.setState({tip: 0.00});
+        }
         let last_page = this.props.parentProps.lastPage;
         if (last_page === "Home") {
             this.makeRequestForPeople();
         }
+        else {
+            this.getUserId();
+        }
     }
+
+    getUserId = () => {
+        fetch(hosturl+'chop/check_logged_in/')
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((responseJson) => {
+               let user_id = responseJson["user_id"];
+               for (let i = 0; i < this.state.people.length; ++i) {
+                   if (this.state.people[i]["friend"] === "You") {
+                       let temp_people =  this.state.people;
+                       temp_people[i]["id"] = (user_id * 1);
+                       this.setState({people: temp_people});
+                           break;
+                   }
+                   if (this.state.people[i]["id"] = user_id) {
+                       let temp_people =  this.state.people;
+                       temp_people[i]["friend"] = "You";
+                       this.setState({people: temp_people});
+                       break;
+                   }
+               }
+            })
+            .catch((error) => {
+                console.log(error);
+                alert(error);
+            });
+    };
 
     getContacts = () => {
         var Contacts = require('react-native-contacts');
@@ -86,7 +123,7 @@ class PeopleList extends Component {
 
     makeRequestForPeople = () => {
         let receipt_id = this.props.parentProps.receipt_id;
-        fetch(`${hosturl} chop/get_people_for_receipt/${receipt_id}`)
+        fetch(`${hosturl}chop/get_people_for_receipt/${receipt_id}`)
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
@@ -97,6 +134,7 @@ class PeopleList extends Component {
                     temp_people[i]["isCollapsed"] = false;
                 }
                 this.setState({people: temp_people});
+                this.getUserId();
             })
             .catch((error) => {
                 console.log(error);
@@ -108,7 +146,7 @@ class PeopleList extends Component {
         let last_page = this.props.parentProps.lastPage;
         let receipt_id = this.props.parentProps.receipt_id;
         if (last_page === "Home") {
-            fetch(`${hosturl} chop/get_items_for_receipt/${receipt_id}`)
+            fetch(`${hosturl}chop/get_items_for_receipt/${receipt_id}`)
                 .then((response) => {
                     if (!response.ok) throw Error(response.statusText);
                     return response.json();
@@ -257,15 +295,12 @@ class PeopleList extends Component {
             })
         })
             .then((res) => {
-                if(res.status === 201) {
-                    alert("success");
-                }
-                else{
+                if(res.status !== 201) {
                     alert("Could not send texts at this time");
                 }
             })
             .done();
-        fetch(hosturl+'chop/save_receipt/'+receipt_id, {
+        fetch(hosturl+'chop/save_receipt/'+receipt_id+'/', {
             method:'POST',
             headers: {
                 'Accept': 'application/json',
@@ -273,14 +308,12 @@ class PeopleList extends Component {
             },
             body: JSON.stringify ({
                 items: this.state.items,
-                people: this.state.people
+                people: this.state.people,
+                title: "Costco"
             })
         })
             .then((res) => {
-                if(res.status === 201) {
-                    alert("success");
-                }
-                else{
+                if(res.status !== 201) {
                     alert("Couldn't save receipt");
                 }
             })
@@ -553,7 +586,7 @@ class PeopleList extends Component {
                         {`Tax: $${this.props.parentProps.tax}`}
                     </Text>
                     <Text style={styles.footer1}>
-                        {`Tip: $${this.props.parentProps.tip}`}
+                        {`Tip: $${this.state.tip}`}
                     </Text>
                     <Text style={styles.footer2}>
                         {`Total: $${this.props.parentProps.finalCost}`}

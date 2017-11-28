@@ -752,7 +752,7 @@ def get_people_for_receipt(request, receipt_id):
             to_add = {}
             print (person.users.pk)
             to_add["id"] = person.users.pk
-            profile = Profile.objects.get(pk=person.users.pk)
+            profile = Profile.objects.get(user=person.users)
             to_add["friend"] = profile.full_name()
             print (profile.venmo)
             print (person.outstanding_payment)
