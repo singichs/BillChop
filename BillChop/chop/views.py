@@ -110,44 +110,35 @@ def create_group(request):
     group_maker = request.user.pk 
 
     if len(group_name) > 30:
-        return JsonResponse("Group name provided was too long", status=400)
+        return JsonResponse({'message':"Group name provided was too long"}, status=400)
     if Group.objects.filter(name=group_name).exists():
-        return JsonResponse("Group name already exists", status=400)
+        return JsonResponse({'message':"Group name already exists"}, status=400)
 
     new_group = Group.objects.create(name=group_name)
-
     maker_user = User.objects.get(profile=group_maker)
     membership = UserMembership.objects.create(user=maker_user, group=new_group)
-    membership.save()
 
     for user in user_info:
-        try:
+        if Profile.objects.filter(phone_number=user["phoneNumber"]).exists():
             profile = Profile.objects.get(phone_number=user["phoneNumber"])
-            db_user = User.objects.get(profile=profile.pk)
+            db_user = User.objects.get(profile=profile)
             membership = UserMembership.objects.create(user=db_user, group=new_group)
             membership.save()
-            #return JsonResponse({'user_id': user.pk})
-        except:
-            try:
-                    # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
-                    # CAN'T BE CREATED
-                new_username = user["givenName"] + "." + user["familyName"]
-                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
-                new_user.save()
-                profile = Profile.objects.get(user=new_user)
-                profile.venmo = "eecs"
-                profile.phone_number = user["phoneNumber"]
-                profile.first_name = user["givenName"]
-                profile.last_name = user["familyName"]
-                membership = UserMembership.objects.create(user=new_user, group=new_group)
-                new_user.save()
-                membership.save()
-                profile.save()
-            except IntegrityError:
-                # user already exists
-                message = 'user already exists'
-                return HttpResponseBadRequest
-    return HttpResponse(status=status.HTTP_201_CREATED)
+        else:
+            new_username = user["givenName"] + "." + user["familyName"]
+            # Making the username unique
+            latest_id = User.objects.latest('pk').pk
+            new_username += str(latest_id + 1)
+            new_user = User.objects.create_user(username=new_username, email="", password="password")
+            new_user.profile.venmo = ""
+            new_user.profile.phone_number = user["phoneNumber"]
+            new_user.profile.first_name = user["givenName"]
+            new_user.profile.last_name = user["familyName"]
+            new_user.save()
+            membership = UserMembership.objects.create(user=new_user, group=new_group)
+            membership.save()
+
+    return JsonResponse({'message':'Success'}, status=201)
 
 @login_required
 def get_user_groups(request):
@@ -173,7 +164,6 @@ def get_user_groups(request):
 # localhost:8000/chop/get_users_in_group/groupName/
 @login_required
 def get_users_in_group(request, group_id):
-
     if not Group.objects.filter(pk=group_id).exists():
         response = HttpResponse("Group id doesn't exist")
         response.status_code = 400
