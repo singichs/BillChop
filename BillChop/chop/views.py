@@ -48,7 +48,6 @@ def index(request):
 # note trailing slash, we need to include for POST requests while APPEND_SLASH is true      
 @login_required
 def receipt(request, user_id):
-
     if request.method == "GET":
         receipts = Receipt.objects.all()
         serializer = ReceiptSerializer(receipts, many=True)
@@ -114,8 +113,8 @@ def create_group(request):
     if Group.objects.filter(name=group_name).exists():
         return JsonResponse({'message':"Group name already exists"}, status=400)
 
+    maker_user = User.objects.get(pk=group_maker)
     new_group = Group.objects.create(name=group_name)
-    maker_user = User.objects.get(profile=group_maker)
     membership = UserMembership.objects.create(user=maker_user, group=new_group)
 
     for user in user_info:
