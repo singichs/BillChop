@@ -48,12 +48,10 @@ def index(request):
 # note trailing slash, we need to include for POST requests while APPEND_SLASH is true      
 @login_required
 def receipt(request, user_id):
-
     if request.method == "GET":
         receipts = Receipt.objects.all()
         serializer = ReceiptSerializer(receipts, many=True)
         return JsonResponse(serializer.data, safe=False)
-        return HttpResponse("Receipt GET: user_id = " + user_id)
     elif request.method == "POST":
         return HttpResponse(request);
 
@@ -62,7 +60,6 @@ def receipt(request, user_id):
 def get_receipt(request, receipt_id):
 
     receipt = Receipt.objects.get(pk=receipt_id)
-
     serializer = ReceiptSerializer(receipt)
     data = {'receipt': serializer.data}
     
@@ -79,7 +76,7 @@ def get_receipt(request, receipt_id):
 
     # serializer = ReceiptSerializer(receipts, many=True)
     # return JsonResponse(serializer.data, safe=False)
-    return JsonResponse(the_data);
+    return JsonResponse(the_data, status=201)
 
 @login_required
 @api_view(['GET', 'POST', 'PUT'])
@@ -110,48 +107,35 @@ def create_group(request):
     group_maker = request.user.pk 
 
     if len(group_name) > 30:
-        response = HttpResponse("Group name provided was too long")
-        response.status_code = 400
-        return response
+        return JsonResponse({'message':"Group name provided was too long"}, status=400)
     if Group.objects.filter(name=group_name).exists():
-        response = HttpResponse("Group name already exists")
-        response.status_code = 400
-        return response
+        return JsonResponse({'message':"Group name already exists"}, status=400)
 
+    maker_user = User.objects.get(pk=group_maker)
     new_group = Group.objects.create(name=group_name)
-
-    maker_user = User.objects.get(profile=group_maker)
     membership = UserMembership.objects.create(user=maker_user, group=new_group)
-    membership.save()
 
     for user in user_info:
-        try:
+        if Profile.objects.filter(phone_number=user["phoneNumber"]).exists():
             profile = Profile.objects.get(phone_number=user["phoneNumber"])
-            db_user = User.objects.get(profile=profile.pk)
+            db_user = User.objects.get(profile=profile)
             membership = UserMembership.objects.create(user=db_user, group=new_group)
             membership.save()
-            #return JsonResponse({'user_id': user.pk})
-        except:
-            try:
-                    # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER 
-                    # CAN'T BE CREATED
-                new_username = user["givenName"] + "." + user["familyName"]
-                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
-                new_user.save()
-                profile = Profile.objects.get(user=new_user)
-                profile.venmo = "eecs"
-                profile.phone_number = user["phoneNumber"]
-                profile.first_name = user["givenName"]
-                profile.last_name = user["familyName"]
-                membership = UserMembership.objects.create(user=new_user, group=new_group)
-                new_user.save()
-                membership.save()
-                profile.save()
-            except IntegrityError:
-                # user already exists
-                message = 'user already exists'
-                return HttpResponseBadRequest
-    return HttpResponse(status=status.HTTP_201_CREATED)
+        else:
+            new_username = user["givenName"] + "." + user["familyName"]
+            # Making the username unique
+            latest_id = User.objects.latest('pk').pk
+            new_username += str(latest_id + 1)
+            new_user = User.objects.create_user(username=new_username, email="", password="password")
+            new_user.profile.venmo = ""
+            new_user.profile.phone_number = user["phoneNumber"]
+            new_user.profile.first_name = user["givenName"]
+            new_user.profile.last_name = user["familyName"]
+            new_user.save()
+            membership = UserMembership.objects.create(user=new_user, group=new_group)
+            membership.save()
+
+    return JsonResponse({'message':'Success'}, status=201)
 
 @login_required
 def get_user_groups(request):
@@ -165,7 +149,6 @@ def get_user_groups(request):
         to_add["group_name"] = group_info.name
         groups.append(to_add)
     return JsonResponse({"groups": groups})
-    #return JsonResponse({'groups':list(user_groups.values())})
     for group in user_groups:
         print (group)
         group_info = Group.objects.get(pk=group.pk)
@@ -177,11 +160,8 @@ def get_user_groups(request):
 # localhost:8000/chop/get_users_in_group/groupName/
 @login_required
 def get_users_in_group(request, group_id):
-
     if not Group.objects.filter(pk=group_id).exists():
-        response = HttpResponse("Group id doesn't exist")
-        response.status_code = 400
-        return response
+        return JsonResponse({'message':"Group id doesn't exist"}, status=400)
 
     #Todo: check if user is in group? or is that done in the frontend?
     group = Group.objects.get(pk=group_id)
@@ -189,9 +169,9 @@ def get_users_in_group(request, group_id):
     data = []
     for user in users:
         profile = Profile.objects.get(user=user.user.pk)
-        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk}
+        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk, "phoneNumber": profile.phone_number}
         data.append(to_add)
-    return JsonResponse(data, safe=False)
+    return JsonResponse(data, safe=False, status=201)
 
 @csrf_exempt
 def add_users_to_group(request):
@@ -305,7 +285,7 @@ def get_group_receipts(request, group_id):
 
     data = {'receipts': receipt_data}
     
-    return JsonResponse(data)
+    return JsonResponse(data, status=201)
 
 
 def get_receipt_home(user_pk, receipt_memberships):
@@ -366,6 +346,8 @@ def register(request):
         user = User.objects.create_user(username, username, password)
         user.profile.venmo = "eecs"
         user.profile.phone_number = phone_number
+        user.profile.first_name = firstname
+        user.profile.last_name = lastname
         user.first_name = firstname
         user.last_name = lastname
         user.save()
@@ -409,8 +391,6 @@ def add_group_to_receipt(request):
 
     group = Group.objects.get(pk=group_id)
     receipt = Receipt.objects.get(pk=receipt_id)
-    # receipt.group.add(group)
-    # receipt.save()
 
     users = UserMembership.objects.filter(group=group.pk)
     for user in users:
@@ -425,7 +405,7 @@ def add_group_to_receipt(request):
 
     receipt.group.add(group)
     receipt.save()
-    return JsonResponse(status=201)
+    return JsonResponse({'message':'Success'}, status=201)
 
 def RepresentsInt(s):
     try: 
@@ -493,7 +473,7 @@ def upload_receipt(request):
                         return_response.append(items_and_prices)
 
         data = {"items" : return_response, "receipt_id" : new_receipt.pk}
-        return JsonResponse(data)
+        return JsonResponse(data, status=201)
 
     return JsonResponse("image wasn't valid")
 
@@ -592,7 +572,7 @@ def add_user_to_receipt(request):
             membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=0)
             membership.save()
             # user_payments = {'payments':  data}
-            return JsonResponse({'user_id': user.pk})
+            return JsonResponse({'user_id': user.pk}, status = 201)
 
         except:
             print ("no similar number found")
@@ -612,13 +592,13 @@ def add_user_to_receipt(request):
                 membership = ReceiptMembership.objects.create(users=new_user, receipt=receipt, outstanding_payment=0)
                 membership.save()
                 profile.save
-                return JsonResponse({'user_id': new_user.pk})
+                return JsonResponse({'user_id': new_user.pk}, status=201)
             except IntegrityError:
                 # user already exists
                 status = 'user already exists'
                 print (status)
     
-    return JsonResponse("add user to receipt", status)
+    return JsonResponse({'message':'Success'}, status=201)
 
 @csrf_exempt
 def add_user_to_app(request):
@@ -654,11 +634,9 @@ def add_user_to_app(request):
                 return JsonResponse({"user_id": new_user.pk}, safe=False)
             except IntegrityError:
                 # user already exists
-                status = 'user already exists'
-                print (status)
-                return JsonResponse({}, safe=False)
+                return JsonResponse({'message':'user already exists'}, status=422)
     
-    return JsonResponse({}, safe=False)
+    return JsonResponse({'message':'Success'}, status=201)
 
 
 @csrf_exempt
@@ -683,7 +661,7 @@ def get_mutual_transactions(request, user_id):
     data = get_receipt_home(request.user.pk, receipt_memberships)
     
     user_payments = {'payments':  data}
-    return JsonResponse(user_payments)
+    return JsonResponse(user_payments, status=201)
 
 
 @csrf_exempt
@@ -707,9 +685,7 @@ def add_receipt_information(request):
             new_item.save()
             item_info = {"name": item["name"], "cost": item["cost"], "item_id": new_item.pk}
             result.append(item_info)
-        return JsonResponse({"items": result})
-    #except:
-        return JsonResponse({})
+        return JsonResponse({"items": result}, status=201)
 
 @csrf_exempt 
 def get_items_for_receipt(request, receipt_id):
@@ -740,7 +716,7 @@ def get_items_for_receipt(request, receipt_id):
             # add for each item an array of payers
             # payers = [ {userid: 1, name: joe}, {userid: 2, name: bro}]
             result.append(to_add)
-        return JsonResponse({"items": result})
+        return JsonResponse({"items": result}, status=201)
 
 
 @csrf_exempt 
@@ -763,7 +739,7 @@ def get_people_for_receipt(request, receipt_id):
 
 
 
-        return JsonResponse({"people": people}) 
+        return JsonResponse({"people": people}, status=201) 
 
 
 @csrf_exempt 
