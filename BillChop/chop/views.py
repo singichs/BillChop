@@ -52,7 +52,6 @@ def receipt(request, user_id):
         receipts = Receipt.objects.all()
         serializer = ReceiptSerializer(receipts, many=True)
         return JsonResponse(serializer.data, safe=False)
-        return HttpResponse("Receipt GET: user_id = " + user_id)
     elif request.method == "POST":
         return HttpResponse(request);
 
@@ -61,7 +60,6 @@ def receipt(request, user_id):
 def get_receipt(request, receipt_id):
 
     receipt = Receipt.objects.get(pk=receipt_id)
-
     serializer = ReceiptSerializer(receipt)
     data = {'receipt': serializer.data}
     
@@ -151,7 +149,6 @@ def get_user_groups(request):
         to_add["group_name"] = group_info.name
         groups.append(to_add)
     return JsonResponse({"groups": groups})
-    #return JsonResponse({'groups':list(user_groups.values())})
     for group in user_groups:
         print (group)
         group_info = Group.objects.get(pk=group.pk)
@@ -164,9 +161,7 @@ def get_user_groups(request):
 @login_required
 def get_users_in_group(request, group_id):
     if not Group.objects.filter(pk=group_id).exists():
-        response = HttpResponse("Group id doesn't exist")
-        response.status_code = 400
-        return response
+        return JsonResponse({'message':"Group id doesn't exist"}, status=400)
 
     #Todo: check if user is in group? or is that done in the frontend?
     group = Group.objects.get(pk=group_id)
@@ -174,9 +169,9 @@ def get_users_in_group(request, group_id):
     data = []
     for user in users:
         profile = Profile.objects.get(user=user.user.pk)
-        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk}
+        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk, "phoneNumber": profile.phone_number}
         data.append(to_add)
-    return JsonResponse(data, safe=False)
+    return JsonResponse(data, safe=False, status=201)
 
 @csrf_exempt
 def add_users_to_group(request):
