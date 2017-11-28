@@ -110,13 +110,9 @@ def create_group(request):
     group_maker = request.user.pk 
 
     if len(group_name) > 30:
-        response = HttpResponse("Group name provided was too long")
-        response.status_code = 400
-        return response
+        return JsonResponse("Group name provided was too long", status=400)
     if Group.objects.filter(name=group_name).exists():
-        response = HttpResponse("Group name already exists")
-        response.status_code = 400
-        return response
+        return JsonResponse("Group name already exists", status=400)
 
     new_group = Group.objects.create(name=group_name)
 
@@ -366,6 +362,8 @@ def register(request):
         user = User.objects.create_user(username, username, password)
         user.profile.venmo = "eecs"
         user.profile.phone_number = phone_number
+        user.profile.first_name = firstname
+        user.profile.last_name = lastname
         user.first_name = firstname
         user.last_name = lastname
         user.save()
