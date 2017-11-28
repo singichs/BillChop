@@ -78,7 +78,7 @@ def get_receipt(request, receipt_id):
 
     # serializer = ReceiptSerializer(receipts, many=True)
     # return JsonResponse(serializer.data, safe=False)
-    return JsonResponse(the_data);
+    return JsonResponse(the_data, status=201)
 
 @login_required
 @api_view(['GET', 'POST', 'PUT'])
@@ -396,8 +396,6 @@ def add_group_to_receipt(request):
 
     group = Group.objects.get(pk=group_id)
     receipt = Receipt.objects.get(pk=receipt_id)
-    # receipt.group.add(group)
-    # receipt.save()
 
     users = UserMembership.objects.filter(group=group.pk)
     for user in users:
@@ -412,7 +410,7 @@ def add_group_to_receipt(request):
 
     receipt.group.add(group)
     receipt.save()
-    return JsonResponse(status=201)
+    return JsonResponse({'message':'Success'}, status=201)
 
 def RepresentsInt(s):
     try: 
@@ -480,7 +478,7 @@ def upload_receipt(request):
                         return_response.append(items_and_prices)
 
         data = {"items" : return_response, "receipt_id" : new_receipt.pk}
-        return JsonResponse(data)
+        return JsonResponse(data, status=201)
 
     return JsonResponse("image wasn't valid")
 
@@ -579,7 +577,7 @@ def add_user_to_receipt(request):
             membership = ReceiptMembership.objects.create(users=user, receipt=receipt, outstanding_payment=0)
             membership.save()
             # user_payments = {'payments':  data}
-            return JsonResponse({'user_id': user.pk})
+            return JsonResponse({'user_id': user.pk}, status = 201)
 
         except:
             print ("no similar number found")
@@ -599,13 +597,13 @@ def add_user_to_receipt(request):
                 membership = ReceiptMembership.objects.create(users=new_user, receipt=receipt, outstanding_payment=0)
                 membership.save()
                 profile.save
-                return JsonResponse({'user_id': new_user.pk})
+                return JsonResponse({'user_id': new_user.pk}, status=201)
             except IntegrityError:
                 # user already exists
                 status = 'user already exists'
                 print (status)
     
-    return JsonResponse("add user to receipt", status)
+    return JsonResponse({'message':'Success'}, status=201)
 
 @csrf_exempt
 def add_user_to_app(request):
@@ -641,11 +639,9 @@ def add_user_to_app(request):
                 return JsonResponse({"user_id": new_user.pk}, safe=False)
             except IntegrityError:
                 # user already exists
-                status = 'user already exists'
-                print (status)
-                return JsonResponse({}, safe=False)
+                return JsonResponse({'message':'user already exists'}, status=422)
     
-    return JsonResponse({}, safe=False)
+    return JsonResponse({'message':'Success'}, status=201)
 
 
 @csrf_exempt
@@ -670,7 +666,7 @@ def get_mutual_transactions(request, user_id):
     data = get_receipt_home(request.user.pk, receipt_memberships)
     
     user_payments = {'payments':  data}
-    return JsonResponse(user_payments)
+    return JsonResponse(user_payments, status=201)
 
 
 @csrf_exempt
@@ -694,9 +690,7 @@ def add_receipt_information(request):
             new_item.save()
             item_info = {"name": item["name"], "cost": item["cost"], "item_id": new_item.pk}
             result.append(item_info)
-        return JsonResponse({"items": result})
-    #except:
-        return JsonResponse({})
+        return JsonResponse({"items": result}, status=201)
 
 @csrf_exempt 
 def get_items_for_receipt(request, receipt_id):
@@ -727,7 +721,7 @@ def get_items_for_receipt(request, receipt_id):
             # add for each item an array of payers
             # payers = [ {userid: 1, name: joe}, {userid: 2, name: bro}]
             result.append(to_add)
-        return JsonResponse({"items": result})
+        return JsonResponse({"items": result}, status=201)
 
 
 @csrf_exempt 
@@ -750,7 +744,7 @@ def get_people_for_receipt(request, receipt_id):
 
 
 
-        return JsonResponse({"people": people}) 
+        return JsonResponse({"people": people}, status=201) 
 
 
 @csrf_exempt 
