@@ -108,8 +108,8 @@ def create_group(request):
 
     if len(group_name) > 30:
         return JsonResponse({'message':"Group name provided was too long"}, status=400)
-    if Group.objects.filter(name=group_name).exists():
-        return JsonResponse({'message':"Group name already exists"}, status=400)
+    # if Group.objects.filter(name=group_name).exists():
+    #     return JsonResponse({'message':"Group name already exists"}, status=400)
 
     maker_user = User.objects.get(pk=group_maker)
     new_group = Group.objects.create(name=group_name)
