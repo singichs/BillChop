@@ -419,6 +419,7 @@ class PeopleList extends Component {
                     people_temp.push(person_temp);
                     this.setState({people: people_temp, ids: temp_id_list});
                 }
+                this.hideSearch();
             })
             .catch((error) => {
                 console.log(error);
@@ -444,6 +445,7 @@ class PeopleList extends Component {
                         people_temp.push(person_temp);
                     }
                 }
+                this.hideSearch();
                 this.setState({people: people_temp, ids: temp_id_list});
             })
             .catch((error) => {
@@ -461,10 +463,7 @@ class PeopleList extends Component {
             })
         })
             .then((res) => {
-                if(res.status === 201) {
-                    alert("success");
-                }
-                else{
+                if(res.status !== 201) {
                     alert("Couldn't add group to receipt.");
                 }
             })
