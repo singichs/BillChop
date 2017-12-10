@@ -79,8 +79,8 @@ export default class Login extends Component<{}> {
          		 <TouchableOpacity style={styles.buttonContainer} onPress={this.login}>
            			<Text style={styles.buttonText}> LOGIN </Text>
          		 </TouchableOpacity>
-            <TouchableOpacity onPress={this.createAcct}>
-              <Text style={styles.signUp}>Don't have an account? Sign up here!</Text>
+            <TouchableOpacity style={styles.buttonContainer} onPress={this.createAcct}>
+              <Text style={styles.buttonText}>Don't have an account? Sign up here!</Text>
             </TouchableOpacity>
 
             </View>
