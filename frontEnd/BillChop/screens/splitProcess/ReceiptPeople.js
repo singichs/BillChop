@@ -326,6 +326,7 @@ class PeopleList extends Component {
                 if(res.status !== 201) {
                     alert("Couldn't save receipt");
                 }
+                this.props.navigation.navigate('Home');
             })
             .done();
         // for now just change text and button to reflect that people have been charged
@@ -615,7 +616,7 @@ export default class ReceiptPeople extends Component<{}> {
 
     render() {
         return (
-            <PeopleList parentProps={this.props.navigation.state.params}/>
+            <PeopleList parentProps={this.props.navigation.state.params} navigation={this.props.navigation}/>
         );
     }
 
