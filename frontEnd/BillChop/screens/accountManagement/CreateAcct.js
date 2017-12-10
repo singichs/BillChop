@@ -7,6 +7,8 @@ import {
     StatusBar,
     TextInput,
     TouchableOpacity,
+    TouchableWithoutFeedback,
+    Keyboard,
     Button,
     KeyboardAvoidingView,
     AsyncStorage
@@ -15,6 +17,7 @@ import { NavigationActions } from 'react-navigation';
 import { StackNavigator } from 'react-navigation';
 import Login from './Login';
 import {hosturl} from "../../constants";
+
 
 export default class CreateAcct extends Component<{}> {
     constructor(props) {
@@ -42,6 +45,7 @@ export default class CreateAcct extends Component<{}> {
 
     render() {
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <KeyboardAvoidingView behavior="position" style={styles.container}>
               <View style={styles.container}>
                 
@@ -113,9 +117,9 @@ export default class CreateAcct extends Component<{}> {
                 <TouchableOpacity style={styles.button} onPress={this.signUpFunc}>
                   <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
-
                 </View>
             </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
         );
     }
 
@@ -161,6 +165,9 @@ export default class CreateAcct extends Component<{}> {
 }
 
 const styles = StyleSheet.create({
+    done:{
+      backgroundColor: 'red'
+    },
     container:{
       flex:1,
       backgroundColor: '#FFFFFF', //white, for now

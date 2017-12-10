@@ -5,6 +5,8 @@ import {
     Text,
     FlatList,
     TextInput,
+    TouchableWithoutFeedback,
+    Keyboard,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
@@ -524,6 +526,7 @@ class PeopleList extends Component {
             }
         };
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
                 <View style={styles.containerSearch}>
                     <SearchBar
@@ -605,6 +608,7 @@ class PeopleList extends Component {
                 </View>
                 <Button title={getButtonStr()} style={styles.button} onPress={() =>{this.charge()}}/>
             </View>
+            </TouchableWithoutFeedback>
         );
     }
 }
