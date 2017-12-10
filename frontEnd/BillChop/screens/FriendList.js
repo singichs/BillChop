@@ -3,6 +3,7 @@ import {
     Platform,
     StyleSheet,
     FlatList,
+    TouchableOpacity,
     Text,
     View, Button, TouchableHighlight
 } from 'react-native';
@@ -54,7 +55,9 @@ class PeopleList extends Component {
         }
         return (
             <View style={styles.container}>
-                <Button style={styles.button} title={"Create New Group"} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup', {refresh: () => {this.makeRemoteRequest()}})}}/>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup', {refresh: () => {this.makeRemoteRequest()}})}}>
+                    <Text style={styles.buttonText}>Create a Group</Text>
+                </TouchableOpacity>
                 {this.state.data.length < 1 && <Text style={styles.titleText}>No groups to show</Text>}
                 <List>
                     <FlatList
@@ -96,7 +99,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
     },
     button: {
-        paddingTop: 40
+        paddingTop: 30,
     },
     titleText: {
         fontWeight: 'bold',
@@ -104,4 +107,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 20
     },
+    buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16
+    }
 });
