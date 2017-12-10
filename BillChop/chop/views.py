@@ -195,6 +195,31 @@ def add_users_to_group(request):
     return HttpResponse(204)
 
 @csrf_exempt
+def delete_user_from_group(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        group = Group.objects.get(pk=data["group_id"])
+        user = User.objects.get(pk=data["user_id"])
+        m1 = UserMembership.objects.filter(group=group.pk)
+        for m in m1:
+            if m.user.pk == user.pk:
+                m.delete()
+                return JsonResponse({"message": "Deleted a user from a group"}, status=400)
+    return JsonResponse({"message": "Could not delete user"}, status=400)
+
+@csrf_exempt
+def get_receipt_owner(request, receipt_id):
+    if request.method == "GET":
+        receipt = Receipt.objects.get(pk=receipt_id)
+        user = User.objects.get(pk=receipt.owner.pk)
+        profile = Profile.objects.get(user=user.pk)
+        data = {"owner": profile.full_name()}
+        return JsonResponse(data, status=201)
+    return JsonResponse({'message':"Receipt not found"}, status=400)
+
+
+@csrf_exempt
 def payments(request):
     if request.method == "GET":
         return HttpResponse("Payments GET");
@@ -771,6 +796,11 @@ def save_receipt(request, receipt_id):
 
 
         return JsonResponse({"people": receipt_id}, status=201) 
+
+
+@csrf_exempt
+def get_receipt_pic(request):
+    return JsonResponse({"people": "nothing happened"}, status=403)
 
 
 @csrf_exempt
