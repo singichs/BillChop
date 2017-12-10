@@ -55,6 +55,7 @@ class PeopleList extends Component {
         return (
             <View style={styles.container}>
                 <Button style={styles.button} title={"Create New Group"} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup', {refresh: () => {this.makeRemoteRequest()}})}}/>
+                {this.state.data.length < 1 && <Text style={styles.titleText}>No groups to show</Text>}
                 <List>
                     <FlatList
                         data={this.state.data}
@@ -96,5 +97,11 @@ const styles = StyleSheet.create({
     },
     button: {
         paddingTop: 40
-    }
+    },
+    titleText: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 20
+    },
 });

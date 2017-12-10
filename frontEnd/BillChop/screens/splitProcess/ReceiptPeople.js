@@ -158,10 +158,15 @@ class PeopleList extends Component {
                 })
                 .then((responseJson) => {
                     let prev_items = responseJson["items"];
+                    let temp_total = 0;
+                    for (let i = 0; i < prev_items.length; ++i) {
+                        temp_total += (prev_items[i]["cost"] * 1).toFixed(2);
+                    }
                     this.setState({
                         items: prev_items,
                         openPerson: -1,
                         receipt_id: receipt_id,
+                        finalCost: temp_total,
                     });
                 })
                 .catch((error) => {

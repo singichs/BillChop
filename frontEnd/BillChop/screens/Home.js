@@ -70,6 +70,7 @@ class TransactionList extends Component {
         };
         return (
             <View>
+                {this.state.data.length < 1 && <Text style={styles.titleText}>No transaction history to show</Text>}
                 <List>
                     <FlatList
                         data={this.state.data}
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: 16,
         textAlign: 'center',
         marginTop: 20
     },
