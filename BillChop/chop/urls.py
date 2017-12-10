@@ -38,8 +38,10 @@ urlpatterns = [
 	url(r'^get_items_for_receipt/(?P<receipt_id>\d+)/$', views.get_items_for_receipt, name='get_items_for_receipt'),
 	url(r'^get_people_for_receipt/(?P<receipt_id>\d+)/$', views.get_people_for_receipt, name='get_people_for_receipt'),
 	url(r'^save_receipt/(?P<receipt_id>\d+)/$', views.save_receipt, name='save_receipt'),
-	url(r'^delete_all', views.delete_all, name='delete_all')
-
+	url(r'^delete_all', views.delete_all, name='delete_all'),
+	url(r'^save_receipt/(?P<receipt_id>\d+)/$', views.save_receipt, name='save_receipt'),
+	url(r'^delete_user_from_group/$', views.delete_user_from_group, name='delete_user_from_group'),
+	url(r'^get_receipt_owner/(?P<receipt_id>\d+)/$', views.get_receipt_owner, name='get_receipt_owner')
 
 ]
 
