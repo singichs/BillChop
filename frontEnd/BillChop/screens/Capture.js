@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     },
     capture: {
         flex: 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#00e68a',
         borderRadius: 5,
         color: '#000',
         padding: 10,
