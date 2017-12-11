@@ -15,8 +15,7 @@ class Group(models.Model):
     last_used = models.DateField(auto_now_add=True)
     users = models.ManyToManyField(User, through='UserMembership', related_name='people')
 
-    def __str__(self):
-        return self.name 
+
 
 # TO DO: 
 #Subclass  auth user model 
@@ -27,12 +26,9 @@ class Profile(models.Model):
     venmo = models.CharField(max_length=30, default="hello")
     phone_number = models.CharField(max_length=30, default="+1")
    # email = models.EmailField()
-
     def full_name(self):
         return self.first_name + " " + self.last_name
 
-    def __str__(self):
-        return self.first_name + " " + self.last_name
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -65,23 +61,18 @@ class Item(models.Model):
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE) #optional
     user = models.ManyToManyField(User)
     # make functions that return cost per user
-    def __str__(self):
-        return self.name 
+   
 
 class UserMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     date_joined = models.DateField(auto_now_add=True)
     role = models.CharField(max_length=30)
-    def __str__(self):
-        return self.user.first_name + " " + self.group.name
+    
 
 class ReceiptMembership(models.Model):
     users = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE, related_name='receipt')
     notified = models.BooleanField(default=False)
     outstanding_payment = models.DecimalField(max_digits=5, decimal_places=2)
-
-    def __str__(self):
-        return self.users.first_name + " " + str(self.receipt.timestamp)
 
