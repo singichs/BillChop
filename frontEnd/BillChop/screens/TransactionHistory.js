@@ -257,6 +257,7 @@ class GroupMembers extends Component {
                 <View style={styles.listContainer}>
                     <List>
                         <FlatList
+                            keyboardShouldPersistTaps="always"
                             data={this.state.results}
                             extraData={this.state}
                             renderItem={({item, index})  => (
@@ -264,8 +265,7 @@ class GroupMembers extends Component {
                                     title={`${item.givenName} ${item.familyName}`}
                                     rightTitle={`${item.phoneNumber}`}
                                     hideChevron={true}
-                                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon}
-                                                onPress={() =>{this.addPersonToGroup(index, item.givenName, item.familyName, item.phoneNumber)}}/>}
+                                    onPress={() =>{this.addPersonToGroup(index, item.givenName, item.familyName, item.phoneNumber)}}
                                 />
                             )}
                             keyExtractor={(item, index) => index}
@@ -274,6 +274,7 @@ class GroupMembers extends Component {
                     <Text style={styles.headingText}> {"Group Members"} </Text>
                     <List>
                         <FlatList
+                            keyboardShouldPersistTaps="always"
                             data={this.state.group.members}
                             extraData={this.state}
                             renderItem={({item, index})  => (
