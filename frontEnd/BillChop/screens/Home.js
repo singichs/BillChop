@@ -74,7 +74,7 @@ class TransactionList extends Component {
             if (item.item.is_owner) {
                 return "#f8fff4";
             }
-            return "#ffefef";
+            return "#eafafc";
         }
         return (
             <View>
