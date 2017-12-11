@@ -332,7 +332,7 @@ def get_group_receipts(request, group_id):
             is_owner = True
         print (serializer.data)
 
-        profile = Profile.objects.get(pk=serializer.data["owner"])
+        profile = Profile.objects.get(user=serializer.data["owner"])
         print (profile.first_name)
 
         to_add["receipt_id"] = receipt.pk
