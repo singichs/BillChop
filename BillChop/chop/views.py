@@ -480,7 +480,9 @@ def upload_receipt(request):
                     items_start = True
 
         if not items_start:
-            return get_charleys_receipt(ocr_string, new_receipt.pk)
+            response = get_charleys_receipt(ocr_string, new_receipt.pk)
+            data = {"items" : response, "receipt_id" : new_receipt.pk}
+            return JsonResponse(data, status=201)
 
         return_response = []
         for item in parsed_items:
@@ -539,7 +541,6 @@ def get_charleys_receipt(ocr_string, new_receipt_id):
             items_and_prices["quantity"] = 1
             items_and_prices["cost"] = item_price
             return_response.append(items_and_prices)
-
     data = {"items" : return_response, "receipt_id" : new_receipt_id}
     return JsonResponse(data, status=201)
 
