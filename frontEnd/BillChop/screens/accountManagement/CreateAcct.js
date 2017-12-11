@@ -46,8 +46,8 @@ export default class CreateAcct extends Component<{}> {
     render() {
         return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <View style={styles.container}>
             <KeyboardAvoidingView behavior="position" style={styles.container}>
-              <View style={styles.container}>
                 
                 <Text style={styles.header}>Create Account</Text>
               
@@ -117,8 +117,8 @@ export default class CreateAcct extends Component<{}> {
                 <TouchableOpacity style={styles.button} onPress={this.signUpFunc}>
                   <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
-                </View>
             </KeyboardAvoidingView>
+            </View>
             </TouchableWithoutFeedback>
         );
     }
