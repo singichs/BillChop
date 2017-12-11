@@ -506,7 +506,7 @@ def upload_receipt(request):
                         items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
                         return_response.append(items_and_prices)
 
-        data = {"items" : return_response}
+        data = {"items" : return_response, "receipt_id" : new_receipt.pk}
         return JsonResponse(data, status=201)
 
     return JsonResponse({"message": "image wasn't valid"}, status=400)
@@ -540,7 +540,7 @@ def get_charleys_receipt(ocr_string):
             items_and_prices["cost"] = item_price
             return_response.append(items_and_prices)
 
-    data = {"items" : return_response}
+    data = {"items" : return_response, "receipt_id" : new_receipt.pk}
     return JsonResponse(data, status=201)
 
 
