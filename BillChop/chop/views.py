@@ -210,6 +210,8 @@ def add_user_to_group(request):
         if Profile.objects.filter(phone_number=phone_number).exists():
             profile = Profile.objects.get(phone_number=phone_number)
             user = User.objects.get(profile=profile)
+            new_usermembership = UserMembership.objects.create(user=user, group=group)
+            new_usermembership.save()
             # user_payments = {'payments':  data}
             return JsonResponse({"user_id": user.pk}, safe=False, status=200)
         else:
@@ -521,8 +523,7 @@ def upload_receipt(request):
 
         if not items_start:
             response = get_charleys_receipt(ocr_string, new_receipt.pk)
-            data = {"items" : response, "receipt_id" : new_receipt.pk}
-            return JsonResponse(data, status=201)
+            return JsonResponse(response, status=201)
 
         return_response = []
         for item in parsed_items:
@@ -556,8 +557,7 @@ def upload_receipt(request):
 
 def get_charleys_receipt(ocr_string, new_receipt_id):
     parsed_items = []
-    start_word = "07:41PM"
-    items_start = False
+    items_start = True
     for line in ocr_string.splitlines():
         for word in line.split():
             if word == "Subtotal":
@@ -565,8 +565,6 @@ def get_charleys_receipt(ocr_string, new_receipt_id):
             elif items_start:
                 parsed_items.append(line)
                 break
-            elif word == start_word:
-                items_start = True
 
     return_response = []
     for item in parsed_items:
@@ -582,7 +580,7 @@ def get_charleys_receipt(ocr_string, new_receipt_id):
             items_and_prices["cost"] = item_price
             return_response.append(items_and_prices)
     data = {"items" : return_response, "receipt_id" : new_receipt_id}
-    return JsonResponse(data, status=201)
+    return data
 
 
 def change_contrast(img, level):

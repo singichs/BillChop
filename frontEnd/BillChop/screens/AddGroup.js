@@ -5,6 +5,7 @@ import {
     Text,
     FlatList,
     TextInput,
+    TouchableOpacity,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
@@ -78,8 +79,6 @@ class GroupView extends Component {
                 results_temp.push(temp_result);
             }
         }
-        console.log("in handle");
-        console.log(results_temp);
         this.setState({results: results_temp});
     };
 
@@ -98,7 +97,9 @@ class GroupView extends Component {
             return (<Text>{""}</Text>);
         }
         else {
-            return(<Button title={"Search for Members to Add"} style={styles.button} onPress={showSearchFn}/>);
+            return(<TouchableOpacity style={styles.buttonContainer2} onPress={showSearchFn}>
+                    <Text style={styles.buttonText}>Search for Members to Add</Text>
+                    </TouchableOpacity>);
         }
     };
 
@@ -156,7 +157,7 @@ class GroupView extends Component {
                 <View style={styles.listContainer}>
                     <List>
                         <FlatList
-                            keyboardShouldPersistTaps={true}
+                            keyboardShouldPersistTaps="always"
                             data={this.state.results}
                             extraData={this.state}
                             renderItem={({item, index})  => (
@@ -164,14 +165,14 @@ class GroupView extends Component {
                                     title={`${item.givenName} ${item.familyName}`}
                                     rightTitle={`${item.phoneNumber}`}
                                     hideChevron={true}
-                                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon}
-                                                onPress={() =>{this.addPersonToGroup(index, item.givenName, item.familyName, item.phoneNumber)}}/>}
+                                    onPress={() =>{this.addPersonToGroup(index, item.givenName, item.familyName, item.phoneNumber)}}
                                 />
                             )}
                             keyExtractor={(item, index) => index}
                         />
                     </List>
-                    <Text style={styles.text}> {"Group Members"} </Text>
+                    <Text style={styles.headingText}> {"Group Members"} </Text>
+                    {this.state.group.members < 1 && <Text style={styles.titleText}>No group members added yet</Text>}
                     <List>
                         <FlatList
                             keyboardShouldPersistTaps="always"
@@ -189,11 +190,13 @@ class GroupView extends Component {
                             keyExtractor={(item, index) => index}
                         />
                     </List>
-                    <Text style={styles.text}> {"Enter Group Name:"} </Text>
+                    <Text style={styles.headingText}> {"Enter Group Name:"} </Text>
                     <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(text) => this.changeGroupName(text)} placeholder="Enter Group Name" value={this.state.group["name"]}/>
+                        <TextInput onChangeText={(text) => this.changeGroupName(text)} placeholder="e.g. My Group" value={this.state.group["name"]}/>
                     </View>
-                    <Button title={"Save Group"} style={styles.button} onPress={() =>{this.saveGroup()}}/>
+                    <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.saveGroup()}}>
+                        <Text style={styles.buttonText}>Save Group</Text>
+                    </TouchableOpacity>
                 </View>
             </View>);
     }
@@ -225,6 +228,18 @@ const styles = StyleSheet.create({
     listContainer: {
         marginTop: 40,
     },
+    titleText: {
+        fontSize: 16,
+        textAlign: 'center',
+        paddingTop: 20,
+        paddingLeft: 20,
+    },
+    headingText: {
+        paddingTop: 20,
+        fontWeight: 'bold',
+        paddingLeft: 5,
+        fontSize: 20,
+    },
     text: {
         paddingTop: 20,
         fontWeight: 'bold',
@@ -232,12 +247,35 @@ const styles = StyleSheet.create({
     button: {
         paddingTop: 40
     },
+    buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    buttonContainer2: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#3b5998',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
     textInput: {
         fontSize: 18,
     },
     inputContainer: {
         paddingTop: 20,
         paddingBottom: 20,
-        backgroundColor: '#f8f8ff'
+        backgroundColor: '#FFF'
     }
 });
