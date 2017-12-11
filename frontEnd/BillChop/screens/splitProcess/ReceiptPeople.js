@@ -5,6 +5,8 @@ import {
     Text,
     FlatList,
     TextInput,
+    TouchableWithoutFeedback,
+    Keyboard,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
@@ -158,10 +160,15 @@ class PeopleList extends Component {
                 })
                 .then((responseJson) => {
                     let prev_items = responseJson["items"];
+                    let temp_total = 0;
+                    for (let i = 0; i < prev_items.length; ++i) {
+                        temp_total += (prev_items[i]["cost"] * 1).toFixed(2);
+                    }
                     this.setState({
                         items: prev_items,
                         openPerson: -1,
                         receipt_id: receipt_id,
+                        finalCost: temp_total,
                     });
                 })
                 .catch((error) => {
@@ -321,6 +328,7 @@ class PeopleList extends Component {
                 if(res.status !== 201) {
                     alert("Couldn't save receipt");
                 }
+                this.props.navigation.navigate('Home');
             })
             .done();
         // for now just change text and button to reflect that people have been charged
@@ -411,6 +419,7 @@ class PeopleList extends Component {
                     people_temp.push(person_temp);
                     this.setState({people: people_temp, ids: temp_id_list});
                 }
+                this.hideSearch();
             })
             .catch((error) => {
                 console.log(error);
@@ -436,6 +445,7 @@ class PeopleList extends Component {
                         people_temp.push(person_temp);
                     }
                 }
+                this.hideSearch();
                 this.setState({people: people_temp, ids: temp_id_list});
             })
             .catch((error) => {
@@ -453,10 +463,7 @@ class PeopleList extends Component {
             })
         })
             .then((res) => {
-                if(res.status === 201) {
-                    alert("success");
-                }
-                else{
+                if(res.status !== 201) {
                     alert("Couldn't add group to receipt.");
                 }
             })
@@ -518,6 +525,7 @@ class PeopleList extends Component {
             }
         };
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
                 <View style={styles.containerSearch}>
                     <SearchBar
@@ -599,6 +607,7 @@ class PeopleList extends Component {
                 </View>
                 <Button title={getButtonStr()} style={styles.button} onPress={() =>{this.charge()}}/>
             </View>
+            </TouchableWithoutFeedback>
         );
     }
 }
@@ -610,7 +619,7 @@ export default class ReceiptPeople extends Component<{}> {
 
     render() {
         return (
-            <PeopleList parentProps={this.props.navigation.state.params}/>
+            <PeopleList parentProps={this.props.navigation.state.params} navigation={this.props.navigation}/>
         );
     }
 

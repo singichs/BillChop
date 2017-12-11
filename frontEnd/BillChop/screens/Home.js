@@ -4,6 +4,8 @@ import {
     StyleSheet,
     FlatList,
     Text,
+    Image,
+    tintColor,
     View, Button, TouchableHighlight
 } from 'react-native';
 import { List, ListItem} from 'react-native-elements';
@@ -70,6 +72,7 @@ class TransactionList extends Component {
         };
         return (
             <View>
+                {this.state.data.length < 1 && <Text style={styles.titleText}>No transaction history to show</Text>}
                 <List>
                     <FlatList
                         data={this.state.data}
@@ -102,7 +105,13 @@ class TransactionList extends Component {
 
 export default class Home extends Component<{}> {
     static navigationOptions = {
-        title: 'Home',
+        tabBarLabel: 'Home',
+        tabBarIcon: ({ tintcolor }) => (
+            <Image
+                source={require('../images/home-icon.png')}
+                style={[styles.icon, {tintColor: tintColor}]}
+            />
+        ),
     };
     render() {
         return (
@@ -122,8 +131,12 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: 16,
         textAlign: 'center',
         marginTop: 20
+    },
+    icon: {
+        height: 30,
+        width: 30
     },
 });

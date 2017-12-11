@@ -5,6 +5,8 @@ import {
     Text,
     FlatList,
     TextInput,
+    TouchableWithoutFeedback,
+    Keyboard,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import {hosturl} from "../../constants";
@@ -165,6 +167,7 @@ class ItemList extends Component {
 
     render() {
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
                 <Text style={styles.header}>
                     {this.state.title}
@@ -206,6 +209,7 @@ class ItemList extends Component {
                 </View>
                 <Button title="Continue to Item Assignment" onPress={() => {this.continueToNextPage()}}/>
             </View>
+            </TouchableWithoutFeedback>
         );
     }
 }

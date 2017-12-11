@@ -22,7 +22,15 @@ const HomeScreenNavigator = TabNavigator({
     Home: {screen: Home},
     Capture: { screen: Capture }},
     {
-        initialRouteName: 'Home'
+        initialRouteName: 'Capture'
+    }, {
+        animationEnabled: true,
+        tabBarOptions: {
+            activeTintColor: '#e91e63',
+            labelStyle: {
+                fontSize: 12
+            }
+        },
     });
 
 export default class HomeNavigation extends Component<{}> {
@@ -41,3 +49,10 @@ export default class HomeNavigation extends Component<{}> {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    icon: {
+        width: 26,
+        height: 26,
+    },
+});

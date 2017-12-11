@@ -3,7 +3,10 @@ import {
     Platform,
     StyleSheet,
     FlatList,
+    TouchableOpacity,
     Text,
+    Image,
+    tintColor,
     View, Button, TouchableHighlight
 } from 'react-native';
 import { List, ListItem} from 'react-native-elements';
@@ -54,7 +57,10 @@ class PeopleList extends Component {
         }
         return (
             <View style={styles.container}>
-                <Button style={styles.button} title={"Create New Group"} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup', {refresh: () => {this.makeRemoteRequest()}})}}/>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.props.screenProps.rootNavigation.navigate('AddGroup', {refresh: () => {this.makeRemoteRequest()}})}}>
+                    <Text style={styles.buttonText}>Create a Group</Text>
+                </TouchableOpacity>
+                {this.state.data.length < 1 && <Text style={styles.titleText}>No groups to show</Text>}
                 <List>
                     <FlatList
                         data={this.state.data}
@@ -75,9 +81,15 @@ class PeopleList extends Component {
 
 
 export default class FriendList extends Component<{}> {
-    static navigationOptions = {
-        title: 'Groups',
-    };
+    static navigationOptions = ({ navigation, screenProps }) => ({
+            tabBarLabel: 'Groups',
+            tabBarIcon: ({ tintcolor }) => (
+            <Image
+                source={require('../images/group-icon.png')}
+                style={[styles.icon, {tintColor: tintColor}]}
+            />
+        ),
+    });
     render() {
         return (
             <View style={styles.container}>
@@ -95,6 +107,30 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
     },
     button: {
-        paddingTop: 40
-    }
+        paddingTop: 30,
+    },
+    titleText: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 20
+    },
+    buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    icon: {
+        height: 35,
+        width: 35
+    },
 });

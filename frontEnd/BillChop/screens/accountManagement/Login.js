@@ -8,6 +8,8 @@ import {
     Button,
     KeyboardAvoidingView,
     TouchableOpacity,
+    TouchableWithoutFeedback,
+    Keyboard,
     AsyncStorage
 } from 'react-native';
 import { StackNavigator } from 'react-navigation'
@@ -44,6 +46,7 @@ export default class Login extends Component<{}> {
     
     render(){
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
              <View style={styles.logoContainer}>
 
@@ -76,12 +79,13 @@ export default class Login extends Component<{}> {
          		 <TouchableOpacity style={styles.buttonContainer} onPress={this.login}>
            			<Text style={styles.buttonText}> LOGIN </Text>
          		 </TouchableOpacity>
-            <TouchableOpacity onPress={this.createAcct}>
-              <Text style={styles.signUp}>Don't have an account? Sign up here!</Text>
+            <TouchableOpacity style={styles.buttonContainer} onPress={this.createAcct}>
+              <Text style={styles.buttonText}>Don't have an account? Sign up here!</Text>
             </TouchableOpacity>
 
             </View>
           </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
       );
     }
 
