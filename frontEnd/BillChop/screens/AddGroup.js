@@ -157,7 +157,7 @@ class GroupView extends Component {
                 <View style={styles.listContainer}>
                     <List>
                         <FlatList
-                            keyboardShouldPersistTaps={true}
+                            keyboardShouldPersistTaps="always"
                             data={this.state.results}
                             extraData={this.state}
                             renderItem={({item, index})  => (
@@ -165,8 +165,7 @@ class GroupView extends Component {
                                     title={`${item.givenName} ${item.familyName}`}
                                     rightTitle={`${item.phoneNumber}`}
                                     hideChevron={true}
-                                    leftIcon={<Icon name='add' color='#32cd32' size={20} containerStyle={styles.icon}
-                                                onPress={() =>{this.addPersonToGroup(index, item.givenName, item.familyName, item.phoneNumber)}}/>}
+                                    onPress={() =>{this.addPersonToGroup(index, item.givenName, item.familyName, item.phoneNumber)}}
                                 />
                             )}
                             keyExtractor={(item, index) => index}
@@ -193,7 +192,7 @@ class GroupView extends Component {
                     </List>
                     <Text style={styles.headingText}> {"Enter Group Name:"} </Text>
                     <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(text) => this.changeGroupName(text)} placeholder="Enter Group Name" value={this.state.group["name"]}/>
+                        <TextInput onChangeText={(text) => this.changeGroupName(text)} placeholder="e.g. My Group" value={this.state.group["name"]}/>
                     </View>
                     <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.saveGroup()}}>
                         <Text style={styles.buttonText}>Save Group</Text>
@@ -277,6 +276,6 @@ const styles = StyleSheet.create({
     inputContainer: {
         paddingTop: 20,
         paddingBottom: 20,
-        backgroundColor: '#f8f8ff'
+        backgroundColor: '#FFF'
     }
 });

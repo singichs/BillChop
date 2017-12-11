@@ -384,7 +384,7 @@ class PeopleList extends Component {
         else {
             return(
                 <TouchableOpacity style={styles.searchButtonContainer} onPress={showSearchFn}>
-                    <Text style={styles.buttonText}>Search for Friends to Split With</Text>
+                    <Text style={styles.buttonText}>Search for Friends and Groups to Split With</Text>
                 </TouchableOpacity>
             );
         }
@@ -687,7 +687,8 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
+        textAlign: 'center'
     },
     searchButtonContainer: {
         alignSelf: 'stretch',
