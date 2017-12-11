@@ -278,7 +278,9 @@ class PeopleList extends Component {
             }
         }
         return (
-            <ListItem onPress={() =>{this.evaluateClick(item, index)}}
+            <ListItem
+                onPress={() =>{this.evaluateClick(item, index)}}
+                containerStyle={{backgroundColor: "#e4fcd6"}}
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}
