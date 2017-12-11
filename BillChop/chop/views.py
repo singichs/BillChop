@@ -168,10 +168,11 @@ def get_users_in_group(request, group_id):
     users = UserMembership.objects.filter(group=group)
     data = []
     for user in users:
-        profile = Profile.objects.get(user=user.user.pk)
-        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk, "phoneNumber": profile.phone_number}
-        data.append(to_add)
-    return JsonResponse(data, safe=False, status=201)
+        if user.user.pk != request.user.pk:
+            profile = Profile.objects.get(user=user.user.pk)
+            to_add = {"givenName": profile.first_name, "familyName": profile.last_name, "id": user.user.pk, "phoneNumber": profile.phone_number}
+            data.append(to_add)
+    return JsonResponse({"members": data}, safe=False, status=201)
 
 @csrf_exempt
 def add_users_to_group(request):
@@ -205,7 +206,7 @@ def delete_user_from_group(request):
         for m in m1:
             if m.user.pk == user.pk:
                 m.delete()
-                return JsonResponse({"message": "Deleted a user from a group"}, status=400)
+                return JsonResponse({"message": "Deleted a user from a group"}, status=200)
     return JsonResponse({"message": "Could not delete user"}, status=400)
 
 @csrf_exempt
@@ -480,7 +481,9 @@ def upload_receipt(request):
                     items_start = True
 
         if not items_start:
-            return get_charleys_receipt(ocr_string)
+            response = get_charleys_receipt(ocr_string, new_receipt.pk)
+            data = {"items" : response, "receipt_id" : new_receipt.pk}
+            return JsonResponse(data, status=201)
 
         return_response = []
         for item in parsed_items:
@@ -512,7 +515,7 @@ def upload_receipt(request):
     return JsonResponse({"message": "image wasn't valid"}, status=400)
 
 
-def get_charleys_receipt(ocr_string):
+def get_charleys_receipt(ocr_string, new_receipt_id):
     parsed_items = []
     start_word = "07:41PM"
     items_start = False
@@ -539,8 +542,7 @@ def get_charleys_receipt(ocr_string):
             items_and_prices["quantity"] = 1
             items_and_prices["cost"] = item_price
             return_response.append(items_and_prices)
-
-    data = {"items" : return_response, "receipt_id" : new_receipt.pk}
+    data = {"items" : return_response, "receipt_id" : new_receipt_id}
     return JsonResponse(data, status=201)
 
 
