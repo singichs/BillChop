@@ -796,6 +796,9 @@ def get_items_for_receipt(request, receipt_id):
     if request.method == "GET":
         # receipts = Receipt.objects.get(pk=receipt_id)
         # print (receipts.participants)
+        receipt = Receipt.objects.get(pk=receipt_id)
+        tip = receipt.tip
+        tax = receipt.tax
         result = []
         items = Item.objects.filter(receipt=receipt_id)
         print (items)
@@ -820,7 +823,7 @@ def get_items_for_receipt(request, receipt_id):
             # add for each item an array of payers
             # payers = [ {userid: 1, name: joe}, {userid: 2, name: bro}]
             result.append(to_add)
-        return JsonResponse({"items": result}, status=201)
+        return JsonResponse({"items": result, "tax": tax, "tip": tip}, status=201)
 
 
 @csrf_exempt 
@@ -870,6 +873,8 @@ def save_receipt(request, receipt_id):
                 new_item.user.add(User.objects.get(pk=user_id))
             new_item.save()
         #receipt.total_cost = total_cost
+        receipt.tip = data["tip"]
+        receipt.tax = data["tax"]
         receipt.title = data["title"]
         receipt.save()
 
