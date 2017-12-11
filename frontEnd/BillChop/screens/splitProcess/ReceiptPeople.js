@@ -170,9 +170,9 @@ class PeopleList extends Component {
                     let tax = responseJson["tax"];
                     let temp_total = 0;
                     for (let i = 0; i < prev_items.length; ++i) {
-                        temp_total += (prev_items[i]["cost"] * 1).toFixed(2);
+                        temp_total += (prev_items[i]["cost"] * 1.00).toFixed(2);
                     }
-                    let final_temp = temp_total + tip + tax;
+                    let final_temp = temp_total + (tip * 1.00).toFixed(2) + (tax * 1.00).toFixed(2);
                     this.setState({
                         items: prev_items,
                         openPerson: -1,
