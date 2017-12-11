@@ -324,14 +324,13 @@ class PeopleList extends Component {
             body: JSON.stringify ({
                 items: this.state.items,
                 people: this.state.people,
-                title: "Costco"
+                title: this.props.parentProps.title
             })
         })
             .then((res) => {
                 if(res.status !== 201) {
                     alert("Couldn't save receipt");
                 }
-                this.props.navigation.navigate('Home');
             })
             .done();
         // for now just change text and button to reflect that people have been charged
@@ -339,6 +338,29 @@ class PeopleList extends Component {
 
         this.setState({charged: true});
     };
+
+    goHome = () => {
+        let receipt_id = this.props.parentProps.receipt_id;
+        fetch(hosturl+'chop/save_receipt/'+receipt_id+'/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                items: this.state.items,
+                people: this.state.people,
+                title: this.props.parentProps.title
+            })
+        })
+            .then((res) => {
+                if(res.status !== 201) {
+                    alert("Couldn't save receipt");
+                }
+            })
+            .done();
+        this.props.navigation.navigate('Home');
+    }
 
     _handleResults = (results) => {
         // loop through results and pull out unnecessary info
@@ -435,7 +457,7 @@ class PeopleList extends Component {
     };
 
     addGroup = (groupID) => {
-        fetch(`${hosturl}chop/get_users_in_group/${groupID}`)
+        fetch(`${hosturl}chop/get_users_in_group_basic/${groupID}`)
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
@@ -616,6 +638,9 @@ class PeopleList extends Component {
                 <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.charge()}}>
                     <Text style={styles.buttonText}>{getButtonStr()}</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonContainerHome} onPress={() => {this.goHome()}}>
+                    <Text style={styles.buttonText}>Save Receipt</Text>
+                </TouchableOpacity>
             </View>
             </TouchableWithoutFeedback>
         );
@@ -678,6 +703,16 @@ const styles = StyleSheet.create({
         marginTop: 100
     },
     buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10,
+        marginBottom: 10,
+    },
+    buttonContainerHome: {
         alignSelf: 'stretch',
         alignItems: 'center',
         padding: 20,
