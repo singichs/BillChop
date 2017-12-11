@@ -555,8 +555,7 @@ def upload_receipt(request):
 
 def get_charleys_receipt(ocr_string, new_receipt_id):
     parsed_items = []
-    start_word = "07:41PM"
-    items_start = False
+    items_start = True
     for line in ocr_string.splitlines():
         for word in line.split():
             if word == "Subtotal":
@@ -564,8 +563,6 @@ def get_charleys_receipt(ocr_string, new_receipt_id):
             elif items_start:
                 parsed_items.append(line)
                 break
-            elif word == start_word:
-                items_start = True
 
     return_response = []
     for item in parsed_items:
