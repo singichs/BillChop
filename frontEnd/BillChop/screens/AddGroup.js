@@ -6,7 +6,8 @@ import {
     FlatList,
     TextInput,
     TouchableOpacity,
-    View, Button, TouchableHighlight, Image
+    View, Button, TouchableHighlight, Image,
+    KeyboardAvoidingView
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
@@ -146,6 +147,7 @@ class GroupView extends Component {
 
     render() {
         return (
+            <KeyboardAvoidingView behavior="padding" style={styles.logoContainer}>
             <View style={styles.container}>
                 {this.renderGroupSearchButton(this.state.searchShown, () => {this.showSearch()})}
                 <SearchBar
@@ -198,7 +200,9 @@ class GroupView extends Component {
                         <Text style={styles.buttonText}>Save Group</Text>
                     </TouchableOpacity>
                 </View>
-            </View>);
+                <View style={{ height: 200 }} />
+            </View>
+            </KeyboardAvoidingView>);
     }
 }
 
@@ -218,6 +222,9 @@ export default class AddGroup extends Component<{}> {
 const styles = StyleSheet.create({
     listItem: {
         flex: 1
+    },
+    logoContainer: {
+        flexGrow: 1,
     },
     container: {
         flex: 1,
