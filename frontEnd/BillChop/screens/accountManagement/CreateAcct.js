@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
       alignSelf: 'stretch',
       alignItems: 'center',
       padding: 20,
-      backgroundColor: '#000',
+      backgroundColor: '#3b5998',
       marginTop: 30
     },
     buttonText: {

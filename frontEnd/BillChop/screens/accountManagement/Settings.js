@@ -40,7 +40,9 @@ export default class Settings extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Button title="Logout" onPress={() => this.logout()}/>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.logout()}>
+                    <Text style={styles.buttonText}> Logout </Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -58,12 +60,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
     },
     buttonContainer: {
-        backgroundColor: '#bdc3c7',
+        backgroundColor: '#A31621',
         paddingVertical: 15
     },
     buttonText: {
         textAlign: 'center',
         color: '#FFFFFF',
-        fontWeight: '700'
+        fontWeight: '700',
+        fontSize: 16
     }
 });
