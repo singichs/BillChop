@@ -168,10 +168,11 @@ def get_users_in_group(request, group_id):
     users = UserMembership.objects.filter(group=group)
     data = []
     for user in users:
-        profile = Profile.objects.get(user=user.user.pk)
-        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk, "phoneNumber": profile.phone_number}
-        data.append(to_add)
-    return JsonResponse(data, safe=False, status=201)
+        if user.user.pk != request.user.pk:
+            profile = Profile.objects.get(user=user.user.pk)
+            to_add = {"givenName": profile.first_name, "familyName": profile.last_name, "id": user.user.pk, "phoneNumber": profile.phone_number}
+            data.append(to_add)
+    return JsonResponse({"members": data}, safe=False, status=201)
 
 @csrf_exempt
 def add_users_to_group(request):
@@ -205,7 +206,7 @@ def delete_user_from_group(request):
         for m in m1:
             if m.user.pk == user.pk:
                 m.delete()
-                return JsonResponse({"message": "Deleted a user from a group"}, status=400)
+                return JsonResponse({"message": "Deleted a user from a group"}, status=200)
     return JsonResponse({"message": "Could not delete user"}, status=400)
 
 @csrf_exempt
