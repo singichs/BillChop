@@ -6,7 +6,8 @@ import {
     FlatList,
     TextInput,
     TouchableOpacity,
-    View, Button, TouchableHighlight, Image
+    View, Button, TouchableHighlight, Image,
+    KeyboardAvoidingView
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
 import { List, ListItem, Icon} from 'react-native-elements';
@@ -146,6 +147,7 @@ class GroupView extends Component {
 
     render() {
         return (
+            <KeyboardAvoidingView behavior="padding" style={styles.logoContainer}>
             <View style={styles.container}>
                 {this.renderGroupSearchButton(this.state.searchShown, () => {this.showSearch()})}
                 <SearchBar
@@ -192,13 +194,15 @@ class GroupView extends Component {
                     </List>
                     <Text style={styles.headingText}> {"Enter Group Name:"} </Text>
                     <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(text) => this.changeGroupName(text)} placeholder="e.g. My Group" value={this.state.group["name"]}/>
+                        <TextInput style={styles.inputText} onChangeText={(text) => this.changeGroupName(text)} placeholder="e.g. My Group" value={this.state.group["name"]}/>
                     </View>
                     <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.saveGroup()}}>
                         <Text style={styles.buttonText}>Save Group</Text>
                     </TouchableOpacity>
                 </View>
-            </View>);
+                <View style={{ height: 200 }} />
+            </View>
+            </KeyboardAvoidingView>);
     }
 }
 
@@ -218,6 +222,9 @@ export default class AddGroup extends Component<{}> {
 const styles = StyleSheet.create({
     listItem: {
         flex: 1
+    },
+    logoContainer: {
+        flexGrow: 1,
     },
     container: {
         flex: 1,
@@ -270,12 +277,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16
     },
-    textInput: {
-        fontSize: 18,
+    inputText: {
+        fontSize: 20,
+        color:'#FFF',
     },
     inputContainer: {
         paddingTop: 20,
         paddingBottom: 20,
-        backgroundColor: '#FFF'
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginTop: 20,
+        alignSelf: 'stretch',
+        backgroundColor: '#D3D3D3'
     }
 });

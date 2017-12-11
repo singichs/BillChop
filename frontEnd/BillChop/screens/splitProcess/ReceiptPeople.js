@@ -8,6 +8,7 @@ import {
     TouchableWithoutFeedback,
     TouchableOpacity,
     Keyboard,
+    Alert,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
@@ -31,6 +32,9 @@ class PeopleList extends Component {
             seed: 1,
             tip: 0,
             currID: 0,
+            finalCost: 0,
+            preTaxCost: 0,
+            tax: 0,
             charged: false,
             error: null,
             searchShown: false,
@@ -53,6 +57,7 @@ class PeopleList extends Component {
             this.makeRequestForPeople();
         }
         else {
+            this.setState({finalCost: this.props.parentProps.finalCost, preTaxCost: this.props.parentProps.preTaxCost, tax: this.props.parentProps.tax});
             this.getUserId();
         }
     }
@@ -165,11 +170,13 @@ class PeopleList extends Component {
                     for (let i = 0; i < prev_items.length; ++i) {
                         temp_total += (prev_items[i]["cost"] * 1).toFixed(2);
                     }
+                    let final_temp = temp_total *  + this.state.tax + this.state.tip;
                     this.setState({
                         items: prev_items,
                         openPerson: -1,
                         receipt_id: receipt_id,
-                        finalCost: temp_total,
+                        preTaxCost: temp_total,
+                        finalCost: final_temp,
                     });
                 })
                 .catch((error) => {
@@ -291,6 +298,7 @@ class PeopleList extends Component {
     charge = () => {
         // TODO: use apis to send twilio request
         let people = [];
+
         for (let i=0; i<this.state.people.length; i++) {
             if (this.state.people[i].friend!=="You") {
                 people.push({phoneNumber: this.state.people[i].phoneNumber,
@@ -324,14 +332,13 @@ class PeopleList extends Component {
             body: JSON.stringify ({
                 items: this.state.items,
                 people: this.state.people,
-                title: "Costco"
+                title: this.props.parentProps.title
             })
         })
             .then((res) => {
                 if(res.status !== 201) {
                     alert("Couldn't save receipt");
                 }
-                this.props.navigation.navigate('Home');
             })
             .done();
         // for now just change text and button to reflect that people have been charged
@@ -339,6 +346,53 @@ class PeopleList extends Component {
 
         this.setState({charged: true});
     };
+
+    checkForUnassignedItems = () => {
+        let unassignedItem = false;
+        for (let i=0; i<this.state.items.length; i++) {
+            if (this.state.items[i].payers.length == 0) {
+                unassignedItem = true;
+                break;
+            }
+        }
+        if (unassignedItem) {
+            Alert.alert(
+                'Unassigned Items',
+                'One or more items is unassigned. Send notifications anyway?',
+                [
+                    {text: 'Cancel', style: 'cancel'},
+                    {text: 'Send', onPress: () => this.charge()},
+                ],
+                { cancelable: false }
+            )
+        }
+        else {
+            this.charge()
+        }
+    }
+
+    goHome = () => {
+        let receipt_id = this.props.parentProps.receipt_id;
+        fetch(hosturl+'chop/save_receipt/'+receipt_id+'/', {
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify ({
+                items: this.state.items,
+                people: this.state.people,
+                title: this.props.parentProps.title
+            })
+        })
+            .then((res) => {
+                if(res.status !== 201) {
+                    alert("Couldn't save receipt");
+                }
+            })
+            .done();
+        this.props.navigation.navigate('Home');
+    }
 
     _handleResults = (results) => {
         // loop through results and pull out unnecessary info
@@ -435,7 +489,7 @@ class PeopleList extends Component {
     };
 
     addGroup = (groupID) => {
-        fetch(`${hosturl}chop/get_users_in_group/${groupID}`)
+        fetch(`${hosturl}chop/get_users_in_group_basic/${groupID}`)
             .then((response) => {
                 if (!response.ok) throw Error(response.statusText);
                 return response.json();
@@ -603,20 +657,23 @@ class PeopleList extends Component {
                 </List>
                 <View style={styles.summary}>
                     <Text style={styles.footer1}>
-                        {`Sub-Total: $${this.props.parentProps.preTaxCost}`}
+                        {`Sub-Total: $${this.state.preTaxCost}`}
                     </Text>
                     <Text style={styles.footer1}>
-                        {`Tax: $${this.props.parentProps.tax}`}
+                        {`Tax: $${this.state.tax}`}
                     </Text>
                     <Text style={styles.footer1}>
                         {`Tip: $${this.state.tip}`}
                     </Text>
                     <Text style={styles.footer2}>
-                        {`Total: $${this.props.parentProps.finalCost}`}
+                        {`Total: $${this.state.finalCost}`}
                     </Text>
                 </View>
-                <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.charge()}}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.checkForUnassignedItems()}}>
                     <Text style={styles.buttonText}>{getButtonStr()}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonContainerHome} onPress={() => {this.goHome()}}>
+                    <Text style={styles.buttonText}>Save Receipt</Text>
                 </TouchableOpacity>
             </View>
             </TouchableWithoutFeedback>
@@ -680,6 +737,16 @@ const styles = StyleSheet.create({
         marginTop: 100
     },
     buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10,
+        marginBottom: 10,
+    },
+    buttonContainerHome: {
         alignSelf: 'stretch',
         alignItems: 'center',
         padding: 20,
