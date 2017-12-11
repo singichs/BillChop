@@ -466,7 +466,6 @@ def upload_receipt(request):
         bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
         ocr_string = image_to_string(bw)
-        print(ocr_string)
         items_start = False
         parsed_items = []
         for line in ocr_string.splitlines():
@@ -480,7 +479,9 @@ def upload_receipt(request):
                     items_start = True
 
         if not items_start:
-            return get_charleys_receipt(ocr_string)
+            response = get_charleys_receipt(ocr_string)
+            data = {"items" : response, "receipt_id" : 2}
+            return JsonResponse(data, status=201)
 
         return_response = []
         for item in parsed_items:
@@ -506,7 +507,7 @@ def upload_receipt(request):
                         items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
                         return_response.append(items_and_prices)
 
-        data = {"items" : return_response, "receipt_id" : new_receipt.pk}
+        data = {"items" : return_response, "receipt_id" : 2}
         return JsonResponse(data, status=201)
 
     return JsonResponse({"message": "image wasn't valid"}, status=400)
@@ -540,9 +541,7 @@ def get_charleys_receipt(ocr_string):
             items_and_prices["cost"] = item_price
             return_response.append(items_and_prices)
 
-    data = {"items" : return_response, "receipt_id" : new_receipt.pk}
-    return JsonResponse(data, status=201)
-
+    return return_response
 
 def change_contrast(img, level):
     factor = (259 * (level + 255)) / (255 * (259 - level))
