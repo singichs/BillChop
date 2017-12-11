@@ -192,7 +192,7 @@ class GroupView extends Component {
                     </List>
                     <Text style={styles.headingText}> {"Enter Group Name:"} </Text>
                     <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(text) => this.changeGroupName(text)} placeholder="e.g. My Group" value={this.state.group["name"]}/>
+                        <TextInput style={styles.inputText} onChangeText={(text) => this.changeGroupName(text)} placeholder="e.g. My Group" value={this.state.group["name"]}/>
                     </View>
                     <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.saveGroup()}}>
                         <Text style={styles.buttonText}>Save Group</Text>
@@ -270,12 +270,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16
     },
-    textInput: {
-        fontSize: 18,
+    inputText: {
+        fontSize: 20,
+        color:'#FFF',
     },
     inputContainer: {
         paddingTop: 20,
         paddingBottom: 20,
-        backgroundColor: '#FFF'
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginTop: 20,
+        alignSelf: 'stretch',
+        backgroundColor: '#D3D3D3'
     }
 });

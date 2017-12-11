@@ -31,6 +31,9 @@ class PeopleList extends Component {
             seed: 1,
             tip: 0,
             currID: 0,
+            finalCost: 0,
+            preTaxCost: 0,
+            tax: 0,
             charged: false,
             error: null,
             searchShown: false,
@@ -53,6 +56,7 @@ class PeopleList extends Component {
             this.makeRequestForPeople();
         }
         else {
+            this.setState({finalCost: this.props.parentProps.finalCost, preTaxCost: this.props.parentProps.preTaxCost, tax: this.props.parentProps.tax});
             this.getUserId();
         }
     }
@@ -165,11 +169,13 @@ class PeopleList extends Component {
                     for (let i = 0; i < prev_items.length; ++i) {
                         temp_total += (prev_items[i]["cost"] * 1).toFixed(2);
                     }
+                    let final_temp = temp_total *  + this.state.tax + this.state.tip;
                     this.setState({
                         items: prev_items,
                         openPerson: -1,
                         receipt_id: receipt_id,
-                        finalCost: temp_total,
+                        preTaxCost: temp_total,
+                        finalCost: final_temp,
                     });
                 })
                 .catch((error) => {
@@ -625,16 +631,16 @@ class PeopleList extends Component {
                 </List>
                 <View style={styles.summary}>
                     <Text style={styles.footer1}>
-                        {`Sub-Total: $${this.props.parentProps.preTaxCost}`}
+                        {`Sub-Total: $${this.state.preTaxCost}`}
                     </Text>
                     <Text style={styles.footer1}>
-                        {`Tax: $${this.props.parentProps.tax}`}
+                        {`Tax: $${this.state.tax}`}
                     </Text>
                     <Text style={styles.footer1}>
                         {`Tip: $${this.state.tip}`}
                     </Text>
                     <Text style={styles.footer2}>
-                        {`Total: $${this.props.parentProps.finalCost}`}
+                        {`Total: $${this.state.finalCost}`}
                     </Text>
                 </View>
                 <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.charge()}}>
