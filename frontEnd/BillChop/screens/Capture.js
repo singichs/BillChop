@@ -77,11 +77,12 @@ const styles = StyleSheet.create({
     },
     capture: {
         flex: 0,
-        backgroundColor: '#eafafc',
+        backgroundColor: '#00798C',
         borderRadius: 5,
         color: '#000',
         padding: 10,
-        margin: 40
+        margin: 40,
+        color: '#FFF',
     },
     icon: {
         height: 35,
