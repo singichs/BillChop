@@ -55,9 +55,9 @@ class TransactionList extends Component {
     render() {
         let getString = (item) => {
             if (item.item.is_owner) {
-                return `You are owed $${item.item.cost}`;
+                return (<Text>You are owed ${item.item.cost}</Text>);
             }
-            return `You owe ${item.item.owner} $${item.item.cost}`;
+            return (<Text>You owe {item.item.owner} ${item.item.cost}</Text>);
         };
         let getDate = (item) => {
            let curr_date = new Date(item.item.timestamp);
@@ -70,19 +70,27 @@ class TransactionList extends Component {
             }
             return " ";
         };
+        let getColor = (item) => {
+            if (item.item.is_owner) {
+                return "#f8fff4";
+            }
+            return "#ffefef";
+        }
         return (
             <View>
                 {this.state.data.length < 1 && <Text style={styles.titleText}>No transaction history to show</Text>}
-                <List>
                     <FlatList
                         data={this.state.data}
                         renderItem={({ item }) => (
                             <ListItem
-                                title={getString({item})}
+                                containerStyle={{borderColor: "#FFFFFF", borderWidth: 1, backgroundColor: getColor({item})}}
+                                title={
+                                    <View>
+                                        {getString({item})}
+                                    </View>}
                                 subtitle={getDate({item})}
                                 rightTitle={getTitle(item)}
-                                titleContainerStyle={{ backgroundColor: '#F5FCFF'}}
-                                rightTitleContainerStyle={{backgroundColor: '#F5FCFF'}}
+                                rightTitleStyle = {{color: "#000000"}}
                                 onPress={() => this.props.screenProps.rootNavigation.navigate('ReceiptPeople', {items: [],
                                     title: "",
                                     preTaxCost: 0.00,
@@ -95,7 +103,6 @@ class TransactionList extends Component {
                         )}
                         keyExtractor={item => item.receipt_id}
                     />
-                </List>
             </View>
         );
     }
