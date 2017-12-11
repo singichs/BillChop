@@ -72,7 +72,7 @@ class TransactionList extends Component {
         };
         let getColor = (item) => {
             if (item.item.is_owner) {
-                return "#f8fff4";
+                return "#e4fcd6";
             }
             return "#eafafc";
         }
