@@ -4,7 +4,8 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View, Button, TouchableHighlight, Image
+    View, Button, TouchableHighlight, Image,
+    ActivityIndicator
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import {hosturl} from "../../constants";
@@ -52,14 +53,23 @@ export default class ReviewCapture extends Component<{}> {
 
 render() {
         let image = this.props.navigation.state.params.image;
+        let view = (<TouchableOpacity style={styles.buttonContainer} onPress={() => this.submitPhoto(image)}>
+            <Text style={styles.buttonText}>Continue</Text>
+        </TouchableOpacity> );
+        if (this.state.rendering) {
+            view =  (<ActivityIndicator style={{ alignSelf: 'stretch',
+                padding: 20,
+                marginTop: 30,
+                marginLeft: 10,
+                marginRight: 10}} size="large" color="#0000ff" />);
+        }
         return (
+
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image source={{uri: image, isStatic:true}} style={styles.image}/>
                 </View>
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.submitPhoto(image)}>
-                    <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity>
+                {view}
             </View>
         );
     }
