@@ -166,11 +166,13 @@ class PeopleList extends Component {
                 })
                 .then((responseJson) => {
                     let prev_items = responseJson["items"];
+                    let tip = responseJson["tip"];
+                    let tax = responseJson["tax"];
                     let temp_total = 0;
                     for (let i = 0; i < prev_items.length; ++i) {
                         temp_total += (prev_items[i]["cost"] * 1).toFixed(2);
                     }
-                    let final_temp = temp_total *  + this.state.tax + this.state.tip;
+                    let final_temp = temp_total + tip + tax;
                     this.setState({
                         items: prev_items,
                         openPerson: -1,
@@ -332,7 +334,9 @@ class PeopleList extends Component {
             body: JSON.stringify ({
                 items: this.state.items,
                 people: this.state.people,
-                title: this.props.parentProps.title
+                title: this.props.parentProps.title,
+                tip: this.state.tip,
+                tax: this.state.tax,
             })
         })
             .then((res) => {
@@ -382,7 +386,9 @@ class PeopleList extends Component {
             body: JSON.stringify ({
                 items: this.state.items,
                 people: this.state.people,
-                title: this.props.parentProps.title
+                title: this.props.parentProps.title,
+                tip: this.state.tip,
+                tax: this.state.tax,
             })
         })
             .then((res) => {
