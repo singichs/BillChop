@@ -280,7 +280,7 @@ class PeopleList extends Component {
         return (
             <ListItem
                 onPress={() =>{this.evaluateClick(item, index)}}
-                containerStyle={{backgroundColor: "#e4fcd6"}}
+                containerStyle={{backgroundColor: "#FFFFFF"}}
                 title={<Text>{item.name}</Text>}
                 rightTitle={`$${item.cost}`}
                 hideChevron={true}
@@ -580,8 +580,10 @@ class PeopleList extends Component {
                                             openPerson: id
                                         })
                                     }}
+                                    containerStyle={{backgroundColor: "#e2e2e2"}}
                                     title={<View><Text>{item.friend}</Text></View>}
                                     rightTitle={`$${item.total}`}
+                                    rightTitleStyle = {{color: "#000000"}}
                                     hideChevron={true}
                                     leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.removePerson(index, item.id)}}/> }
                                     />

@@ -247,7 +247,8 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         marginTop: 10,
         marginBottom: 10,
-        marginLeft: 6
+        marginLeft: 6,
+        paddingTop: 5
     },
     header: {
         fontWeight: 'bold',
@@ -275,7 +276,9 @@ const styles = StyleSheet.create({
     inputFooter: {
         fontSize: 16,
         height: 20,
-        width: 50
+        width: 50,
+        backgroundColor: '#D3D3D3',
+        textAlign: 'center'
     },
     icon: {
         marginRight: 20
