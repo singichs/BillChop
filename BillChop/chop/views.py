@@ -454,7 +454,7 @@ def upload_receipt(request):
         print(type(form.cleaned_data['image'].name))
         print("hopefully next line is changed name")
         latest_id = Receipt.objects.latest('pk').pk
-        form.cleaned_data['image'].name = "receipt" + str(latest_id+1) + ".jpg"
+        form.cleaned_data['image'].name = "receipt" + str(latest_id+1) + ".jpeg"
         print(form.cleaned_data['image'])
         new_receipt = Receipt.objects.create(image=form.cleaned_data['image'], total_cost = 0, tip = 0, tax = 0, title = '', is_complete = False, owner_id = request.user.pk)
         membership = ReceiptMembership.objects.create(users=request.user, receipt=new_receipt, outstanding_payment=0)
@@ -822,6 +822,13 @@ def delete_all(request):
         return JsonResponse({"operation": "delete"}, status=200) 
 
 
-
-
-
+@csrf_exempt
+def get_receipt_image(request, receipt_id):
+    try:
+        with open("receipt_images/receipt" + str(receipt_id) + ".jpeg", "r") as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")
+    except IOError:
+        red = Image.new('RGBA', (1, 1), (255,0,0,0))
+        response = HttpResponse(content_type="image/jpeg")
+        red.save(response, "JPEG")
+        return response

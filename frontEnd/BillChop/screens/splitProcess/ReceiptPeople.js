@@ -543,6 +543,7 @@ class PeopleList extends Component {
                 <View style={styles.containerSearch}>
                     <List>
                         <FlatList
+                            keyboardShouldPersistTaps="always"
                             data={this.state.results}
                             extraData={this.state}
                             renderItem={({item, index})  => (
