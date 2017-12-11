@@ -282,7 +282,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#00e68a',
         marginTop: 30,
         marginLeft: 10,
-        marginRight: 10
+        marginRight: 10,
+        marginBottom: 10
     },
     buttonText: {
         color: '#FFF',
