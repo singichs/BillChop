@@ -3,15 +3,12 @@ import {
     StyleSheet,
     View,
     Image,
-    ImageBackground,
     Text,
     TextInput,
     Button,
     KeyboardAvoidingView,
     TouchableOpacity,
     TouchableWithoutFeedback,
-    AnimatedButton,
-    AnimationOverlay,
     Keyboard,
     AsyncStorage
 } from 'react-native';
@@ -51,10 +48,6 @@ export default class Login extends Component<{}> {
         return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
-             
-             <ImageBackground source={require('./BillChopBackground1.jpg')}
-                  style={styles.backgroundImage}>
-
              <View style={styles.logoContainer}>
 
                 <Text style={styles.title}>BillChop</Text>
@@ -84,14 +77,13 @@ export default class Login extends Component<{}> {
            		 />
 
          		 <TouchableOpacity style={styles.buttonContainer} onPress={this.login}>
-           			<Text style={styles.buttonText}> Login </Text>
+           			<Text style={styles.buttonText}> LOGIN </Text>
          		 </TouchableOpacity>
             <TouchableOpacity style={styles.buttonContainer} onPress={this.createAcct}>
               <Text style={styles.buttonText}>Don't have an account? Sign up here!</Text>
             </TouchableOpacity>
 
             </View>
-           </ImageBackground>
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
       );
@@ -131,13 +123,6 @@ const styles = StyleSheet.create({
     wrapper:{
     	flex:1
 	},
-  backgroundImage: {
-          flex: 1,
-          position: 'absolute',
-          width: '110%',
-          height: '200%',
-          justifyContent: 'center' 
-           },
     container:{
       flex:1,
       backgroundColor: '#FFFFFF', //white, for now
@@ -152,66 +137,46 @@ const styles = StyleSheet.create({
       justifyContent: 'center'
     },
     title: {
-      color: '#FFF', //Black for now
-      backgroundColor: 'transparent',
+      color: '#000', //Black for now
       marginTop: 10,
       width: 160,
       textAlign: 'center',
       opacity: 0.9,
       fontSize: 36,
-            fontFamily: 'TrebuchetMS-Bold'
     },
     valueProp: {
-      color: '#FFF', //Black for now
-            backgroundColor: 'transparent',
+      color: '#000', //Black for now
       marginTop: 10,
       width: 160,
       textAlign: 'center',
       opacity: 0.9,
-            fontFamily: 'TrebuchetMS-Bold'
     },
     signUp: {
+      color: '#000', //Black for now
       marginTop: 30,
       width: 160,
       textAlign: 'center',
       opacity: 0.9,
       borderBottomColor: '#000',
-            backgroundColor: 'transparent',
-      fontFamily: 'Trebuchet MS'
     },
   	input: {
     	height: 40,
       width: 300,
+    	backgroundColor: '#bdc3c7',
       marginTop: 20,
     	marginBottom: 20,
-      backgroundColor: 'transparent',
-    	paddingHorizontal: 10,
-       borderWidth: 25,
+    	color: '#FFF',
+    	paddingHorizontal: 10
   	},
   	buttonContainer: {
-      // Setting up Hint Align center.
-      textAlign: 'center',
- 
-// Setting up TextInput height as 50 pixel.
-height: 50,
- 
-// Set border width.
- borderWidth: 2,
- 
- // Set border Hex Color Code Here.
- borderColor: '#00cc99',
- 
-// Set border Radius.
- borderRadius: 25,
+      alignSelf: 'stretch',
       alignItems: 'center',
       padding: 20,
-      marginTop: 30,
-      backgroundColor: '#00cc99',
-
+      backgroundColor: '#000',
+      marginTop: 30
   	},
   	buttonText: {
     	color: '#FFF',
-      fontWeight: 'bold',
-      fontFamily: 'TrebuchetMS-Bold'
+      fontWeight: 'bold'
   	}
 });
