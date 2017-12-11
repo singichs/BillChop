@@ -168,10 +168,11 @@ def get_users_in_group(request, group_id):
     users = UserMembership.objects.filter(group=group)
     data = []
     for user in users:
-        profile = Profile.objects.get(user=user.user.pk)
-        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk, "phoneNumber": profile.phone_number}
-        data.append(to_add)
-    return JsonResponse(data, safe=False, status=201)
+        if user.user.pk != request.user.pk:
+            profile = Profile.objects.get(user=user.user.pk)
+            to_add = {"givenName": profile.first_name, "familyName": profile.last_name, "id": user.user.pk, "phoneNumber": profile.phone_number}
+            data.append(to_add)
+    return JsonResponse({"members": data}, safe=False, status=201)
 
 @csrf_exempt
 def add_users_to_group(request):
@@ -194,6 +195,45 @@ def add_users_to_group(request):
 
     return HttpResponse(204)
 
+
+@csrf_exempt
+def add_user_to_group(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        username = data['givenName']
+        password = data['familyName']
+        phone_number = data['phoneNumber']
+        group_id = data['groupID']
+
+        group = Group.objects.get(pk=group_id)
+        if Profile.objects.filter(phone_number=phone_number).exists():
+            profile = Profile.objects.get(phone_number=phone_number)
+            user = User.objects.get(profile=profile)
+            # user_payments = {'payments':  data}
+            return JsonResponse({"user_id": user.pk}, safe=False, status=200)
+        else:
+            try:
+                # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER
+                # CAN'T BE CREATED
+                new_username = username + "." + password
+                latest_id = User.objects.latest('pk').pk
+                new_username += str(latest_id + 1)
+                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = phone_number
+                profile.first_name = username
+                profile.last_name = password
+                new_usermembership = UserMembership.objects.create(user=new_user, group=group)
+                new_usermembership.save()
+                new_user.save()
+                profile.save()
+                return JsonResponse({"user_id": new_user.pk}, safe=False, status=200)
+            except IntegrityError:
+                # user already exists
+                return JsonResponse({'message':'user already exists'}, status=422)
+
 @csrf_exempt
 def delete_user_from_group(request):
     if request.method == "POST":
@@ -205,7 +245,7 @@ def delete_user_from_group(request):
         for m in m1:
             if m.user.pk == user.pk:
                 m.delete()
-                return JsonResponse({"message": "Deleted a user from a group"}, status=400)
+                return JsonResponse({"message": "Deleted a user from a group"}, status=200)
     return JsonResponse({"message": "Could not delete user"}, status=400)
 
 @csrf_exempt
@@ -451,6 +491,11 @@ def upload_receipt(request):
     print(request.FILES)
     form = ImageUploadForm(request.POST, request.FILES)
     if form.is_valid():
+        print(type(form.cleaned_data['image'].name))
+        print("hopefully next line is changed name")
+        latest_id = Receipt.objects.latest('pk').pk
+        form.cleaned_data['image'].name = "receipt" + str(latest_id+1) + ".jpeg"
+        print(form.cleaned_data['image'])
         new_receipt = Receipt.objects.create(image=form.cleaned_data['image'], total_cost = 0, tip = 0, tax = 0, title = '', is_complete = False, owner_id = request.user.pk)
         membership = ReceiptMembership.objects.create(users=request.user, receipt=new_receipt, outstanding_payment=0)
         img = Image.open(form.cleaned_data['image'].file)
@@ -461,6 +506,7 @@ def upload_receipt(request):
         bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
         ocr_string = image_to_string(bw)
+        print(ocr_string)
         items_start = False
         parsed_items = []
         for line in ocr_string.splitlines():
@@ -472,6 +518,11 @@ def upload_receipt(request):
                     break
                 elif word.lower() == "member":
                     items_start = True
+
+        if not items_start:
+            response = get_charleys_receipt(ocr_string, new_receipt.pk)
+            data = {"items" : response, "receipt_id" : new_receipt.pk}
+            return JsonResponse(data, status=201)
 
         return_response = []
         for item in parsed_items:
@@ -500,7 +551,38 @@ def upload_receipt(request):
         data = {"items" : return_response, "receipt_id" : new_receipt.pk}
         return JsonResponse(data, status=201)
 
-    return JsonResponse("image wasn't valid")
+    return JsonResponse({"message": "image wasn't valid"}, status=400)
+
+
+def get_charleys_receipt(ocr_string, new_receipt_id):
+    parsed_items = []
+    start_word = "07:41PM"
+    items_start = False
+    for line in ocr_string.splitlines():
+        for word in line.split():
+            if word == "Subtotal":
+                items_start = False
+            elif items_start:
+                parsed_items.append(line)
+                break
+            elif word == start_word:
+                items_start = True
+
+    return_response = []
+    for item in parsed_items:
+        items_and_prices = {}
+        item_name = ""
+        item_price = -1
+        words = item.split()
+        if RepresentsFloat(words[len(words)-1]):
+            item_name = ''.join(words[:len(words)-1])
+            item_price = words[len(words)-1]
+            items_and_prices["name"] = item_name
+            items_and_prices["quantity"] = 1
+            items_and_prices["cost"] = item_price
+            return_response.append(items_and_prices)
+    data = {"items" : return_response, "receipt_id" : new_receipt_id}
+    return data
 
 
 def change_contrast(img, level):
@@ -817,6 +899,13 @@ def delete_all(request):
         return JsonResponse({"operation": "delete"}, status=200) 
 
 
-
-
-
+@csrf_exempt
+def get_receipt_image(request, receipt_id):
+    try:
+        with open("receipt_images/receipt" + str(receipt_id) + ".jpeg", "r") as f:
+            return HttpResponse(f.read(), content_type="image/jpeg")
+    except IOError:
+        red = Image.new('RGBA', (1, 1), (255,0,0,0))
+        response = HttpResponse(content_type="image/jpeg")
+        red.save(response, "JPEG")
+        return response

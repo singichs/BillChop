@@ -157,6 +157,7 @@ class GroupView extends Component {
                 <View style={styles.listContainer}>
                     <List>
                         <FlatList
+                            keyboardShouldPersistTaps={true}
                             data={this.state.results}
                             extraData={this.state}
                             renderItem={({item, index})  => (
@@ -175,6 +176,7 @@ class GroupView extends Component {
                     {this.state.group.members < 1 && <Text style={styles.titleText}>No group members added yet</Text>}
                     <List>
                         <FlatList
+                            keyboardShouldPersistTaps="always"
                             data={this.state.group.members}
                             extraData={this.state}
                             renderItem={({item, index})  => (

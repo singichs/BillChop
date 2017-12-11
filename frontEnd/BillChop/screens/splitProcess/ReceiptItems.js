@@ -6,6 +6,7 @@ import {
     FlatList,
     TextInput,
     TouchableWithoutFeedback,
+    TouchableOpacity,
     Keyboard,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
@@ -172,8 +173,9 @@ class ItemList extends Component {
                 <Text style={styles.header}>
                     {this.state.title}
                 </Text>
-                <List>
                     <FlatList
+                        style={{flex: 0.7}}
+                        keyboardShouldPersistTaps="always"
                         data={this.state.items}
                         extraData={this.state}
                         renderItem={({item, index})  => (
@@ -190,8 +192,7 @@ class ItemList extends Component {
                         keyExtractor={(item, index) => index}
                         ListFooterComponent={this.renderFooter}
                     />
-                </List>
-                <View>
+                <View style={{flex: .3}}>
                     <Text style={styles.footer1}>
                         {`Sub-Total: $${this.state.preTaxCost}`}
                     </Text>
@@ -207,7 +208,9 @@ class ItemList extends Component {
                         {`Total: $${this.state.finalCost}`}
                     </Text>
                 </View>
-                <Button title="Continue to Item Assignment" onPress={() => {this.continueToNextPage()}}/>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => {this.continueToNextPage()}}>
+                    <Text style={styles.buttonText}>Continue to Item Assignment</Text>
+                </TouchableOpacity>
             </View>
             </TouchableWithoutFeedback>
         );
@@ -271,5 +274,20 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 20
-    }
+    },
+    buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10,
+        marginBottom: 10
+    },
+    buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
 });

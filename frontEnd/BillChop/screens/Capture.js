@@ -57,7 +57,7 @@ export default class Capture extends Component<{}> {
                     detectionCountBeforeCapture={50000000}
                     detectionRefreshRateInMS={50}
                     captureMultiple>
-                    <Text style={styles.capture} onPress={this.takePicture.bind(this)}>[CAPTURE]</Text>
+                    <Text style={styles.capture} onPress={this.takePicture.bind(this)}>Scan Receipt</Text>
                 </DocumentScanner>
                 <Image source={{ uri: `data:image/jpeg;base64,${this.state.image}`}} resizeMode="contain" />
             </View>
@@ -77,11 +77,12 @@ const styles = StyleSheet.create({
     },
     capture: {
         flex: 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#00798C',
         borderRadius: 5,
         color: '#000',
         padding: 10,
-        margin: 40
+        margin: 40,
+        color: '#FFF',
     },
     icon: {
         height: 35,
