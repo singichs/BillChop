@@ -62,7 +62,7 @@ class TransactionList extends Component {
         let getDate = (item) => {
            let curr_date = new Date(item.item.timestamp);
            let date_str = curr_date.toLocaleString('en-US');
-           return date_str;
+           return (<Text>{date_str}</Text>);
         };
         let getTitle = (item) => {
             if (item["title"]) {
@@ -88,7 +88,10 @@ class TransactionList extends Component {
                                     <View>
                                         {getString({item})}
                                     </View>}
-                                subtitle={getDate({item})}
+                                subtitle={
+                                    <View>
+                                        {getDate({item})}
+                                    </View>}
                                 rightTitle={getTitle(item)}
                                 rightTitleStyle = {{color: "#000000"}}
                                 onPress={() => this.props.screenProps.rootNavigation.navigate('ReceiptPeople', {items: [],
