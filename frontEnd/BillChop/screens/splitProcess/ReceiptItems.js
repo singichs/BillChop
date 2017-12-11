@@ -172,8 +172,9 @@ class ItemList extends Component {
                 <Text style={styles.header}>
                     {this.state.title}
                 </Text>
-                <List>
                     <FlatList
+                        style={{flex: 0.7}}
+                        keyboardShouldPersistTaps="always"
                         data={this.state.items}
                         extraData={this.state}
                         renderItem={({item, index})  => (
@@ -190,8 +191,7 @@ class ItemList extends Component {
                         keyExtractor={(item, index) => index}
                         ListFooterComponent={this.renderFooter}
                     />
-                </List>
-                <View>
+                <View style={{flex: .3}}>
                     <Text style={styles.footer1}>
                         {`Sub-Total: $${this.state.preTaxCost}`}
                     </Text>
