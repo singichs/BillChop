@@ -332,7 +332,7 @@ def get_group_receipts(request, group_id):
             is_owner = True
         print (serializer.data)
 
-        profile = Profile.objects.get(pk=serializer.data["owner"])
+        profile = Profile.objects.get(user=serializer.data["owner"])
         print (profile.first_name)
 
         to_add["receipt_id"] = receipt.pk
@@ -508,7 +508,6 @@ def upload_receipt(request):
         bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
         ocr_string = image_to_string(bw)
-        print(ocr_string)
         items_start = False
         parsed_items = []
         for line in ocr_string.splitlines():
@@ -907,3 +906,19 @@ def get_receipt_image(request, receipt_id):
         response = HttpResponse(content_type="image/jpeg")
         red.save(response, "JPEG")
         return response
+
+
+@csrf_exempt
+def get_users_in_group_basic(request, group_id):
+    if not Group.objects.filter(pk=group_id).exists():
+        return JsonResponse({'message':"Group id doesn't exist"}, status=400)
+
+    #Todo: check if user is in group? or is that done in the frontend?
+    group = Group.objects.get(pk=group_id)
+    users = UserMembership.objects.filter(group=group)
+    data = []
+    for user in users:
+        profile = Profile.objects.get(user=user.user.pk)
+        to_add = {"name": profile.first_name + " " + profile.last_name, "user_id": user.user.pk, "phoneNumber": profile.phone_number}
+        data.append(to_add)
+    return JsonResponse(data, safe=False, status=201)
