@@ -3,6 +3,7 @@ import {
     Platform,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
@@ -56,7 +57,9 @@ render() {
                 <View style={styles.imageContainer}>
                     <Image source={{uri: image, isStatic:true}} style={styles.image}/>
                 </View>
-                <Button title="Continue" onPress={() => this.submitPhoto(image)}/>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.submitPhoto(image)}>
+                    <Text style={styles.buttonText}>Continue</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -75,5 +78,19 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
+    },
+    buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16
     },
 });

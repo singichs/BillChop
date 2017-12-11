@@ -6,6 +6,7 @@ import {
     FlatList,
     TextInput,
     TouchableWithoutFeedback,
+    TouchableOpacity,
     Keyboard,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
@@ -381,7 +382,11 @@ class PeopleList extends Component {
             return (<Text>{""}</Text>);
         }
         else {
-            return(<Button title={"Search for Friends to Split With"} style={styles.button} onPress={showSearchFn}/>);
+            return(
+                <TouchableOpacity style={styles.searchButtonContainer} onPress={showSearchFn}>
+                    <Text style={styles.buttonText}>Search for Friends to Split With</Text>
+                </TouchableOpacity>
+            );
         }
     };
 
@@ -606,7 +611,9 @@ class PeopleList extends Component {
                         {`Total: $${this.props.parentProps.finalCost}`}
                     </Text>
                 </View>
-                <Button title={getButtonStr()} style={styles.button} onPress={() =>{this.charge()}}/>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.charge()}}>
+                    <Text style={styles.buttonText}>{getButtonStr()}</Text>
+                </TouchableOpacity>
             </View>
             </TouchableWithoutFeedback>
         );
@@ -667,5 +674,28 @@ const styles = StyleSheet.create({
     button: {
         paddingTop: 40,
         marginTop: 100
-    }
+    },
+    buttonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#00e68a',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    searchButtonContainer: {
+        alignSelf: 'stretch',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#3b5998',
+        marginTop: 30,
+        marginLeft: 10,
+        marginRight: 10
+    },
 });
