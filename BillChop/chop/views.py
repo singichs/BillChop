@@ -521,8 +521,7 @@ def upload_receipt(request):
 
         if not items_start:
             response = get_charleys_receipt(ocr_string, new_receipt.pk)
-            data = {"items" : response, "receipt_id" : new_receipt.pk}
-            return JsonResponse(data, status=201)
+            return JsonResponse(response, status=201)
 
         return_response = []
         for item in parsed_items:
