@@ -69,8 +69,14 @@ class TransactionHistory extends Component {
             }
             return " ";
         };
+        let getColor = (item) => {
+            if (item.item.is_owner) {
+                return "#e4fcd6";
+            }
+            return "#eafafc";
+        }
         return (
-            <View>
+            <View style={{flex: .7}}>
                 <Text style={styles.headingText}> {"Group History"} </Text>
                 <List>
                     <FlatList
@@ -80,8 +86,7 @@ class TransactionHistory extends Component {
                             title={getString({item})}
                             subtitle={getDate({item})}
                             rightTitle={getTitle(item)}
-                            titleContainerStyle={{ backgroundColor: '#F5FCFF'}}
-                            rightTitleContainerStyle={{backgroundColor: '#F5FCFF'}}
+                            containerStyle={{borderColor: "#FFFFFF", borderWidth: 1, backgroundColor: getColor({item})}}
                             onPress={() => this.props.screenProps.rootNavigation.navigate('ReceiptPeople', {items: [],
                                 title: "",
                                 preTaxCost: 0.00,
@@ -246,7 +251,7 @@ class GroupMembers extends Component {
     };
 
     render() {
-        return (<View style={styles.container}>
+        return (<View style={{flex: .7}}>
                 {this.renderGroupSearchButton(this.state.searchShown, () => {this.showSearch()})}
                 <SearchBar
                     ref={(ref) => this.searchBar = ref}
