@@ -195,6 +195,45 @@ def add_users_to_group(request):
 
     return HttpResponse(204)
 
+
+@csrf_exempt
+def add_user_to_group(request):
+    if request.method == "POST":
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        username = data['givenName']
+        password = data['familyName']
+        phone_number = data['phoneNumber']
+        group_id = data['groupID']
+
+        group = Group.objects.get(pk=group_id)
+        if Profile.objects.filter(phone_number=phone_number).exists():
+            profile = Profile.objects.get(phone_number=phone_number)
+            user = User.objects.get(profile=profile)
+            # user_payments = {'payments':  data}
+            return JsonResponse({"user_id": user.pk}, safe=False, status=200)
+        else:
+            try:
+                # HAVE TO MAKE SURE THAT FIRSTNAME AND LASTNAME COMBINATION IS UNIQUE - OR ELSE USER
+                # CAN'T BE CREATED
+                new_username = username + "." + password
+                latest_id = User.objects.latest('pk').pk
+                new_username += str(latest_id + 1)
+                new_user = User.objects.create_user(username=new_username, email=new_username, password="password")
+                profile = Profile.objects.get(user=new_user)
+                profile.venmo = "eecs"
+                profile.phone_number = phone_number
+                profile.first_name = username
+                profile.last_name = password
+                new_usermembership = UserMembership.objects.create(user=new_user, group=group)
+                new_usermembership.save()
+                new_user.save()
+                profile.save()
+                return JsonResponse({"user_id": new_user.pk}, safe=False, status=200)
+            except IntegrityError:
+                # user already exists
+                return JsonResponse({'message':'user already exists'}, status=422)
+
 @csrf_exempt
 def delete_user_from_group(request):
     if request.method == "POST":
