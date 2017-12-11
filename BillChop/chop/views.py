@@ -466,6 +466,7 @@ def upload_receipt(request):
         bw.show()
         # image_to_string is the receipt parsing function that returns the text from the image
         ocr_string = image_to_string(bw)
+        print(ocr_string)
         items_start = False
         parsed_items = []
         for line in ocr_string.splitlines():
@@ -477,6 +478,9 @@ def upload_receipt(request):
                     break
                 elif word.lower() == "member":
                     items_start = True
+
+        if not items_start:
+            return get_charleys_receipt(ocr_string)
 
         return_response = []
         for item in parsed_items:
@@ -502,10 +506,42 @@ def upload_receipt(request):
                         items_and_prices = {"name": item_name, "cost": item_price, "quantity": 1}
                         return_response.append(items_and_prices)
 
-        data = {"items" : return_response, "receipt_id" : new_receipt.pk}
+        data = {"items" : return_response}
         return JsonResponse(data, status=201)
 
     return JsonResponse({"message": "image wasn't valid"}, status=400)
+
+
+def get_charleys_receipt(ocr_string):
+    parsed_items = []
+    start_word = "07:41PM"
+    items_start = False
+    for line in ocr_string.splitlines():
+        for word in line.split():
+            if word == "Subtotal":
+                items_start = False
+            elif items_start:
+                parsed_items.append(line)
+                break
+            elif word == start_word:
+                items_start = True
+
+    return_response = []
+    for item in parsed_items:
+        items_and_prices = {}
+        item_name = ""
+        item_price = -1
+        words = item.split()
+        if RepresentsFloat(words[len(words)-1]):
+            item_name = ''.join(words[:len(words)-1])
+            item_price = words[len(words)-1]
+            items_and_prices["name"] = item_name
+            items_and_prices["quantity"] = 1
+            items_and_prices["cost"] = item_price
+            return_response.append(items_and_prices)
+
+    data = {"items" : return_response}
+    return JsonResponse(data, status=201)
 
 
 def change_contrast(img, level):
