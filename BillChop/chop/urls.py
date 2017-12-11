@@ -41,7 +41,8 @@ urlpatterns = [
 	url(r'^delete_all', views.delete_all, name='delete_all'),
 	url(r'^save_receipt/(?P<receipt_id>\d+)/$', views.save_receipt, name='save_receipt'),
 	url(r'^delete_user_from_group/$', views.delete_user_from_group, name='delete_user_from_group'),
-	url(r'^get_receipt_owner/(?P<receipt_id>\d+)/$', views.get_receipt_owner, name='get_receipt_owner')
+	url(r'^get_receipt_owner/(?P<receipt_id>\d+)/$', views.get_receipt_owner, name='get_receipt_owner'),
+	url(r'^get_receipt_image/(?P<receipt_id>\d+)/$', views.get_receipt_image, name='get_receipt_image'),
 
 ]
 
