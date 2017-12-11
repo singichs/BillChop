@@ -32,6 +32,9 @@ class PeopleList extends Component {
             seed: 1,
             tip: 0,
             currID: 0,
+            finalCost: 0,
+            preTaxCost: 0,
+            tax: 0,
             charged: false,
             error: null,
             searchShown: false,
@@ -54,6 +57,7 @@ class PeopleList extends Component {
             this.makeRequestForPeople();
         }
         else {
+            this.setState({finalCost: this.props.parentProps.finalCost, preTaxCost: this.props.parentProps.preTaxCost, tax: this.props.parentProps.tax});
             this.getUserId();
         }
     }
@@ -162,15 +166,19 @@ class PeopleList extends Component {
                 })
                 .then((responseJson) => {
                     let prev_items = responseJson["items"];
+                    let tip = responseJson["tip"];
+                    let tax = responseJson["tax"];
                     let temp_total = 0;
                     for (let i = 0; i < prev_items.length; ++i) {
                         temp_total += (prev_items[i]["cost"] * 1).toFixed(2);
                     }
+                    let final_temp = temp_total + tip + tax;
                     this.setState({
                         items: prev_items,
                         openPerson: -1,
                         receipt_id: receipt_id,
-                        finalCost: temp_total,
+                        preTaxCost: temp_total,
+                        finalCost: final_temp,
                     });
                 })
                 .catch((error) => {
@@ -326,7 +334,9 @@ class PeopleList extends Component {
             body: JSON.stringify ({
                 items: this.state.items,
                 people: this.state.people,
-                title: this.props.parentProps.title
+                title: this.props.parentProps.title,
+                tip: this.state.tip,
+                tax: this.state.tax,
             })
         })
             .then((res) => {
@@ -376,7 +386,9 @@ class PeopleList extends Component {
             body: JSON.stringify ({
                 items: this.state.items,
                 people: this.state.people,
-                title: this.props.parentProps.title
+                title: this.props.parentProps.title,
+                tip: this.state.tip,
+                tax: this.state.tax,
             })
         })
             .then((res) => {
@@ -651,16 +663,16 @@ class PeopleList extends Component {
                 </List>
                 <View style={styles.summary}>
                     <Text style={styles.footer1}>
-                        {`Sub-Total: $${this.props.parentProps.preTaxCost}`}
+                        {`Sub-Total: $${this.state.preTaxCost}`}
                     </Text>
                     <Text style={styles.footer1}>
-                        {`Tax: $${this.props.parentProps.tax}`}
+                        {`Tax: $${this.state.tax}`}
                     </Text>
                     <Text style={styles.footer1}>
                         {`Tip: $${this.state.tip}`}
                     </Text>
                     <Text style={styles.footer2}>
-                        {`Total: $${this.props.parentProps.finalCost}`}
+                        {`Total: $${this.state.finalCost}`}
                     </Text>
                 </View>
                 <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.checkForUnassignedItems()}}>
