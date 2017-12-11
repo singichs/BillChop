@@ -8,6 +8,7 @@ import {
     TouchableWithoutFeedback,
     TouchableOpacity,
     Keyboard,
+    Alert,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import SearchBar from 'react-native-searchbar';
@@ -291,6 +292,7 @@ class PeopleList extends Component {
     charge = () => {
         // TODO: use apis to send twilio request
         let people = [];
+
         for (let i=0; i<this.state.people.length; i++) {
             if (this.state.people[i].friend!=="You") {
                 people.push({phoneNumber: this.state.people[i].phoneNumber,
@@ -338,6 +340,30 @@ class PeopleList extends Component {
 
         this.setState({charged: true});
     };
+
+    checkForUnassignedItems = () => {
+        let unassignedItem = false;
+        for (let i=0; i<this.state.items.length; i++) {
+            if (this.state.items[i].payers.length == 0) {
+                unassignedItem = true;
+                break;
+            }
+        }
+        if (unassignedItem) {
+            Alert.alert(
+                'Unassigned Items',
+                'One or more items is unassigned. Send notifications anyway?',
+                [
+                    {text: 'Cancel', style: 'cancel'},
+                    {text: 'Send', onPress: () => this.charge()},
+                ],
+                { cancelable: false }
+            )
+        }
+        else {
+            this.charge()
+        }
+    }
 
     goHome = () => {
         let receipt_id = this.props.parentProps.receipt_id;
@@ -637,7 +663,7 @@ class PeopleList extends Component {
                         {`Total: $${this.props.parentProps.finalCost}`}
                     </Text>
                 </View>
-                <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.charge()}}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() =>{this.checkForUnassignedItems()}}>
                     <Text style={styles.buttonText}>{getButtonStr()}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonContainerHome} onPress={() => {this.goHome()}}>

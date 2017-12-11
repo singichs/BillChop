@@ -87,7 +87,7 @@ class TransactionHistory extends Component {
                             subtitle={getDate({item})}
                             rightTitle={getTitle(item)}
                             containerStyle={{borderColor: "#FFFFFF", borderWidth: 1, backgroundColor: getColor({item})}}
-                            onPress={() => this.props.screenProps.rootNavigation.navigate('ReceiptPeople', {items: [],
+                            onPress={() => this.props.navigation.navigate('ReceiptPeople', {items: [],
                                 title: "",
                                 preTaxCost: 0.00,
                                 tax: 0.00,
