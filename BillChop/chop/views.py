@@ -451,6 +451,11 @@ def upload_receipt(request):
     print(request.FILES)
     form = ImageUploadForm(request.POST, request.FILES)
     if form.is_valid():
+        print(type(form.cleaned_data['image'].name))
+        print("hopefully next line is changed name")
+        latest_id = Receipt.objects.latest('pk').pk
+        form.cleaned_data['image'].name = "receipt" + str(latest_id+1) + ".jpg"
+        print(form.cleaned_data['image'])
         new_receipt = Receipt.objects.create(image=form.cleaned_data['image'], total_cost = 0, tip = 0, tax = 0, title = '', is_complete = False, owner_id = request.user.pk)
         membership = ReceiptMembership.objects.create(users=request.user, receipt=new_receipt, outstanding_payment=0)
         img = Image.open(form.cleaned_data['image'].file)
@@ -500,7 +505,7 @@ def upload_receipt(request):
         data = {"items" : return_response, "receipt_id" : new_receipt.pk}
         return JsonResponse(data, status=201)
 
-    return JsonResponse("image wasn't valid")
+    return JsonResponse({"message": "image wasn't valid"}, status=400)
 
 
 def change_contrast(img, level):
