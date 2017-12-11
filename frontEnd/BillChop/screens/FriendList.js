@@ -5,6 +5,8 @@ import {
     FlatList,
     TouchableOpacity,
     Text,
+    Image,
+    tintColor,
     View, Button, TouchableHighlight
 } from 'react-native';
 import { List, ListItem} from 'react-native-elements';
@@ -79,9 +81,15 @@ class PeopleList extends Component {
 
 
 export default class FriendList extends Component<{}> {
-    static navigationOptions = {
-        title: 'Groups',
-    };
+    static navigationOptions = ({ navigation, screenProps }) => ({
+            tabBarLabel: 'Groups',
+            tabBarIcon: ({ tintcolor }) => (
+            <Image
+                source={require('../images/group-icon.png')}
+                style={[styles.icon, {tintColor: tintColor}]}
+            />
+        ),
+    });
     render() {
         return (
             <View style={styles.container}>
@@ -120,5 +128,9 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontWeight: 'bold',
         fontSize: 16
-    }
+    },
+    icon: {
+        height: 35,
+        width: 35
+    },
 });

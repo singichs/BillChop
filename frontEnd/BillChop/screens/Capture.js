@@ -3,6 +3,7 @@ import {
     Platform,
     StyleSheet,
     Text,
+    tintColor,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
 import DocumentScanner from 'react-native-document-scanner';
@@ -17,7 +18,13 @@ export default class Capture extends Component<{}> {
         };
     }
     static navigationOptions = ({ navigation, screenProps }) => ({
-        title: "Capture",
+            tabBarLabel: 'Capture',
+            tabBarIcon: ({ tintcolor }) => (
+            <Image
+                source={require('../images/capture-icon.png')}
+                style={[styles.icon, {tintColor: tintColor}]}
+            />
+        ),
     });
     evalPicture =(data)=>{
         this.props.screenProps.rootNavigation.navigate('ReviewCapture', {image: data.croppedImage});
@@ -75,5 +82,9 @@ const styles = StyleSheet.create({
         color: '#000',
         padding: 10,
         margin: 40
-    }
+    },
+    icon: {
+        height: 35,
+        width: 35
+    },
 });

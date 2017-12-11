@@ -4,6 +4,8 @@ import {
     StyleSheet,
     FlatList,
     Text,
+    Image,
+    tintColor,
     View, Button, TouchableHighlight
 } from 'react-native';
 import { List, ListItem} from 'react-native-elements';
@@ -103,7 +105,13 @@ class TransactionList extends Component {
 
 export default class Home extends Component<{}> {
     static navigationOptions = {
-        title: 'Home',
+        tabBarLabel: 'Home',
+        tabBarIcon: ({ tintcolor }) => (
+            <Image
+                source={require('../images/home-icon.png')}
+                style={[styles.icon, {tintColor: tintColor}]}
+            />
+        ),
     };
     render() {
         return (
@@ -126,5 +134,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
         marginTop: 20
+    },
+    icon: {
+        height: 30,
+        width: 30
     },
 });
