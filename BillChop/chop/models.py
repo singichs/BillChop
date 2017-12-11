@@ -26,6 +26,8 @@ class Profile(models.Model):
     venmo = models.CharField(max_length=30, default="hello")
     phone_number = models.CharField(max_length=30, default="+1")
    # email = models.EmailField()
+    def full_name(self):
+        return self.first_name + " " + self.last_name
 
 
 @receiver(post_save, sender=User)

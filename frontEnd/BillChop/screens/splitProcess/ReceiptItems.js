@@ -7,6 +7,7 @@ import {
     TextInput,
     TouchableWithoutFeedback,
     TouchableOpacity,
+    KeyboardAvoidingView,
     Keyboard,
     View, Button, TouchableHighlight, Image
 } from 'react-native';
@@ -48,7 +49,7 @@ class ItemList extends Component {
             preTaxCost+=(1*data.items[i].cost);
         }
         preTaxCost = preTaxCost.toFixed(2);
-        this.setState({title: "Costco",
+        this.setState({title: "",
                         receipt_id: data.receipt_id,
                         preTaxCost: preTaxCost,
                         tax: 0,
@@ -83,6 +84,7 @@ class ItemList extends Component {
 
     renderFooter = () => {
         return <ListItem
+                    containerStyle={{backgroundColor: "#FFFFFF"}}
                     title={<TextInput onChangeText={(text) => this.setState({newItemName: text})} placeholder="Add new item" value={this.state.newItemName}/>}
                     textInputPlaceholder="Cost: $0.00"
                     textInput = {true}
@@ -170,9 +172,8 @@ class ItemList extends Component {
         return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
-                <Text style={styles.header}>
-                    {this.state.title}
-                </Text>
+                <KeyboardAvoidingView behavior="padding" style={styles.logoContainer}>
+                <TextInput style={styles.header} onChangeText={(text) => this.setState({title: text})} placeholder={`Enter Receipt Name`} value={`${this.state.title}`}/>
                     <FlatList
                         style={{flex: 0.7}}
                         keyboardShouldPersistTaps="always"
@@ -186,6 +187,7 @@ class ItemList extends Component {
                                 textInputValue = {item.cost}
                                 textInputOnChangeText = {(text) => this.changeItemCost(index,text)}
                                 hideChevron={true}
+                                containerStyle={{backgroundColor: "#FFFFFF"}}
                                 leftIcon={<Icon name='clear' color='#ff0000' size={20} containerStyle={styles.icon} onPress={() =>{this.deleteItem(index) }} />}
                             />
                         )}
@@ -211,6 +213,7 @@ class ItemList extends Component {
                 <TouchableOpacity style={styles.buttonContainer} onPress={() => {this.continueToNextPage()}}>
                     <Text style={styles.buttonText}>Continue to Item Assignment</Text>
                 </TouchableOpacity>
+                </KeyboardAvoidingView>
             </View>
             </TouchableWithoutFeedback>
         );
@@ -250,7 +253,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         textAlign: 'center',
-        marginTop: 20
+        marginTop: 20,
+        height: 40,
+        backgroundColor: "#FFFFFF"
     },
     footer1: {
         marginTop: 20,
@@ -289,5 +294,8 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontWeight: 'bold',
         fontSize: 16
+    },
+    logoContainer: {
+        flexGrow: 1,
     },
 });
