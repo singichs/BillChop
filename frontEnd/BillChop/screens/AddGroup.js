@@ -6,6 +6,8 @@ import {
     FlatList,
     TextInput,
     TouchableOpacity,
+    TouchableWithoutFeedback,
+    Keyboard,
     View, Button, TouchableHighlight, Image,
     KeyboardAvoidingView
 } from 'react-native';
@@ -147,6 +149,7 @@ class GroupView extends Component {
 
     render() {
         return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <KeyboardAvoidingView behavior="padding" style={styles.logoContainer}>
             <View style={styles.container}>
                 {this.renderGroupSearchButton(this.state.searchShown, () => {this.showSearch()})}
@@ -202,7 +205,9 @@ class GroupView extends Component {
                 </View>
                 <View style={{ height: 200 }} />
             </View>
-            </KeyboardAvoidingView>);
+            </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+        );
     }
 }
 
