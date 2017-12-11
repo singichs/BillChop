@@ -210,6 +210,8 @@ def add_user_to_group(request):
         if Profile.objects.filter(phone_number=phone_number).exists():
             profile = Profile.objects.get(phone_number=phone_number)
             user = User.objects.get(profile=profile)
+            new_usermembership = UserMembership.objects.create(user=user, group=group)
+            new_usermembership.save()
             # user_payments = {'payments':  data}
             return JsonResponse({"user_id": user.pk}, safe=False, status=200)
         else:
